@@ -1,8 +1,37 @@
-# React + Vite
+## Objective 1: JSX Conversion
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Task Description:
 
-Currently, two official plugins are available:
+You need to convert your layout assignment to JSX.
+Break down the layout’s code into reusable React components such as Buttons, Header, Footer, Tweet, ProfileCard, etc.
+Ensure that each component is in its own file, and organize these files in a logical folder structure.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Checklist:
+
+- [ ] HTML/CSS template successfully converted to JSX.
+- [ ] Reusable components identified and created.
+- [ ] Each component is in its own file with a logical folder structure.
+
+### Deliverables:
+
+- A React application with a UI mirroring the provided HTML/CSS template.
+- A library of reusable components.
+
+## Objective 2: State Management
+
+### Task Description:
+
+Set up state for the Login/Signup page using React’s state management. Ensure that the state updates as the user types.
+Implement state for the Home Feed and Profile Page to manage tweets and profile information.
+Employ Context API to manage and pass down global state where necessary.
+
+### Checklist:
+
+- [ ] State for Login/Signup page set up and functioning as expected.
+- [ ] State for Home Feed and Profile Page set up and functioning as expected.
+- [ ] Context API implemented for global state management.
+
+### Deliverables:
+
+- Functional Login/Signup, Home Feed, and Profile Page with appropriate state management.
+- Context API setup demonstrating advanced state management.
