@@ -9,7 +9,6 @@ import Login from "./pages/Login/Login.jsx";
 import Compose from "./pages/compose/index.jsx";
 import User from "./pages/userProfile/index.jsx";
 import Edit from "./pages/userProfile/editProfile.jsx";
-// import AuthProvider from "../../context/AuthProvider";
 
 function App() {
   return (
