@@ -1,5 +1,7 @@
 ## Objective 1: JSX Conversion
 
+# Click on Sign up for home page
+
 ### Task Description:
 
 You need to convert your layout assignment to JSX.
