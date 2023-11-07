@@ -1,6 +1,6 @@
-## Objective 1: JSX Conversion
-
 # Click on Sign up for home page
+
+## Objective 1: JSX Conversion
 
 ### Task Description:
 
