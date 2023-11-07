@@ -1,5 +1,5 @@
 import UserHeader from "../../components/userProfile/UserHeader";
-import bgImage from "../../assets/bgImage.png";
+import bgImage from "../../assets/bgimage.png";
 import userAvatar from "../../assets/user-avatar.png";
 import TweetLink from "../../components/TweetLink";
 import Tweet from "../../components/Tweet";
