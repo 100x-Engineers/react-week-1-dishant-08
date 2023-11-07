@@ -3,6 +3,7 @@ import bgImage from "../../assets/bgimage.png";
 import userAvatar from "../../assets/user-avatar.png";
 import TweetLink from "../../components/TweetLink";
 import Tweet from "../../components/Tweet";
+import HomeFooter from "../../components/homecomp/HomeFooter";
 
 export default function User() {
   return (
@@ -21,6 +22,8 @@ export default function User() {
 
       <TweetLink />
       <Tweet />
+
+      <HomeFooter page="user" />
     </>
   );
 }

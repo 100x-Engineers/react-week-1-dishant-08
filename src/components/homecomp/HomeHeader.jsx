@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import Logo from "../../assets/100x-Logo.svg";
 import userAvatar from "../../assets/user-avatar.png";
+import { useState } from "react";
 
 export default function HomeHeader() {
+  const [tab, setTab] = useState(true);
   return (
     <>
       <header className=" flex   flex-col items-start shrink-0  rounded-2xl">
@@ -24,14 +26,32 @@ export default function HomeHeader() {
         <main>
           {/* for you */}
           <div className=" flex pt-5 px-20  w-screen pb-0 justify-center items-center gap-40  border-b  border-b-neutral-700 self-stretch ">
-            <button className=" flex flex-col justify-center items-center gap-4  group  border-b-4 shrink-0 border-transparent focus:border-twitter-blue">
-              <span className=" font-Inter  text-fx text-neutral-50 font-medium group-focus:text-neutral-400 pb-2 ">
+            <button
+              className={` flex flex-col justify-center items-center gap-4   shrink-0 border-transparent ${
+                tab ? "border-twitter-blue border-b-4" : " "
+              }`}
+              onClick={() => setTab(true)}
+            >
+              <span
+                className={`font-Inter  text-fx text-neutral-50 font-semibold ${
+                  tab ? " text-neutral-400 pb-2 " : " "
+                } `}
+              >
                 For you
               </span>
             </button>
-            <button className=" flex flex-col justify-center items-center gap-4  group  border-b-4  border-transparent focus:border-twitter-blue">
-              <span className=" font-Inter text-fx text-neutral-50 font-medium group-focus:text-neutral-400 pb-2 ">
-                Following{" "}
+            <button
+              className={` flex flex-col justify-center items-center gap-4   shrink-0 border-transparent ${
+                tab ? " " : "border-twitter-blue border-b-4"
+              }`}
+              onClick={() => setTab(false)}
+            >
+              <span
+                className={`font-Inter  text-fx text-neutral-50 font-semibold ${
+                  tab ? " " : " text-neutral-400 pb-2 "
+                } `}
+              >
+                Following
               </span>
             </button>
           </div>

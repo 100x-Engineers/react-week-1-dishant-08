@@ -34,7 +34,11 @@ export default function LoginMain() {
             Already have an account?
           </p>
 
-          <Button variant="outline" type="default">
+          <Button
+            variant="outline"
+            type="default"
+            onClick={() => navigate("/home")}
+          >
             Sign Up
           </Button>
         </section>
