@@ -7,11 +7,7 @@ export default function Tweet() {
   return (
     <>
       {tweet.map((twt) => {
-        return (
-          <>
-            <Card key={twt.id} text={twt.content} />
-          </>
-        );
+        return <Card key={twt.id} text={twt.content} />;
       })}
     </>
   );

@@ -4,7 +4,7 @@ import cancel from "../assets/create-account-1-signup-x.svg";
 import PropTypes from "prop-types"; // ES6
 
 StepHeder.propTypes = {
-  number: PropTypes.number.isRequired,
+  number: PropTypes.string.isRequired,
 };
 
 export default function StepHeder({ number }) {

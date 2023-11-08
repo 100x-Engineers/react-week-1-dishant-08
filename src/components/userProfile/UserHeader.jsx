@@ -9,8 +9,8 @@ UserHeader.propTypes = {
   bio: PropTypes.string,
   userImage: PropTypes.string.isRequired,
   UserBackground: PropTypes.string.isRequired,
-  following: PropTypes.number,
-  followers: PropTypes.number,
+  following: PropTypes.string,
+  followers: PropTypes.string,
   bioLink: PropTypes.string,
 };
 
@@ -93,6 +93,7 @@ export default function UserHeader({
                 {following}
               </span>
               <span className="font-Inter text-fx font-medium text-neutral-500">
+                {" "}
                 Following
               </span>
             </div>

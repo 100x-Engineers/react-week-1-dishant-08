@@ -33,8 +33,8 @@ export default function HomeHeader() {
               onClick={() => setTab(true)}
             >
               <span
-                className={`font-Inter  text-fx text-neutral-50 font-semibold ${
-                  tab ? " text-neutral-400 pb-2 " : " "
+                className={`font-Inter  text-fx text-neutral-50 font-semibold pb-2  ${
+                  tab ? " text-neutral-400 " : " "
                 } `}
               >
                 For you
@@ -47,8 +47,8 @@ export default function HomeHeader() {
               onClick={() => setTab(false)}
             >
               <span
-                className={`font-Inter  text-fx text-neutral-50 font-semibold ${
-                  tab ? " " : " text-neutral-400 pb-2 "
+                className={`font-Inter  text-fx text-neutral-50 font-semibold pb-2  ${
+                  tab ? " " : " text-neutral-400 "
                 } `}
               >
                 Following

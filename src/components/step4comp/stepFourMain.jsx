@@ -2,8 +2,10 @@ import Input from "../../components/input";
 import Button from "../../components/button";
 import { BoldText } from "../../components/textcomp";
 import { DescriptionText } from "../../components/textcomp";
+import { useNavigate } from "react-router-dom";
 
 export default function StepFourMain() {
+  const navigate = useNavigate();
   return (
     <>
       <main className="flex flex-col items-start gap-5 self-stretch">
@@ -19,11 +21,9 @@ export default function StepFourMain() {
               width={24}
               height={25}
               viewBox="0 0 24 25"
-              c
             >
               <path
                 d="M2 12.0256C2 12.0256 5 5.02563 12 5.02563C19 5.02563 22 12.0256 22 12.0256C22 12.0256 19 19.0256 12 19.0256C5 19.0256 2 12.0256 2 12.0256Z"
-                str
                 strokeWidth={2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -43,7 +43,7 @@ export default function StepFourMain() {
           variant="default"
           type="next"
           onClick={() => {
-            navigate("/step4");
+            navigate("/");
           }}
         >
           Next

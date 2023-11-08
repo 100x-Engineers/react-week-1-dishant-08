@@ -25,14 +25,13 @@ export default function Compose() {
               setTweet([
                 ...tweet,
                 {
-                  id: tweet.length,
+                  id: tweet.length + 1,
                   userId: 42,
                   content: tweetText,
                   postedAt: date.getSeconds(),
                 },
               ]);
               setTweetText("");
-              console.log(tweet);
             }}
           >
             Post

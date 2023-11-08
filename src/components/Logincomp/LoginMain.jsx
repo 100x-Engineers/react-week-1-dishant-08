@@ -1,5 +1,34 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../../components/button";
+
+const handleSignUp = async () => {
+  try {
+    let response = await fetch(
+      "https://one00x-react-backend.onrender.com/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: "batman@example.com",
+          password: "gothamrocks",
+        }),
+      }
+    );
+    // console.log(response.status);
+    if (response.ok) {
+      const jsonres = response.json();
+      return jsonres;
+    } else {
+      console.log("HTTPS Status : ", response.status);
+      console.log("Error  ");
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export default function LoginMain() {
   const navigate = useNavigate();
   return (
@@ -37,7 +66,12 @@ export default function LoginMain() {
           <Button
             variant="outline"
             type="default"
-            onClick={() => navigate("/home")}
+            onClick={async () => {
+              const res = await handleSignUp();
+              console.log(res.message);
+
+              navigate("/home");
+            }}
           >
             Sign Up
           </Button>
