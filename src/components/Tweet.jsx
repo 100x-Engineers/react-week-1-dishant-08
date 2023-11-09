@@ -6,7 +6,7 @@ export default function Tweet() {
   const { tweet } = useContext(AuthContext);
   return (
     <>
-      {tweet.map((twt) => {
+      {[...tweet].reverse().map((twt) => {
         return <Card key={twt.id} text={twt.content} />;
       })}
     </>
