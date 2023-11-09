@@ -1,39 +1,8 @@
-# Click on Sign up for home page
+## Click on Sign up for home page
 
-## Objective 1: JSX Conversion
 
-### Task Description:
+# 100xmicroblogLLD
 
-You need to convert your layout assignment to JSX.
-Break down the layout’s code into reusable React components such as Buttons, Header, Footer, Tweet, ProfileCard, etc.
-Ensure that each component is in its own file, and organize these files in a logical folder structure.
+![100xmicroblogLLD](https://github.com/100x-Engineers/react-week-1-dishant-08/assets/60565337/e5facb45-f904-40d5-8641-8e2497f470eb)
 
-### Checklist:
-
-- [ ] HTML/CSS template successfully converted to JSX.
-- [ ] Reusable components identified and created.
-- [ ] Each component is in its own file with a logical folder structure.
-
-### Deliverables:
-
-- A React application with a UI mirroring the provided HTML/CSS template.
-- A library of reusable components.
-
-## Objective 2: State Management
-
-### Task Description:
-
-Set up state for the Login/Signup page using React’s state management. Ensure that the state updates as the user types.
-Implement state for the Home Feed and Profile Page to manage tweets and profile information.
-Employ Context API to manage and pass down global state where necessary.
-
-### Checklist:
-
-- [ ] State for Login/Signup page set up and functioning as expected.
-- [ ] State for Home Feed and Profile Page set up and functioning as expected.
-- [ ] Context API implemented for global state management.
-
-### Deliverables:
-
-- Functional Login/Signup, Home Feed, and Profile Page with appropriate state management.
-- Context API setup demonstrating advanced state management.
+link for LLD: https://excalidraw.com/#json=Aw53SM3t1Dn8krHZ3NYMJ,njk97nc3rypVr5SwzScdyQ
