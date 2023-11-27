@@ -12,7 +12,10 @@ export default function StepHeder({ number }) {
     <>
       <header>
         <div className=" flex py-3 px-0 items-center gap-5 self-stretch">
-          <Link to={"/"}>
+          {/* <button onClick={SetModal(false)}>
+              <img src={cancel} alt="cross-button" />
+            </button> */}
+          <Link to={-1}>
             <img src={cancel} alt="cross-button" />
           </Link>
           <span className=" font-Inter text-tx font-bold text-neutral-50">

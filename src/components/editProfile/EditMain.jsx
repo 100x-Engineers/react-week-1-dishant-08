@@ -2,6 +2,8 @@ import camera from "../../assets/material-symbols-add-a-photo-outline.svg";
 import cancel from "../../assets/create-account-1-signup-x.svg";
 import Input from "../input";
 import PropTypes from "prop-types"; // ES6
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 EditMain.propTypes = {
   userName: PropTypes.string.isRequired,
@@ -20,56 +22,93 @@ export default function EditMain({
   UserBackground,
   bioLink,
 }) {
+  const { formData, setFormData } = useContext(AuthContext);
+  const userData = formData;
+  const [inputValues, setInputValues] = useState({
+    userName: userData.userName,
+    bio: userData.bio,
+    location: userData.location,
+    website: userData.website,
+  });
+  const handleInputChange = (field, value) => {
+    setInputValues((c) => {
+      const updatedValues = {
+        ...c,
+        [field]: value,
+      };
+      console.log("updated values", updatedValues);
+      return updatedValues;
+    });
+  };
   return (
     <>
-      <main>
-        <div className="flex  justify-center items-center relative">
-          <img className="  w-full  " src={UserBackground} alt="bg-image" />
-          <div className="flex p-1 justify-center items-center absolute bg-edit-svg rounded-full  ">
-            <img className="w-6 h-6" src={camera} alt="camera icon" />
-          </div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          setFormData(inputValues);
+          console.log("Submitted values", inputValues);
+        }}
+      >
+        <main>
+          <div className="flex  justify-center items-center relative">
+            <img className="  w-full  " src={UserBackground} alt="bg-image" />
+            <div className="flex p-1 justify-center items-center absolute bg-edit-svg rounded-full  ">
+              <img className="w-6 h-6" src={camera} alt="camera icon" />
+            </div>
 
-          <img
-            className="absolute top-1/2  left-[60%] -translate-x-1/2 -translate-y-1/2     bg-edit-svg  p-1 rounded-full flex  items-center z-40"
-            src={cancel}
-            alt="cross-button "
-          />
-          <img
-            className=" absolute -bottom-4 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
-            src={userImage}
-            alt="user-avatar"
-          />
-        </div>
-        <div className=" mt-6 flex flex-col items-center gap-5 self-stretch ">
-          <Input
-            name="Name"
-            placeholder="Name"
-            show="true"
-            defaultValue={userFullname}
-          />
-          <fieldset className="flex  group w-full self-stretch py-4 px-3 items-center  rounded border  focus-within:border-twitter-blue justify-between grow">
-            <legend className="group-focus-within:text-twitter-blue text-neutral-500 font-Inter text-[0.75rem]  font-medium px-1 ">
-              Bio
-            </legend>
-            <textarea
-              cols={30}
-              rows={4}
-              className="bg-inherit  w-full h-full  caret-twitter-blue focus:outline-none resize-none
-      rounded-md placeholder-neutral-500 text-base text-neutral-50"
-              placeholder="Bio"
-              defaultValue={bio}
+            <img
+              className="absolute top-1/2  left-[60%] -translate-x-1/2 -translate-y-1/2     bg-edit-svg  p-1 rounded-full flex  items-center z-40"
+              src={cancel}
+              alt="cross-button "
             />
-          </fieldset>
-
-          <Input name="Location" placeholder="Location" show="true" />
-          <Input
-            name="Website"
-            placeholder="Website"
-            show="true"
-            defaultValue={bioLink}
-          />
-        </div>
-      </main>
+            <img
+              className=" absolute -bottom-4 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
+              src={userImage}
+              alt="user-avatar"
+            />
+          </div>
+          <div className=" mt-6 flex flex-col items-center gap-5 self-stretch ">
+            <Input
+              name="Name"
+              placeholder="Name"
+              show="true"
+              defaultValue={userFullname}
+              inputValue={inputValues.userName}
+              onInputChange={(value) => handleInputChange(userName, value)}
+            />
+            <fieldset className="flex  group w-full self-stretch py-4 px-3 items-center  rounded border  focus-within:border-twitter-blue justify-between grow">
+              <legend className="group-focus-within:text-twitter-blue text-neutral-500 font-Inter text-[0.75rem]  font-medium px-1 ">
+                Bio
+              </legend>
+              <textarea
+                cols={30}
+                rows={4}
+                className="bg-inherit  w-full h-full  caret-twitter-blue focus:outline-none resize-none
+      rounded-md placeholder-neutral-500 text-base text-neutral-50"
+                placeholder="Bio"
+                defaultValue={bio}
+                inputValue={inputValues.bio}
+                onInputChange={(value) => handleInputChange(bio, value)}
+              />
+            </fieldset>
+            <Input
+              name="Location"
+              placeholder="Location"
+              show="true"
+              inputValue={inputValues.location}
+              onInputChange={(value) => handleInputChange(location, value)}
+            />{" "}
+            <Input
+              name="Website"
+              placeholder="Website"
+              show="true"
+              defaultValue={bioLink}
+              inputValue={inputValues.website}
+              onInputChange={(value) => handleInputChange(website, value)}
+            />
+          </div>
+        </main>
+      </form>
     </>
   );
 }

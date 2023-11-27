@@ -38,7 +38,7 @@ export default function StepFourMain() {
           </button>
         </Input>
       </main>
-      <footer className="flex pt-20  flex-col justify-end w-full  items-center gap-2.5 flex-grow  flex-shrink-0 self-stretch">
+      <footer className="flex pt-20 h-screen sm:h-0 sm:pt-[300px]  flex-col justify-end w-full  items-center gap-2.5 flex-grow  flex-shrink-0 self-stretch">
         <Button
           variant="default"
           type="next"

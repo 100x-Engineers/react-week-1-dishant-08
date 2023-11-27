@@ -29,7 +29,7 @@ export default function StepOneMain() {
         </div>
         <DateSelector />
       </main>
-      <div className="flex h-screen pt-20 px-5 pb-0 flex-col justify-end  items-center gap-2.5 flex-1  flex-shrink-0 self-stretch">
+      <div className="flex  sm:h-0 pt-20 px-5 pb-0 flex-col justify-end  items-center gap-2.5 flex-1  flex-shrink-0 self-stretch">
         <Button
           variant="default"
           type="default"

@@ -9,7 +9,7 @@ export default function StepThreeMain() {
 
   return (
     <>
-      <main className="flex flex-col items-start gap-5 self-stretch">
+      <main className="flex flex-col items-start gap-5 self-stretch  ">
         <div className=" flex flex-col items-start gap-1 self-stretch">
           <BoldText>Create your account</BoldText>
           <DescriptionText>
@@ -23,7 +23,7 @@ export default function StepThreeMain() {
           </p>
         </div>
       </main>
-      <footer className="flex pt-20  flex-col justify-end w-full  items-center gap-2.5 flex-grow  flex-shrink-0 self-stretch">
+      <footer className="flex  pt-20 sm:h-0 sm:pt-[280px]  flex-col justify-end w-full  items-center gap-2.5 flex-grow  flex-shrink-0 self-stretch">
         <Button
           variant="default"
           type="next"
