@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import Button from "../../components/button";
 import { useContext, useState } from "react";
 import Modal from "../modal/modal";
@@ -57,7 +58,9 @@ export default function LoginMain() {
           >
             Create Account
           </Button>
-          {showModal && <Modal />}
+          {showModal &&
+            createPortal(<Modal />, document.getElementById("portal"))}
+          {/* {showModal && <Modal />} */}
 
           {/* </div> */}
           {/* <div className=" md:hidden ">

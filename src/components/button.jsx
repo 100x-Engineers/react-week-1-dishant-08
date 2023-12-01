@@ -38,7 +38,7 @@ export default function Button({
   // console.log(classes)
   return (
     <>
-      <button className={classes} {...rest}>
+      <button type="submit" className={classes} {...rest}>
         {children}
       </button>
     </>

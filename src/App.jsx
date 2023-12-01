@@ -15,6 +15,9 @@ import Compose from "./pages/compose/index.jsx";
 import User from "./pages/userProfile/index.jsx";
 import AuthProvider from "./context/AuthProvider";
 import Edit from "./pages/userProfile/editProfile.jsx";
+import StepHeader from "./components/stepHeader.jsx";
+import DesktopPage from "./pages/home/desktopPage.jsx";
+import ErrorModal from "./components/modal/Errormodal.jsx";
 
 const router = createBrowserRouter([
   {
@@ -44,8 +47,8 @@ const router = createBrowserRouter([
     element: <Compose />,
   },
   {
-    path: "/step56",
-    element: <Step4 />,
+    path: "/test",
+    element: <DesktopPage />,
   },
   {
     path: "/home",
@@ -54,6 +57,10 @@ const router = createBrowserRouter([
   {
     path: "/user",
     element: <User />,
+  },
+  {
+    path: "/test12",
+    element: <ErrorModal />,
   },
   {
     path: "/editProfile",

@@ -6,7 +6,6 @@ import userAvatar from "../../assets/user-avatar.png";
 export default function Edit() {
   return (
     <>
-      <EditHeader />
       <EditMain
         userName=" @dishant_sahu "
         userFullname=" Dishant sahu"

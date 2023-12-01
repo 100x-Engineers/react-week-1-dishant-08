@@ -3,8 +3,43 @@ import Logo from "../../assets/100x-Logo.svg";
 import userAvatar from "../../assets/user-avatar.png";
 import { useState } from "react";
 
-export default function HomeHeader() {
+export function ForyouTab() {
   const [tab, setTab] = useState(true);
+  return (
+    <div className=" flex pt-5 px-20  pb-0 justify-center items-center gap-40  border-b  border-b-neutral-700 self-stretch ">
+      <button
+        className={` flex flex-col justify-center items-center gap-4   shrink-0 border-transparent ${
+          tab ? "border-twitter-blue border-b-4" : " "
+        }`}
+        onClick={() => setTab(true)}
+      >
+        <span
+          className={`font-Inter  text-fx text-neutral-50 font-semibold pb-2  ${
+            tab ? " text-neutral-400 " : " "
+          } `}
+        >
+          For you
+        </span>
+      </button>
+      <button
+        className={` flex flex-col justify-center items-center gap-4   shrink-0 border-transparent ${
+          tab ? " " : "border-twitter-blue border-b-4"
+        }`}
+        onClick={() => setTab(false)}
+      >
+        <span
+          className={`font-Inter  text-fx text-neutral-50 font-semibold pb-2  ${
+            tab ? " " : " text-neutral-400 "
+          } `}
+        >
+          Following
+        </span>
+      </button>
+    </div>
+  );
+}
+
+export default function HomeHeader() {
   return (
     <>
       <header className=" flex   flex-col items-start shrink-0  rounded-2xl">
@@ -23,38 +58,9 @@ export default function HomeHeader() {
             alt="100x-logo"
           />
         </div>
-        <main>
+        <main className="w-screen">
           {/* for you */}
-          <div className=" flex pt-5 px-20  w-screen pb-0 justify-center items-center gap-40  border-b  border-b-neutral-700 self-stretch ">
-            <button
-              className={` flex flex-col justify-center items-center gap-4   shrink-0 border-transparent ${
-                tab ? "border-twitter-blue border-b-4" : " "
-              }`}
-              onClick={() => setTab(true)}
-            >
-              <span
-                className={`font-Inter  text-fx text-neutral-50 font-semibold pb-2  ${
-                  tab ? " text-neutral-400 " : " "
-                } `}
-              >
-                For you
-              </span>
-            </button>
-            <button
-              className={` flex flex-col justify-center items-center gap-4   shrink-0 border-transparent ${
-                tab ? " " : "border-twitter-blue border-b-4"
-              }`}
-              onClick={() => setTab(false)}
-            >
-              <span
-                className={`font-Inter  text-fx text-neutral-50 font-semibold pb-2  ${
-                  tab ? " " : " text-neutral-400 "
-                } `}
-              >
-                Following
-              </span>
-            </button>
-          </div>
+          <ForyouTab />
         </main>
       </header>
     </>

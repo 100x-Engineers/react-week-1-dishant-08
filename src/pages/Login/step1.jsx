@@ -12,28 +12,30 @@ export default function Step1() {
   const navigate = useNavigate();
   return (
     <>
-      <div className=" flex  px-tx pt-0 pb-5 flex-col items-start gap-3 shrink-0 bg-neutral-1000 rounded-2xl">
-        {/* <StepHeader number="1" /> */}
-        <header>
-          <div className=" flex py-3 px-0 items-center gap-5 self-stretch">
-            <button
-              onClick={() => {
-                SetModal(false);
-                navigate(-1);
-              }}
-            >
-              <img src={cancel} alt="cross-button" />
-            </button>
-            {/* <Link to={"/"}>
-            <img src={cancel} alt="cross-button" />
-          </Link> */}
-            <span className=" font-Inter text-tx font-bold text-neutral-50">
-              Step 1 of 4
-            </span>
-          </div>
-        </header>
+      <div className=" flex  px-tx pt-0 pb-5 flex-col  w-screen h-screen z-40 md:w-auto md:h-auto gap-3 shrink-0 bg-neutral-1000 rounded-2xl">
+        <StepHeader number="1" />
         <StepOneMain />
       </div>
     </>
   );
 }
+
+/* <header>
+            <div className=" flex py-3 px-0 items-center gap-5 self-stretch">
+              <button
+                onClick={() => {
+                  SetModal(false);
+                  navigate(-1);
+                }}
+              >
+                <img src={cancel} alt="cross-button" />
+              </button>
+              <Link to={"/"}>
+              <img src={cancel} alt="cross-button" />
+            </Link> 
+              <span className=" font-Inter text-tx font-bold text-neutral-50">
+                Step 1 of 4
+              </span>
+            </div>
+          </header> 
+        */

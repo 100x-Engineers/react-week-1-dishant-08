@@ -7,9 +7,21 @@ Input.propTypes = {
   name: PropTypes.string.isRequired,
   placeholder: PropTypes.string.isRequired,
   children: PropTypes.node,
+  errors: PropTypes.string,
+  tick: PropTypes.string,
+  touched: PropTypes.bool,
 };
 
-export default function Input({ name, placeholder, children, show, ...rest }) {
+export default function Input({
+  name,
+  placeholder,
+  children,
+  errors,
+  touched,
+  show,
+  tick,
+  ...rest
+}) {
   return (
     <>
       <fieldset className="flex  group w-full self-stretch py-4 px-3 items-center  rounded border  focus-within:border-twitter-blue justify-between grow">
@@ -19,18 +31,23 @@ export default function Input({ name, placeholder, children, show, ...rest }) {
              show ? "block" : " hidden group-focus-within:block"
            } font-medium px-1 `}
         >
-          {name}
+          {placeholder}
         </legend>
         <input
           type="text"
-          name="name"
+          name={name}
           placeholder={placeholder}
           className="bg-transparent  text-neutral-50 font-Inter text-xl leading-[1.2] font-normal focus:outline-none  w-full   group-focus-within:placeholder-shown:scale-y-75 group-focus-within:placeholder-transparent    "
           {...rest}
         />
-        <img src={greenTick} alt="green-status" className="ml-5 hidden" />
+        <img
+          src={greenTick}
+          alt="green-status"
+          className={`ml-5  ${tick ? "block" : "hidden"}`}
+        />
         {children}
       </fieldset>
+      {errors && touched && <div className="text-red-600">{errors}</div>}
     </>
   );
 }

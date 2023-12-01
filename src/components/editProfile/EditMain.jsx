@@ -4,7 +4,7 @@ import Input from "../input";
 import PropTypes from "prop-types"; // ES6
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-
+import EditHeader from "./EditHeader";
 EditMain.propTypes = {
   userName: PropTypes.string.isRequired,
   userFullname: PropTypes.string,
@@ -31,9 +31,9 @@ export default function EditMain({
     website: userData.website,
   });
   const handleInputChange = (field, value) => {
-    setInputValues((c) => {
+    setInputValues((prevValues) => {
       const updatedValues = {
-        ...c,
+        ...prevValues,
         [field]: value,
       };
       console.log("updated values", updatedValues);
@@ -49,6 +49,7 @@ export default function EditMain({
           console.log("Submitted values", inputValues);
         }}
       >
+        <EditHeader />
         <main>
           <div className="flex  justify-center items-center relative">
             <img className="  w-full  " src={UserBackground} alt="bg-image" />
@@ -69,12 +70,12 @@ export default function EditMain({
           </div>
           <div className=" mt-6 flex flex-col items-center gap-5 self-stretch ">
             <Input
-              name="Name"
+              name="userName"
               placeholder="Name"
               show="true"
-              defaultValue={userFullname}
-              inputValue={inputValues.userName}
-              onInputChange={(value) => handleInputChange(userName, value)}
+              // defaultValue={userFullname}
+              value={inputValues.userName}
+              onChange={(e) => handleInputChange("userName", e.target.value)}
             />
             <fieldset className="flex  group w-full self-stretch py-4 px-3 items-center  rounded border  focus-within:border-twitter-blue justify-between grow">
               <legend className="group-focus-within:text-twitter-blue text-neutral-500 font-Inter text-[0.75rem]  font-medium px-1 ">
@@ -83,28 +84,29 @@ export default function EditMain({
               <textarea
                 cols={30}
                 rows={4}
+                name="bio"
                 className="bg-inherit  w-full h-full  caret-twitter-blue focus:outline-none resize-none
       rounded-md placeholder-neutral-500 text-base text-neutral-50"
                 placeholder="Bio"
-                defaultValue={bio}
-                inputValue={inputValues.bio}
-                onInputChange={(value) => handleInputChange(bio, value)}
+                // defaultValue={bio}
+                value={inputValues.bio}
+                onChange={(e) => handleInputChange("bio", e.target.value)}
               />
             </fieldset>
             <Input
-              name="Location"
+              name="location"
               placeholder="Location"
               show="true"
-              inputValue={inputValues.location}
-              onInputChange={(value) => handleInputChange(location, value)}
+              value={inputValues.location}
+              onChange={(e) => handleInputChange("location", e.target.value)}
             />{" "}
             <Input
-              name="Website"
+              name="website"
               placeholder="Website"
               show="true"
-              defaultValue={bioLink}
-              inputValue={inputValues.website}
-              onInputChange={(value) => handleInputChange(website, value)}
+              // defaultValue={bioLink}
+              value={inputValues.website}
+              onChange={(e) => handleInputChange("website", e.target.value)}
             />
           </div>
         </main>
