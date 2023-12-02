@@ -19,29 +19,28 @@ export function MobilePage() {
 
 export default function Home() {
   const { showTweetModal } = useContext(AuthContext);
-  const [desktopMode, setDesktopMode] = useState(false);
+  // const [desktopMode, setDesktopMode] = useState(false);
 
-  const checkScreenSize = () => {
-    console.log(window.innerWidth);
-    setDesktopMode(window.innerWidth > 768);
-  };
+  // const checkScreenSize = () => {
+  //   console.log(window.innerWidth);
+  //   setDesktopMode(window.innerWidth > 768);
+  // };
 
-  useEffect(() => {
-    window.addEventListener("resize", checkScreenSize);
-    return () => {
-      window.removeEventListener("resize", checkScreenSize);
-    };
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener("resize", checkScreenSize);
+  //   return () => {
+  //     window.removeEventListener("resize", checkScreenSize);
+  //   };
+  // }, []);
 
   return (
     <>
-      {desktopMode ? (
-        <div className={` ${showTweetModal && "bg-modal-bg"} `}>
-          <DesktopPage />
-        </div>
-      ) : (
+      <div className={` hidden md:block ${showTweetModal && "bg-modal-bg"} `}>
+        <DesktopPage />
+      </div>
+      <div className=" md:hidden ">
         <MobilePage />
-      )}
+      </div>
     </>
   );
 }

@@ -4,8 +4,11 @@ import userAvatar from "../../assets/user-avatar.png";
 import TweetLink from "../../components/TweetLink";
 import Tweet from "../../components/Tweet";
 import HomeFooter from "../../components/homecomp/HomeFooter";
+import { useContext, useState, useEffect } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import DesktopUserPage from "./desktopUserPage";
 
-export default function User() {
+export function MobileUserPage() {
   return (
     <>
       <UserHeader
@@ -27,3 +30,45 @@ export default function User() {
     </>
   );
 }
+
+export default function User() {
+  const { showEditModal, SetShowEditModal } = useContext(AuthContext);
+  return (
+    <>
+      <div className={` hidden md:block ${showEditModal && "bg-modal-bg"} `}>
+        <DesktopUserPage />
+      </div>
+      <div className=" md:hidden ">
+        <MobileUserPage />
+      </div>
+    </>
+  );
+}
+
+/*
+  const [desktopMode, setDesktopMode] = useState(false);
+
+  const checkScreenSize = () => {
+    console.log(window.innerWidth);
+    setDesktopMode(window.innerWidth > 768);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", checkScreenSize);
+    return () => {
+      window.removeEventListener("resize", checkScreenSize);
+    };
+  }, []);
+  return (
+    <>
+      {desktopMode ? (
+        <div className={` ${showEditModal && "bg-modal-bg"} `}>
+          <DesktopUserPage />
+        </div>
+      ) : (
+        <MobileUserPage />
+      )}
+    </>
+  );
+
+*/
