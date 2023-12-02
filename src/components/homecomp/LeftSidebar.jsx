@@ -10,7 +10,7 @@ import Button from "../button";
 import userAvatar from "../../assets/user-avatar.png";
 import ThreeDot from "../../assets/dark-theme-ellipses-group.svg";
 import { createPortal } from "react-dom";
-import TweetModal from "../modal/tweetmodal";
+import TweetModal from "../modal/tweetmodal.jsx";
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
