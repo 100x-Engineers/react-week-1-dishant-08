@@ -2,6 +2,10 @@ import { useNavigate } from "react-router-dom";
 import calender from "../../assets/calendar-sv.svg";
 
 import PropTypes from "prop-types"; // ES6
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import Edit from "../../pages/userProfile/editProfile";
+import { createPortal } from "react-dom";
 
 UserHeader.propTypes = {
   userName: PropTypes.string.isRequired,
@@ -26,6 +30,7 @@ export default function UserHeader({
   joinedAt,
 }) {
   const navigate = useNavigate();
+  const { showEditModal, SetShowEditModal } = useContext(AuthContext);
   return (
     <>
       <header className=" flex flex-col ">
@@ -44,10 +49,12 @@ export default function UserHeader({
 
         <button
           className=" text-neutral-50 text-[1rem] font-medium font-Inter py-2 px-5 rounded-[1.875rem] mt-2 mr-4 border border-edit-stroke self-end "
-          onClick={() => navigate("/editProfile")}
+          onClick={() => SetShowEditModal(true)}
         >
           Edit profile
         </button>
+        {showEditModal &&
+          createPortal(<Edit />, document.getElementById("portal"))}
 
         <div className="flex flex-col justify-end items-start gap-4 ml-5 mr-4 ">
           <div className="flex flex-col justify-end items-start gap-1">

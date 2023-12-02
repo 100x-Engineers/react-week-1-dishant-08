@@ -1,11 +1,14 @@
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function EditHeader() {
+  const { showEditModal, SetShowEditModal } = useContext(AuthContext);
   return (
     <>
       <header className=" flex py-3 pr-4 justify-between items-center self-stretch ">
         <div className="flex items-center gap-5">
-          <Link to={"/user"}>
+          <button onClick={() => SetShowEditModal(false)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width={24}
@@ -28,7 +31,7 @@ export default function EditHeader() {
                 strokeLinejoin="round"
               />
             </svg>
-          </Link>
+          </button>
           <span className="text-neutral-50 font-Inter text-fx font-bold">
             Edit profile
           </span>

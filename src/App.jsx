@@ -18,6 +18,7 @@ import Edit from "./pages/userProfile/editProfile.jsx";
 import StepHeader from "./components/stepHeader.jsx";
 import DesktopPage from "./pages/home/desktopPage.jsx";
 import ErrorModal from "./components/modal/Errormodal.jsx";
+import TweetModal from "./components/modal/tweetmodal.jsx";
 
 const router = createBrowserRouter([
   {
@@ -60,7 +61,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/test12",
-    element: <ErrorModal />,
+    element: <TweetModal />,
   },
   {
     path: "/editProfile",

@@ -9,6 +9,10 @@ import Logox from "../../assets/copy-link-group-27162.svg";
 import Button from "../button";
 import userAvatar from "../../assets/user-avatar.png";
 import ThreeDot from "../../assets/dark-theme-ellipses-group.svg";
+import { createPortal } from "react-dom";
+import TweetModal from "../modal/tweetmodal";
+import { useState, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 function DesktopHome({ page }) {
   return (
@@ -34,6 +38,8 @@ function DesktopHome({ page }) {
 }
 
 export default function LeftSidebar() {
+  // const [showTweetModal, SetShowTweetModal] = useState(false);
+  const { showTweetModal, SetShowTweetModal } = useContext(AuthContext);
   return (
     <div className="flex p-5 flex-col h-screen justify-between  border-r border-r-neutral-700 ">
       <div className="flex flex-col gap-2">
@@ -46,9 +52,15 @@ export default function LeftSidebar() {
         <DesktopHome page="home" />
         <div className="p-2.5 ">
           <div className="py-tx ">
-            <Button variant="solidBlue" type="medium">
+            <Button
+              variant="solidBlue"
+              type="medium"
+              onClick={() => SetShowTweetModal(true)}
+            >
               Post
             </Button>
+            {showTweetModal &&
+              createPortal(<TweetModal />, document.getElementById("portal"))}
           </div>
         </div>
       </div>

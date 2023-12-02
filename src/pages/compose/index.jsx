@@ -2,9 +2,9 @@ import { useState, useContext } from "react";
 import cancel from "../../assets/create-account-1-signup-x.svg";
 import userAvatar from "../../assets/user-avatar.png";
 import Button from "../../components/button";
-import { AuthContext } from "../../context/AuthContext";
 
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function Compose() {
   const [tweetText, setTweetText] = useState("");
@@ -50,6 +50,16 @@ export default function Compose() {
             />
           </div>
         </main>
+        <footer className=" py-3 px-4  flex items-start text-neutral-500 ">
+          <span
+            className={`${
+              tweetText.length > 280 ? "text-red-600" : "text-neutral-500"
+            }`}
+          >
+            {tweetText.length < 280 ? tweetText.length : 280 - tweetText.length}{" "}
+          </span>
+          <span>/280</span>
+        </footer>
       </div>
     </>
   );

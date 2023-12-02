@@ -9,7 +9,7 @@ export default function DesktopPage() {
     <div className="flex justify-center ">
       <div className="flex ">
         <LeftSidebar />
-        <div className="w-[37.5rem] py-0 px-[0.0625rem] flex flex-col  ">
+        <div className="w-[37.5rem] h-screen px-[0.0625rem] flex flex-col overflow-y-auto no-scrollbar ">
           <div className="flex p-4 border-b border-b-neutral-700 ">
             <p className=" text-neutral-50 font-Inter text-[1.1875rem] font-bold ">
               Home
@@ -30,6 +30,7 @@ export default function DesktopPage() {
             <Button
               variant="solidBlue"
               type="small"
+
               //   onClick={() => {
               //     setTweet([
               //       ...tweet,

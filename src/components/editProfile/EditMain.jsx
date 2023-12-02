@@ -5,6 +5,9 @@ import PropTypes from "prop-types"; // ES6
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import EditHeader from "./EditHeader";
+
+import * as yup from "yup";
+
 EditMain.propTypes = {
   userName: PropTypes.string.isRequired,
   userFullname: PropTypes.string,
@@ -14,6 +17,14 @@ EditMain.propTypes = {
   bioLink: PropTypes.string,
 };
 
+const editUserSchema = yup.object().shape({
+  userName: yup.string().required("Username is Required").min(2).max(12),
+  // bio: userData.bio,
+  location: yup.string(),
+  website: yup.string(),
+  // website: userData.website,
+});
+
 export default function EditMain({
   userName,
   userFullname,
@@ -22,8 +33,10 @@ export default function EditMain({
   UserBackground,
   bioLink,
 }) {
+  const [error, SetError] = useState("");
   const { formData, setFormData } = useContext(AuthContext);
   const userData = formData;
+  const { showEditModal, SetShowEditModal } = useContext(AuthContext);
   const [inputValues, setInputValues] = useState({
     userName: userData.userName,
     bio: userData.bio,
@@ -36,16 +49,41 @@ export default function EditMain({
         ...prevValues,
         [field]: value,
       };
-      console.log("updated values", updatedValues);
+      // const isValid = await editUserSchema.isValid(updatedValues);
+
+      // console.log("updated values", updatedValues);
       return updatedValues;
     });
   };
+  // async function handleInputChange (field, value) {
+  //   setInputValues( async (prevValues) => {
+  //     const updatedValues = {
+  //       ...prevValues,
+  //       [field]: value,
+  //     };
+
+  //     const isValid = await editUserSchema.isValid(updatedValues);
+  //     console.log("updated values", updatedValues);
+  //     return updatedValues;
+  //   });
+  // };
   return (
     <>
       <form
         onSubmit={(e) => {
           e.preventDefault();
           setFormData(inputValues);
+          editUserSchema
+            .validate(inputValues)
+            .then(() => {
+              SetError("");
+              console.log("Validation Sucessful");
+            })
+            .catch((error) => {
+              SetError(error);
+              console.log(error.message);
+            });
+
           console.log("Submitted values", inputValues);
         }}
       >
@@ -57,18 +95,21 @@ export default function EditMain({
               <img className="w-6 h-6" src={camera} alt="camera icon" />
             </div>
 
-            <img
-              className="absolute top-1/2  left-[60%] -translate-x-1/2 -translate-y-1/2     bg-edit-svg  p-1 rounded-full flex  items-center z-40"
-              src={cancel}
-              alt="cross-button "
-            />
+            <button onClick={() => SetShowEditModal(false)}>
+              <img
+                className="absolute top-1/2  left-[60%] -translate-x-1/2 -translate-y-1/2     bg-edit-svg  p-1 rounded-full flex  items-center z-40"
+                src={cancel}
+                alt="cross-button "
+              />{" "}
+            </button>
             <img
               className=" absolute -bottom-4 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
               src={userImage}
               alt="user-avatar"
             />
           </div>
-          <div className=" mt-6 flex flex-col items-center gap-5 self-stretch ">
+
+          <div className=" mt-6 flex flex-col px-4 pb-2 items-start gap-5 self-stretch ">
             <Input
               name="userName"
               placeholder="Name"
@@ -77,6 +118,9 @@ export default function EditMain({
               value={inputValues.userName}
               onChange={(e) => handleInputChange("userName", e.target.value)}
             />
+            <div className="text-red-600  ">
+              {error && <span>{error.message}</span>}
+            </div>
             <fieldset className="flex  group w-full self-stretch py-4 px-3 items-center  rounded border  focus-within:border-twitter-blue justify-between grow">
               <legend className="group-focus-within:text-twitter-blue text-neutral-500 font-Inter text-[0.75rem]  font-medium px-1 ">
                 Bio
