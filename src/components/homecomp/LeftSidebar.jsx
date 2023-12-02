@@ -1,5 +1,5 @@
 // Import statements
-import React, { useContext } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import Logo100 from "../../assets/copy-link-100.svg";
 import HomeInactive from "../../assets/state-not-selectedhome-icon.svg";
