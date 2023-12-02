@@ -1,6 +1,6 @@
 import cancel from "../../assets/create-account-1-signup-x.svg";
 import userAvatar from "../../assets/user-avatar.png";
-import Button from "../../components/button";
+import Button from "../button";
 
 import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
@@ -45,24 +45,21 @@ export default function TweetModal() {
             <span>/280</span>
           </div>
 
-          <Button
-            variant="solidBlue"
-            type="small"
-            //   onClick={() => {
-            //     setTweet([
-            //       ...tweet,
-            //       {
-            //         id: tweet.length + 1,
-            //         userId: 42,
-            //         content: tweetText,
-            //         postedAt: date.getSeconds(),
-            //       },
-            //     ]);
-            //     setTweetText("");
-            //   }}
-          >
+          <Button variant="solidBlue" type="small">
             Post
           </Button>
+          {/* onClick={() => {
+                setTweet([
+                  ...tweet,
+                  {
+                    id: tweet.length + 1,
+                    userId: 42,
+                    content: tweetText,
+                    postedAt: date.getSeconds(),
+                  },
+                ]);
+                setTweetText("");
+              }} */}
         </footer>
       </div>
     </>

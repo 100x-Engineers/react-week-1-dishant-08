@@ -11,11 +11,11 @@ import Button from "../button";
 import userAvatar from "../../assets/user-avatar.png";
 import ThreeDot from "../../assets/dark-theme-ellipses-group.svg";
 import { createPortal } from "react-dom";
-import TweetModal from "../modal/tweetmodal"; // Removed .jsx extension
+import TweetModal from "../modal/tweetModal"; // Removed .jsx extension
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 
-function DesktopHome({ page }) {
+export function DesktopHome({ page }) {
   return (
     <>
       <div>
