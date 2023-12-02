@@ -59,10 +59,7 @@ const router = createBrowserRouter([
     path: "/user",
     element: <User />,
   },
-  {
-    path: "/test12",
-    element: <TweetModal />,
-  },
+
   {
     path: "/editProfile",
     element: <Edit />,
