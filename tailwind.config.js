@@ -22,7 +22,7 @@ export default {
         secondary: "rgba(255, 255, 255, 0.60)",
         "edit-stroke": "rgba(29, 155, 240, 0.24)",
         "edit-svg": "rgba(0, 0, 0, 0.60)",
-        "modal-bg": "rgba(189,189,189,0.3)",
+        "modal-bg": "rgba(189,189,189,0.25)",
       },
 
       spacing: {

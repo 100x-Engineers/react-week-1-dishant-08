@@ -36,7 +36,20 @@ export default function User() {
   return (
     <>
       <div className={` hidden md:block ${showEditModal && "bg-modal-bg"} `}>
-        <DesktopUserPage />
+        <DesktopUserPage>
+          {" "}
+          <UserHeader
+            userName=" @dishant_sahu "
+            userFullname=" Dishant sahu"
+            bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
+            userImage={userAvatar}
+            UserBackground={bgImage}
+            following=" 217"
+            followers="118 "
+            bioLink="pixsellz.io "
+            joinedAt="  Joined September 2018"
+          />
+        </DesktopUserPage>
       </div>
       <div className=" md:hidden ">
         <MobileUserPage />

@@ -80,7 +80,7 @@ export default function Card({ text, time, postId }) {
     if (likeFocus === true) likedPost();
     if (likeFocus === false) unlikedPost();
 
-    getAllLikedPost();
+    postId && getAllLikedPost();
   }, [likeFocus]);
 
   const timeStamp = moment(time).fromNow();
