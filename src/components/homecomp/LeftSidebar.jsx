@@ -41,7 +41,7 @@ export function DesktopHome({ page }) {
   );
 }
 
-export default function LeftSidebar() {
+export default function LeftSidebar({ page }) {
   const { showTweetModal, SetShowTweetModal } = useContext(AuthContext);
 
   return (
@@ -53,7 +53,7 @@ export default function LeftSidebar() {
             <img src={Logox} alt="X" />
           </div>
         </div>
-        <DesktopHome page="home" />
+        <DesktopHome page={page} />
         <div className="p-2.5">
           <div className="py-tx">
             <Button

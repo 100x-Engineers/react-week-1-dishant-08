@@ -5,6 +5,7 @@ import Button from "../button";
 import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
 
 export default function TweetModal() {
   const { showTweetModal, SetShowTweetModal } = useContext(AuthContext);
@@ -45,7 +46,19 @@ export default function TweetModal() {
             <span>/280</span>
           </div>
 
-          <Button variant="solidBlue" type="small">
+          <Button
+            onClick={async () => {
+              try {
+                await axios.post("/api/post", {
+                  koko: tweetText,
+                });
+              } catch (error) {
+                console.error("Error", error);
+              }
+            }}
+            variant="solidBlue"
+            type="small"
+          >
             Post
           </Button>
           {/* onClick={() => {

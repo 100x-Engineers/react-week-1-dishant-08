@@ -53,7 +53,10 @@ export default function LoginMain() {
           <Button
             variant="default"
             type="default"
-            onClick={() => SetModal(true)}
+            onClick={() => {
+              navigate("/step1"); // Navigate to "/step1" when the button is clicked
+              SetModal(true);
+            }}
             // onClick={() => navigate("/step1")}
           >
             Create Account
@@ -90,12 +93,16 @@ export default function LoginMain() {
             <Button
               variant="outline"
               type="default"
-              onClick={async () => {
-                const res = await handleSignUp();
-                console.log(res.message);
-
-                navigate("/home");
+              onClick={() => {
+                navigate("/signup"); // Navigate to "/step1" when the button is clicked
+                SetModal(true);
               }}
+              // onClick={async () => {
+              //   const res = await handleSignUp();
+              //   console.log(res.message);
+
+              //   navigate("/home");
+              // }}
             >
               Sign Up
             </Button>

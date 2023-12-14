@@ -15,9 +15,21 @@ export default function DesktopUserPage() {
   return (
     <div className="flex justify-center ">
       <div className="flex ">
-        <LeftSidebar />
+        <LeftSidebar page="user" />
         <div className="w-[37.5rem] h-screen px-[0.0625rem] flex flex-col overflow-y-auto no-scrollbar ">
-          <MobileUserPage />
+          <UserHeader
+            userName=" @dishant_sahu "
+            userFullname=" Dishant sahu"
+            bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
+            userImage={userAvatar}
+            UserBackground={bgImage}
+            following=" 217"
+            followers="118 "
+            bioLink="pixsellz.io "
+            joinedAt="  Joined September 2018"
+          />
+
+          <Tweet />
         </div>
         <RightSidebar />
       </div>

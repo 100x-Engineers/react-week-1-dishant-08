@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useFormik } from "formik";
 import Button from "../../components/button";
 import Input from "../../components/input";
@@ -7,9 +7,12 @@ import { BoldText } from "../../components/textcomp";
 import { DescriptionText } from "../../components/textcomp";
 import DateSelector from "../../components/DateSelect";
 import { object, string } from "yup";
+import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
 
 export default function StepOneMain() {
   const navigate = useNavigate();
+  const { formData, setFormData } = useContext(AuthContext);
 
   const validation = object({
     name: string("Invalid Entry")
@@ -33,25 +36,68 @@ export default function StepOneMain() {
     isSubmitting,
   } = useFormik({
     initialValues: {
-      name: "",
-      email: "",
-      month: "",
-      day: "",
-      year: "",
+      name: formData.name || "", // Use formData.name as initial value, or an empty string if it's undefined
+      email: formData.email || "", // Use formData.email as initial value, or an empty string if it's undefined
+      month: formData.month || "",
+      day: formData.day || "",
+      year: formData.year || "",
     },
     validationSchema: validation,
-    onSubmit: (values, { setSubmitting, resetForm }) => {
-      setTimeout(() => {
-        console.log("Submitted values", values);
-        resetForm();
-        setSubmitting(false);
-        navigate("/step2");
-      }, 400);
+    onSubmit: async (values, { setSubmitting }) => {
+      setFormData((prevData) => {
+        // let updatedValues = { ...prevData, ...values };
+        const updatedValues = {
+          ...prevData,
+          date_of_birth:
+            (values.month || "") +
+            " " +
+            (values.day || "") +
+            " " +
+            (values.year || ""),
+          ...values,
+        };
+
+        console.log(updatedValues);
+        // Make an API call here
+        // axios
+        //   .post("/api/signup", { status: updatedValues.name })
+        //   .then((response) => {
+        //     console.log("API response:", response.data);
+        //     // Do any additional actions or navigate as needed
+        // navigate("/step2");
+        //   })
+        //   .catch((error) => {
+        //     console.error("API error:", error);
+        //     // Handle API error if needed
+        //   });
+        return updatedValues;
+      });
+
+      navigate("/step2");
+      setSubmitting(false);
     },
+    // onSubmit: (values, { setSubmitting }) => {
+    //   setFormData((prevData) => {
+    //     const updatedValues = { ...prevData, ...values };
+    //     const response = axios.post('/api/signup', { "status" : updatedValues.name}).then(re)
+
+    //     console.log(updatedValues);
+    //     return updatedValues;
+    //   });
+
+    //   console.log("Updated formData", formData); // Log the updated formData immediately
+    //   setSubmitting(false);
+    //   navigate("/step2");
+    // },
   });
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit(e);
+      }}
+    >
       <main className="flex flex-col items-start gap-[1.12rem] self-stretch">
         <div>
           <BoldText>Create your account</BoldText>

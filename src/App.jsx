@@ -18,6 +18,7 @@ import Edit from "./pages/userProfile/editProfile.jsx";
 import StepHeader from "./components/stepHeader.jsx";
 import DesktopPage from "./pages/home/desktopPage.jsx";
 import ErrorModal from "./components/modal/Errormodal.jsx";
+import SignUpmodal from "./components/modal/SignUpmodal.jsx";
 
 const router = createBrowserRouter([
   {
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
     element: <Login />,
     children: [
       {
-        path: "/",
+        path: "/step1",
         element: <Step1 />,
       },
       {
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/step4",
         element: <Step4 />,
+      },
+      {
+        path: "/signup",
+        element: <SignUpmodal />,
       },
     ],
   },

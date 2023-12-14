@@ -6,7 +6,7 @@ import Tweet from "../../components/Tweet";
 import HomeFooter from "../../components/homecomp/HomeFooter";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import DesktopUserPage from "./desktopUserPage.jsx";
+import DesktopUserPage from "./desktopUserPage";
 
 export function MobileUserPage() {
   return (

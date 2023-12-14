@@ -15,7 +15,7 @@ export default {
         "card-bg": "#40596A",
         "Twitter-blue-disabled": "#1E5D87",
         "Button-stroke": "#546A7A",
-
+        "red-like": "#F4245E",
         "Card-fill": "#16181C",
         Success: "#00BE74",
         Error: "#8B141A",

@@ -8,7 +8,7 @@ export default function DesktopPage() {
   return (
     <div className="flex justify-center ">
       <div className="flex ">
-        <LeftSidebar />
+        <LeftSidebar page="home" />
         <div className="w-[37.5rem] h-screen px-[0.0625rem] flex flex-col overflow-y-auto no-scrollbar ">
           <div className="flex p-4 border-b border-b-neutral-700 ">
             <p className=" text-neutral-50 font-Inter text-[1.1875rem] font-bold ">

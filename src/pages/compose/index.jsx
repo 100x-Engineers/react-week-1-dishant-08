@@ -5,6 +5,7 @@ import Button from "../../components/button";
 
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
 
 export default function Compose() {
   const [tweetText, setTweetText] = useState("");
@@ -21,16 +22,24 @@ export default function Compose() {
           <Button
             variant="solidBlue"
             type="small"
-            onClick={() => {
-              setTweet([
-                ...tweet,
-                {
-                  id: tweet.length + 1,
-                  userId: 42,
-                  content: tweetText,
-                  postedAt: date.getSeconds(),
-                },
-              ]);
+            onClick={async () => {
+              try {
+                await axios.post("/api/post", {
+                  koko: tweetText,
+                });
+              } catch (error) {
+                console.error("Error", error);
+              }
+
+              // setTweet([
+              //   ...tweet,
+              //   {
+              //     id: tweet.length + 1,
+              //     userId: 42,
+              //     content: tweetText,
+              //     postedAt: date.getSeconds(),
+              //   },
+              // ]);
               setTweetText("");
             }}
           >
