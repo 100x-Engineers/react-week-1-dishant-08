@@ -37,7 +37,7 @@ export default function Compose() {
               //     id: tweet.length + 1,
               //     userId: 42,
               //     content: tweetText,
-              //     postedAt: date.getSeconds(),
+              //     postedAt: date.getSeconds(),E
               //   },
               // ]);
               setTweetText("");
