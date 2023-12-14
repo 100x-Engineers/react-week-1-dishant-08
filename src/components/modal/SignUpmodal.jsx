@@ -39,11 +39,14 @@ export default function StepFourMain() {
     onSubmit: async (values, { setSubmitting }) => {
       console.log(values);
       try {
-        const response = await axios.post("/api/login", {
-          email: values.email,
+        const response = await axios.post(
+          "https://one00xapi.onrender.com/api/login",
+          {
+            email: values.email,
 
-          password: values.password, // Assuming hashehPassword is defined
-        });
+            password: values.password, // Assuming hashehPassword is defined
+          }
+        );
 
         console.log("API response:", response.data);
 

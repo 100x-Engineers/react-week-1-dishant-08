@@ -39,13 +39,16 @@ export default function StepFourMain() {
         };
         console.log(apiValue);
 
-        const response = await axios.post("/api/signup", {
-          username: apiValue.username,
-          email: apiValue.email,
-          display_name: apiValue.name, // You might want to verify if this is the correct property
-          date_of_birth: apiValue.date_of_birth,
-          password: apiValue.password, // Assuming hashehPassword is defined
-        });
+        const response = await axios.post(
+          "https://one00xapi.onrender.com/api/signup",
+          {
+            username: apiValue.username,
+            email: apiValue.email,
+            display_name: apiValue.name, // You might want to verify if this is the correct property
+            date_of_birth: apiValue.date_of_birth,
+            password: apiValue.password, // Assuming hashehPassword is defined
+          }
+        );
 
         console.log("API response:", response.data);
         // Do any additional actions or navigate as needed

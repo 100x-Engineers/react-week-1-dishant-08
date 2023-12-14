@@ -2,18 +2,24 @@ import { AuthContext } from "../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
 import Card from "./card";
 
+import axios from "axios";
 export default function Tweet() {
   const { tweet } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
 
   const getAllPosts = async () => {
     try {
-      const response = await fetch("/api/feed");
-      const data = await response.json();
-      console.log(data);
-      setPosts(data.posts);
+      const response = await axios.get(
+        "https://one00xapi.onrender.com/api/feed",
+        {
+          withCredentials: true, // Include credentials (cookies) in the request
+        }
+      );
+
+      console.log(response.data);
+      setPosts(response.data.posts);
     } catch (error) {
-      console.error("Error fetching posts:", error);
+      console.error("Error fetching posts:", error.message);
     }
   };
 

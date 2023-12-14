@@ -23,7 +23,7 @@ export default function Card({ text, time, postId }) {
 
   const likedPost = async () => {
     try {
-      await axios.post("/api/like", {
+      await axios.post("https://one00xapi.onrender.com/api/like", {
         post_id: postId,
       });
       // setLikeFocus(!likeFocus)
@@ -33,7 +33,7 @@ export default function Card({ text, time, postId }) {
   };
   const unlikedPost = async () => {
     try {
-      await axios.delete(`/api/unlike/${postId}`);
+      await axios.delete(`https://one00xapi.onrender.com/api/unlike/${postId}`);
       // setLikeFocus(!likeFocus)
     } catch (error) {
       console.error("Error", error);
@@ -41,7 +41,9 @@ export default function Card({ text, time, postId }) {
   };
   const getAllLikedPost = async () => {
     try {
-      const likesData = await axios.get(`/api/getlike/${postId}`);
+      const likesData = await axios.get(
+        `https://one00xapi.onrender.com/api/getlike/${postId}`
+      );
       console.log(likesData);
       setAllLike(likesData?.data?.count);
       setLike(likesData?.data?.likedPost);
@@ -54,7 +56,7 @@ export default function Card({ text, time, postId }) {
   // useEffect(() => {
   //   const checkLikedStatus = async () => {
   //     try {
-  //       const likesData = await axios.get(`/api/getlike/${postId}`);
+  //       const likesData = await axios.get(`https://one00xapi.onrender.com/api/getlike/${postId}`);
   //       console.log(likesData);
   //       setAllLike(likesData?.data?.count);
   //       setLike(likesData?.data?.likedPost); // Set likeFocus based on the liked status

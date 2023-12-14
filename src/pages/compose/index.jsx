@@ -24,7 +24,7 @@ export default function Compose() {
             type="small"
             onClick={async () => {
               try {
-                await axios.post("/api/post", {
+                await axios.post("https://one00xapi.onrender.com/api/post", {
                   koko: tweetText,
                 });
               } catch (error) {
