@@ -55,7 +55,7 @@ export default function StepFourMain() {
 
         console.log("API response:", response.data);
         // Do any additional actions or navigate as needed
-        navigate("/step2");
+        navigate("/signup");
       } catch (error) {
         console.error("API error:", error);
         // Handle API error if needed
