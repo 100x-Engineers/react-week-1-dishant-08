@@ -49,9 +49,15 @@ export default function TweetModal() {
           <Button
             onClick={async () => {
               try {
-                await axios.post("https://one00xapi.onrender.com/api/post", {
-                  koko: tweetText,
-                });
+                await axios.post(
+                  "https://one00xapi.onrender.com/api/post",
+                  {
+                    koko: tweetText,
+                  },
+                  {
+                    withCredentials: true,
+                  }
+                );
               } catch (error) {
                 console.error("Error", error);
               }

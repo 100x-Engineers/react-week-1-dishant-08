@@ -47,6 +47,9 @@ export default function StepFourMain() {
             display_name: apiValue.name, // You might want to verify if this is the correct property
             date_of_birth: apiValue.date_of_birth,
             password: apiValue.password, // Assuming hashehPassword is defined
+          },
+          {
+            withCredentials: true,
           }
         );
 

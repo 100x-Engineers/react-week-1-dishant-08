@@ -43,8 +43,10 @@ export default function StepFourMain() {
           "https://one00xapi.onrender.com/api/login",
           {
             email: values.email,
-
-            password: values.password, // Assuming hashehPassword is defined
+            password: values.password,
+          },
+          {
+            withCredentials: true,
           }
         );
 

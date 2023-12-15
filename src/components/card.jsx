@@ -23,9 +23,16 @@ export default function Card({ text, time, postId }) {
 
   const likedPost = async () => {
     try {
-      await axios.post("https://one00xapi.onrender.com/api/like", {
-        post_id: postId,
-      });
+      await axios.post(
+        "https://one00xapi.onrender.com/api/like",
+        {
+          post_id: postId,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
       // setLikeFocus(!likeFocus)
     } catch (error) {
       console.error("Error", error);
@@ -33,7 +40,12 @@ export default function Card({ text, time, postId }) {
   };
   const unlikedPost = async () => {
     try {
-      await axios.delete(`https://one00xapi.onrender.com/api/unlike/${postId}`);
+      await axios.delete(
+        `https://one00xapi.onrender.com/api/unlike/${postId}`,
+        {
+          withCredentials: true,
+        }
+      );
       // setLikeFocus(!likeFocus)
     } catch (error) {
       console.error("Error", error);
@@ -42,7 +54,10 @@ export default function Card({ text, time, postId }) {
   const getAllLikedPost = async () => {
     try {
       const likesData = await axios.get(
-        `https://one00xapi.onrender.com/api/getlike/${postId}`
+        `https://one00xapi.onrender.com/api/getlike/${postId}`,
+        {
+          withCredentials: true,
+        }
       );
       console.log(likesData);
       setAllLike(likesData?.data?.count);
