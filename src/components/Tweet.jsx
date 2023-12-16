@@ -6,6 +6,7 @@ import axios from "axios";
 export default function Tweet() {
   const { tweet } = useContext(AuthContext);
   const [posts, setPosts] = useState([]);
+  const { isLoading } = useContext(AuthContext);
 
   const getAllPosts = async () => {
     try {
@@ -25,7 +26,7 @@ export default function Tweet() {
 
   useEffect(() => {
     getAllPosts();
-  }, []);
+  }, [isLoading]);
 
   return (
     <>

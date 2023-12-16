@@ -2,75 +2,91 @@ import camera from "../../assets/material-symbols-add-a-photo-outline.svg";
 import cancel from "../../assets/create-account-1-signup-x.svg";
 import Input from "../input";
 import PropTypes from "prop-types"; // ES6
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import EditHeader from "./EditHeader";
 
 import * as yup from "yup";
+import axios from "axios";
 
 EditMain.propTypes = {
-  userName: PropTypes.string.isRequired,
-  userFullname: PropTypes.string,
-  bio: PropTypes.string,
+  // display_name: PropTypes.string.isRequired,
+  // userFullname: PropTypes.string,
+  // bio: PropTypes.string,
   userImage: PropTypes.string.isRequired,
   UserBackground: PropTypes.string.isRequired,
-  bioLink: PropTypes.string,
+  // bioLink: PropTypes.string,
 };
 
 const editUserSchema = yup.object().shape({
-  userName: yup.string().required("Username is Required").min(2).max(12),
+  display_name: yup
+    .string()
+    .required("display_name is Required")
+    .min(2)
+    .max(12),
   // bio: userData.bio,
   location: yup.string(),
   website: yup.string(),
   // website: userData.website,
 });
 
-export default function EditMain({
-  userName,
-  userFullname,
-  bio,
-  userImage,
-  UserBackground,
-  bioLink,
-}) {
-  const [error, SetError] = useState("");
+export default function EditMain({ userImage, UserBackground }) {
   const { formData, setFormData } = useContext(AuthContext);
-  const userData = formData;
   const { showEditModal, SetShowEditModal } = useContext(AuthContext);
+
+  const [user, setUser] = useState();
   const [inputValues, setInputValues] = useState({
-    userName: userData.userName,
-    bio: userData.bio,
-    location: userData.location,
-    website: userData.website,
+    display_name: "",
+    bio: "",
+    location: "",
+    website: "",
   });
+  const [error, SetError] = useState("");
+
+  const getUserData = async () => {
+    try {
+      const response = await axios.get(
+        "https://one00xapi.onrender.com/api/geteditcuruser",
+        {
+          withCredentials: true,
+        }
+      );
+      setUser(response.data?.user || {});
+    } catch (error) {
+      console.error("Error fetching User Details:", error.message);
+    }
+  };
+
+  useEffect(() => {
+    getUserData();
+  }, []);
+
+  useEffect(() => {
+    // Update inputValues when user changes
+    setInputValues((prevValues) => ({
+      ...prevValues,
+      display_name: user?.display_name || "",
+      bio: user?.bio || "",
+      location: user?.location || "",
+      website: user?.website || "",
+    }));
+  }, [user]);
+
   const handleInputChange = (field, value) => {
     setInputValues((prevValues) => {
       const updatedValues = {
         ...prevValues,
         [field]: value,
       };
-      // const isValid = await editUserSchema.isValid(updatedValues);
 
-      // console.log("updated values", updatedValues);
       return updatedValues;
     });
   };
-  // async function handleInputChange (field, value) {
-  //   setInputValues( async (prevValues) => {
-  //     const updatedValues = {
-  //       ...prevValues,
-  //       [field]: value,
-  //     };
 
-  //     const isValid = await editUserSchema.isValid(updatedValues);
-  //     console.log("updated values", updatedValues);
-  //     return updatedValues;
-  //   });
-  // };
   return (
     <>
       <form
-        onSubmit={(e) => {
+        onSubmit={async (e) => {
           e.preventDefault();
           setFormData(inputValues);
           editUserSchema
@@ -84,10 +100,31 @@ export default function EditMain({
               console.log(error.message);
             });
 
+          try {
+            const response = await axios.put(
+              "https://one00xapi.onrender.com/api/editUser",
+              {
+                display_name: inputValues.display_name,
+                bio: inputValues.bio,
+                location: inputValues.location,
+                website: inputValues.website,
+              },
+              {
+                withCredentials: true,
+              }
+            );
+            SetShowEditModal(false);
+            window.location.reload(false);
+            console.log("API response:", response.data);
+          } catch (error) {
+            console.error("API error:", error);
+          }
+
           console.log("Submitted values", inputValues);
         }}
       >
         <EditHeader />
+
         <main>
           <div className="flex  justify-center items-center relative">
             <img className="  w-full  " src={UserBackground} alt="bg-image" />
@@ -111,12 +148,14 @@ export default function EditMain({
 
           <div className=" mt-6 flex flex-col px-4 pb-2 items-start gap-5 self-stretch ">
             <Input
-              name="userName"
+              name="display_name"
               placeholder="Name"
               show="true"
               // defaultValue={userFullname}
-              value={inputValues.userName}
-              onChange={(e) => handleInputChange("userName", e.target.value)}
+              value={inputValues.display_name}
+              onChange={(e) =>
+                handleInputChange("display_name", e.target.value)
+              }
             />
             <div className="text-red-600  ">
               {error && <span>{error.message}</span>}

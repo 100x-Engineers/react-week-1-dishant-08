@@ -12,6 +12,7 @@ import axios from "axios";
 import moment from "moment";
 
 export function MobileUserPage({ children }) {
+  window.scrollTo(0, 0);
   return (
     <>
       {children}

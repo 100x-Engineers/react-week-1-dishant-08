@@ -10,6 +10,7 @@ import axios from "axios";
 export default function TweetModal() {
   const { showTweetModal, SetShowTweetModal } = useContext(AuthContext);
   const [tweetText, setTweetText] = useState("");
+  const { isLoading, SetLoading } = useContext(AuthContext);
 
   return (
     <>
@@ -47,25 +48,34 @@ export default function TweetModal() {
           </div>
 
           <Button
-            onClick={async () => {
-              try {
-                await axios.post(
-                  "https://one00xapi.onrender.com/api/post",
-                  {
-                    koko: tweetText,
-                  },
-                  {
-                    withCredentials: true,
-                  }
-                );
-              } catch (error) {
-                console.error("Error", error);
-              }
-            }}
             variant="solidBlue"
             type="small"
+            onClick={async () => {
+              if (tweetText != "" && !isLoading) {
+                SetLoading(true);
+                try {
+                  await axios.post(
+                    "https://one00xapi.onrender.com/api/post",
+                    {
+                      koko: tweetText,
+                    },
+                    {
+                      withCredentials: true,
+                    }
+                  );
+                  setTweetText("");
+                  SetShowTweetModal(false);
+                  // window.location.reload(false);
+                } catch (error) {
+                  console.error("Error", error);
+                } finally {
+                  SetLoading(false);
+                }
+              }
+            }}
+            isDisabled={isLoading}
           >
-            Post
+            {isLoading ? "Posting..." : "Post"}
           </Button>
           {/* onClick={() => {
                 setTweet([

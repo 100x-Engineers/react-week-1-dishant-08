@@ -9,7 +9,6 @@ export default function RightSidebar() {
             type="search"
             name="search"
             placeholder="Search"
-            id
             className=" w-[21.75rem] h-[2.4375rem] pt-2.5 pr-[12.4375rem] bg-searchbar-fill pb-2.5 pl-[3.1275rem] shrink-0 rounded-[6249.9375rem] text-neutral-50 font-Inter text-fx focus:outline-none border focus:border-twitter-blue"
           />
           <svg

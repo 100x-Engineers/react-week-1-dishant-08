@@ -7,6 +7,8 @@ import DesktopPage from "./desktopPage";
 import { AuthContext } from "../../context/AuthContext";
 
 export function MobilePage() {
+  window.scrollTo(0, 0);
+
   return (
     <>
       <HomeHeader />

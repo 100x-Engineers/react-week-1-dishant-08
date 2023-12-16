@@ -8,7 +8,7 @@ import Edit from "../../pages/userProfile/editProfile";
 import { createPortal } from "react-dom";
 
 UserHeader.propTypes = {
-  userName: PropTypes.string.isRequired,
+  userName: PropTypes.string,
   userFullname: PropTypes.string,
   bio: PropTypes.string,
   userImage: PropTypes.string.isRequired,

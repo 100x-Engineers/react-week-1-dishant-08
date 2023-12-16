@@ -5,9 +5,12 @@ import RightSidebar from "../../components/homecomp/RightSidebar";
 import userAvatar from "../../assets/user-avatar.png";
 import Button from "../../components/button";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/AuthContext";
 export default function DesktopPage() {
   const [tweetText, setTweetText] = useState("");
+  // const [isLoading, SetLoading] = useState(false);
+  const { isLoading, SetLoading } = useContext(AuthContext);
   return (
     <div className="flex justify-center ">
       <div className="flex ">
@@ -36,37 +39,30 @@ export default function DesktopPage() {
               variant="solidBlue"
               type="small"
               onClick={async () => {
-                try {
-                  await axios.post(
-                    "https://one00xapi.onrender.com/api/post",
-                    {
-                      koko: tweetText,
-                    },
-                    {
-                      withCredentials: true,
-                    }
-                  );
-                  setTweetText("");
-                } catch (error) {
-                  console.error("Error", error);
+                if (tweetText != "" && !isLoading) {
+                  SetLoading(true);
+                  try {
+                    await axios.post(
+                      "https://one00xapi.onrender.com/api/post",
+                      {
+                        koko: tweetText,
+                      },
+                      {
+                        withCredentials: true,
+                      }
+                    );
+                    setTweetText("");
+                    // window.location.reload(false);
+                  } catch (error) {
+                    console.error("Error", error);
+                  } finally {
+                    SetLoading(false);
+                  }
                 }
               }}
-
-              //   onClick={() => {
-              //     setTweet([
-              //       ...tweet,
-              //       {
-              //         id: tweet.length + 1,
-              //         userId: 42,
-              //         content: tweetText,
-              //         postedAt: date.getSeconds(),
-              //       },
-              //     ]);
-              //     setTweetText("");
-              //   }
-              // }
+              isDisabled={isLoading}
             >
-              Post
+              {isLoading ? "Posting..." : "Post"}
             </Button>
           </div>
 

@@ -3,7 +3,7 @@ import cancel from "../../assets/create-account-1-signup-x.svg";
 import userAvatar from "../../assets/user-avatar.png";
 import Button from "../../components/button";
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 
@@ -11,6 +11,8 @@ export default function Compose() {
   const [tweetText, setTweetText] = useState("");
   const { tweet, setTweet } = useContext(AuthContext);
   const date = new Date();
+  const { isLoading, SetLoading } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   return (
     <>
@@ -23,33 +25,30 @@ export default function Compose() {
             variant="solidBlue"
             type="small"
             onClick={async () => {
-              try {
-                await axios.post(
-                  "https://one00xapi.onrender.com/api/post",
-                  {
-                    koko: tweetText,
-                  },
-                  {
-                    withCredentials: true,
-                  }
-                );
-              } catch (error) {
-                console.error("Error", error);
+              if (tweetText != "" && !isLoading) {
+                SetLoading(true);
+                try {
+                  await axios.post(
+                    "https://one00xapi.onrender.com/api/post",
+                    {
+                      koko: tweetText,
+                    },
+                    {
+                      withCredentials: true,
+                    }
+                  );
+                  setTweetText("");
+                  navigate("/home");
+                } catch (error) {
+                  console.error("Error", error);
+                } finally {
+                  SetLoading(false);
+                }
               }
-
-              // setTweet([
-              //   ...tweet,
-              //   {
-              //     id: tweet.length + 1,
-              //     userId: 42,
-              //     content: tweetText,
-              //     postedAt: date.getSeconds(),E
-              //   },
-              // ]);
-              setTweetText("");
             }}
+            isDisabled={isLoading}
           >
-            Post
+            {isLoading ? "Posting..." : "Post"}
           </Button>
         </header>
         <main>
@@ -79,3 +78,14 @@ export default function Compose() {
     </>
   );
 }
+
+// setTweet([
+//   ...tweet,
+//   {
+//     id: tweet.length + 1,
+//     userId: 42,
+//     content: tweetText,
+//     postedAt: date.getSeconds(),E
+//   },
+// ]);
+// setTweetText("");

@@ -8,6 +8,7 @@ export default function AuthProvider({ children }) {
   const [formData, setFormData] = useState({});
   const [showTweetModal, SetShowTweetModal] = useState(false);
   const [showEditModal, SetShowEditModal] = useState(false);
+  const [isLoading, SetLoading] = useState(false);
 
   return (
     <>
@@ -23,6 +24,8 @@ export default function AuthProvider({ children }) {
           SetShowTweetModal,
           showEditModal,
           SetShowEditModal,
+          isLoading,
+          SetLoading,
         }}
       >
         {children}

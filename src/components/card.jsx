@@ -90,8 +90,10 @@ export default function Card({ text, time, postId, userId }) {
   };
 
   useEffect(() => {
-    getCurrentUser();
-  }, []);
+    {
+      userId && getCurrentUser();
+    }
+  }, [userId]);
 
   useEffect(() => {
     // if (likeFocus === true) likedPost();
@@ -110,7 +112,7 @@ export default function Card({ text, time, postId, userId }) {
         <div className="flex flex-col items-center gap-2 self-stretch flex-1 flex-shrink-0 flex-basis-0">
           <div className="flex flex-col items-start gap-1 self-stretch">
             <div className="flex items-center gap-[0.0625rem] self-stretch">
-              <span className="text-neutral-50 font-Inter text-[1rem] font-medium">
+              <span className="text-neutral-50 font-Inter text-[1rem] font-semibold">
                 {currUser?.disName}
               </span>
               <span className="font-Inter text-[1rem] font-normal text-neutral-500">
