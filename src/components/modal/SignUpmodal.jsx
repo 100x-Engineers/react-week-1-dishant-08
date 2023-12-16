@@ -37,7 +37,7 @@ export default function StepFourMain() {
     },
     validationSchema: validation,
     onSubmit: async (values, { setSubmitting }) => {
-      console.log(values);
+      // console.log(values);
       try {
         const response = await axios.post(
           "https://one00xapi.onrender.com/api/login",

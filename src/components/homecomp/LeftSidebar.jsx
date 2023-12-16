@@ -1,5 +1,5 @@
 // Import statements
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Logo100 from "../../assets/copy-link-100.svg";
 import HomeInactive from "../../assets/state-not-selectedhome-icon.svg";
@@ -14,8 +14,32 @@ import { createPortal } from "react-dom";
 import TweetModal from "../modal/tweetModal"; // Removed .jsx extension
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
 
-export function DesktopHome({ page }) {
+export function DesktopHome({ page, onPageIdChange }) {
+  const [pageId, setPageId] = useState();
+
+  const getCurrentUser = async () => {
+    try {
+      const response = await axios.get(
+        "https://one00xapi.onrender.com/api/curuser",
+        {
+          withCredentials: true,
+        }
+      );
+      const data = await response.data;
+      setPageId(data);
+      onPageIdChange(data);
+      // console.log(data);
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+    }
+  };
+
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
+
   return (
     <>
       <div>
@@ -27,7 +51,10 @@ export function DesktopHome({ page }) {
         </Link>
       </div>
       <div>
-        <Link to={"/user"} className="flex py-3 px-5 gap-5 ">
+        <Link
+          to={`/user/${pageId?.currUser}`}
+          className="flex py-3 px-5 gap-5 "
+        >
           <img
             src={page === "user" ? IconActive : IconInactive}
             alt="Profile"
@@ -44,6 +71,12 @@ export function DesktopHome({ page }) {
 export default function LeftSidebar({ page }) {
   const { showTweetModal, SetShowTweetModal } = useContext(AuthContext);
 
+  const [currUser, SetCurrUser] = useState();
+
+  function SettingUser(data) {
+    SetCurrUser(data);
+  }
+
   return (
     <div className="flex p-5 flex-col h-screen justify-between border-r border-r-neutral-700">
       <div className="flex flex-col gap-2">
@@ -53,7 +86,7 @@ export default function LeftSidebar({ page }) {
             <img src={Logox} alt="X" />
           </div>
         </div>
-        <DesktopHome page={page} />
+        <DesktopHome page={page} onPageIdChange={SettingUser} />
         <div className="p-2.5">
           <div className="py-tx">
             <Button
@@ -74,10 +107,10 @@ export default function LeftSidebar({ page }) {
             <img src={userAvatar} alt="User Avatar" />
             <div className="flex flex-col items-start">
               <p className="text-neutral-50 font-Inter text-fx font-bold">
-                aarushe_reddy
+                {currUser?.disName}
               </p>
               <p className="text-neutral-500 font-Inter text-fx">
-                @aarushe_reddy
+                @{currUser?.currUser}
               </p>
             </div>
           </div>

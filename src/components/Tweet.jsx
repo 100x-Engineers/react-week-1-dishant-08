@@ -29,11 +29,12 @@ export default function Tweet() {
 
   return (
     <>
-      {posts.map((twt) => (
+      {[...posts].reverse().map((twt) => (
         <Card
           key={twt.id}
           postId={twt.id}
           text={twt.content}
+          userId={twt.user_id}
           time={twt.posted_at}
         />
       ))}

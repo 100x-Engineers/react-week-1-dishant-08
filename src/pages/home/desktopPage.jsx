@@ -4,7 +4,10 @@ import LeftSidebar from "../../components/homecomp/LeftSidebar";
 import RightSidebar from "../../components/homecomp/RightSidebar";
 import userAvatar from "../../assets/user-avatar.png";
 import Button from "../../components/button";
+import axios from "axios";
+import { useState } from "react";
 export default function DesktopPage() {
+  const [tweetText, setTweetText] = useState("");
   return (
     <div className="flex justify-center ">
       <div className="flex ">
@@ -23,6 +26,8 @@ export default function DesktopPage() {
               className="bg-inherit  w-full  mt-1.5 caret-twitter-blue focus:outline-none  resize-none
       rounded-md placeholder-neutral-500 text-base text-neutral-50"
               placeholder="What's happening?"
+              value={tweetText}
+              onChange={(e) => setTweetText(e.target.value)}
             />
 
             {/* value={tweetText}
@@ -30,6 +35,22 @@ export default function DesktopPage() {
             <Button
               variant="solidBlue"
               type="small"
+              onClick={async () => {
+                try {
+                  await axios.post(
+                    "https://one00xapi.onrender.com/api/post",
+                    {
+                      koko: tweetText,
+                    },
+                    {
+                      withCredentials: true,
+                    }
+                  );
+                  setTweetText("");
+                } catch (error) {
+                  console.error("Error", error);
+                }
+              }}
 
               //   onClick={() => {
               //     setTweet([

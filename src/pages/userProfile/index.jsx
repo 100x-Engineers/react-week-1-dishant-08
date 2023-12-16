@@ -7,22 +7,14 @@ import HomeFooter from "../../components/homecomp/HomeFooter";
 import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import DesktopUserPage from "./desktopUserPage";
+import { useParams } from "react-router-dom";
+import axios from "axios";
+import moment from "moment";
 
-export function MobileUserPage() {
+export function MobileUserPage({ children }) {
   return (
     <>
-      <UserHeader
-        userName=" @dishant_sahu "
-        userFullname=" Dishant sahu"
-        bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
-        userImage={userAvatar}
-        UserBackground={bgImage}
-        following=" 217"
-        followers="118 "
-        bioLink="pixsellz.io "
-        joinedAt="  Joined September 2018"
-      />
-
+      {children}
       <TweetLink />
       <Tweet />
 
@@ -32,6 +24,33 @@ export function MobileUserPage() {
 }
 
 export default function User() {
+  const [User, SetUser] = useState();
+  const userName = useParams();
+  // console.log();
+
+  const getUserDetails = async () => {
+    try {
+      const response = await axios.get(
+        `https://one00xapi.onrender.com/api/getUser/${userName.userName}`,
+        {
+          withCredentials: true,
+        }
+      );
+      // console.log(response);
+      const data = response.data;
+      SetUser(data.user);
+      console.log(User);
+      console.log(User.display_name);
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+  // joinedAt={}
+  const timeStamp = "Joined" + " " + moment(User?.createdAt).fromNow();
+  useEffect(() => {
+    getUserDetails();
+  }, []);
+
   const { showEditModal, SetShowEditModal } = useContext(AuthContext);
   return (
     <>
@@ -39,20 +58,34 @@ export default function User() {
         <DesktopUserPage>
           {" "}
           <UserHeader
-            userName=" @dishant_sahu "
-            userFullname=" Dishant sahu"
-            bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
-            userImage={userAvatar}
+            userName={User?.username}
+            userFullname={User?.display_name}
+            bio={User?.bio}
+            // bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
+            userImage={userAvatar ?? User?.profile_picture}
             UserBackground={bgImage}
-            following=" 217"
-            followers="118 "
-            bioLink="pixsellz.io "
-            joinedAt="  Joined September 2018"
+            following=" 0"
+            followers=" 1 "
+            bioLink={User?.website}
+            joinedAt={timeStamp}
           />
         </DesktopUserPage>
       </div>
       <div className=" md:hidden ">
-        <MobileUserPage />
+        <MobileUserPage>
+          <UserHeader
+            userName={User?.username}
+            userFullname={User?.display_name}
+            bio={User?.bio}
+            // bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
+            userImage={userAvatar ?? User?.profile_picture}
+            UserBackground={bgImage}
+            following=" 0"
+            followers=" 1 "
+            bioLink={User?.website}
+            joinedAt={timeStamp}
+          />
+        </MobileUserPage>
       </div>
     </>
   );
@@ -83,5 +116,16 @@ export default function User() {
       )}
     </>
   );
+  <UserHeader
+        userName=" @dishant_sahu "
+        userFullname=" Dishant sahu"
+        bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
+        userImage={userAvatar}
+        UserBackground={bgImage}
+        following=" 217"
+        followers="118 "
+        bioLink="pixsellz.io "
+        joinedAt="  Joined September 2018"
+      />
 
 */

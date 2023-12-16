@@ -9,18 +9,18 @@ Card.propTypes = {
   text: PropTypes.string.isRequired,
 };
 
-export default function Card({ text, time, postId }) {
+export default function Card({ text, time, postId, userId }) {
   const date = new Date();
-  console.log(postId);
+  // console.log(postId);
 
   const [TrendingFocus, setTrendingFocus] = useState(false);
   const [likeFocus, setLikeFocus] = useState(null);
   const [AllLike, setAllLike] = useState(0);
   const [like, setLike] = useState(false);
+  const [currUser, SetCurrUser] = useState();
 
   const [RetweetFocus, setRetweetFocus] = useState(false);
   const [shareFocus, setShareFocus] = useState(false);
-
   const likedPost = async () => {
     try {
       await axios.post(
@@ -32,12 +32,13 @@ export default function Card({ text, time, postId }) {
           withCredentials: true,
         }
       );
-
-      // setLikeFocus(!likeFocus)
+      setLike(true); // Set the like state to true
+      setAllLike((prev) => prev + 1); // Increment the like count
     } catch (error) {
       console.error("Error", error);
     }
   };
+
   const unlikedPost = async () => {
     try {
       await axios.delete(
@@ -46,11 +47,13 @@ export default function Card({ text, time, postId }) {
           withCredentials: true,
         }
       );
-      // setLikeFocus(!likeFocus)
+      setLike(false); // Set the like state to false
+      setAllLike((prev) => prev - 1); // Decrement the like count
     } catch (error) {
       console.error("Error", error);
     }
   };
+
   const getAllLikedPost = async () => {
     try {
       const likesData = await axios.get(
@@ -59,7 +62,7 @@ export default function Card({ text, time, postId }) {
           withCredentials: true,
         }
       );
-      console.log(likesData);
+      // console.log(likesData);
       setAllLike(likesData?.data?.count);
       setLike(likesData?.data?.likedPost);
       // setLikeFocus(!likeFocus)
@@ -68,40 +71,37 @@ export default function Card({ text, time, postId }) {
     }
   };
 
-  // useEffect(() => {
-  //   const checkLikedStatus = async () => {
-  //     try {
-  //       const likesData = await axios.get(`https://one00xapi.onrender.com/api/getlike/${postId}`);
-  //       console.log(likesData);
-  //       setAllLike(likesData?.data?.count);
-  //       setLike(likesData?.data?.likedPost); // Set likeFocus based on the liked status
-  //     } catch (error) {
-  //       console.error("Error", error);
-  //     }
-  //   };
+  const getCurrentUser = async () => {
+    try {
+      const response = await axios.get(
+        `https://one00xapi.onrender.com/api/getUserbyId/${userId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      const data = await response.data;
+      // setPageId(data);
+      SetCurrUser(data);
+      // onPageIdChange(data);
+      // console.log(data);
+    } catch (error) {
+      console.error("Error fetching current user:", error);
+    }
+  };
 
-  //   checkLikedStatus(); // Call the function to check liked status
-
-  //   // Cleanup function to avoid unnecessary requests when the component is unmounted
-  //   return () => {
-  //     // Cleanup logic (if needed)
-  //   };
-  // }, [postId]);
-
-  // useEffect(() => {
-  //   // likeFocus ? likedPost() : unlikedPost();
-  //   getAllLikedPost();
-  // }, []);
   useEffect(() => {
-    // likeFocus ? likedPost() : unlikedPost();
-    if (likeFocus === true) likedPost();
-    if (likeFocus === false) unlikedPost();
+    getCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    // if (likeFocus === true) likedPost();
+    // if (likeFocus === false) unlikedPost();
 
     postId && getAllLikedPost();
-  }, [likeFocus]);
+  }, [like]);
 
   const timeStamp = moment(time).fromNow();
-  console.log(time, timeStamp);
+  // console.log(time, timeStamp);
 
   return (
     <div>
@@ -111,10 +111,11 @@ export default function Card({ text, time, postId }) {
           <div className="flex flex-col items-start gap-1 self-stretch">
             <div className="flex items-center gap-[0.0625rem] self-stretch">
               <span className="text-neutral-50 font-Inter text-[1rem] font-medium">
-                Name
+                {currUser?.disName}
               </span>
               <span className="font-Inter text-[1rem] font-normal text-neutral-500">
-                @handle • {timeStamp ? timeStamp : date.getSeconds() + "s"}{" "}
+                @{currUser?.currUser} •{" "}
+                {timeStamp ? timeStamp : date.getSeconds() + "s"}{" "}
               </span>
             </div>
             <div className="self-stretch text-neutral-50 font-Inter text-[1rem]">
@@ -182,14 +183,25 @@ export default function Card({ text, time, postId }) {
               </span>
             </button>
 
-            <button
+            {/* <button
               className="flex justify-center items-center gap-[0.3125rem]"
               // className={likeFocus ? "group" : ""}
               onClick={() => {
+                
                 setLikeFocus(!likeFocus);
                 // likeFocus ? likedPost() : unlikedPost();
               }}
               // onClick={() => }
+            > */}
+            <button
+              className="flex justify-center items-center gap-[0.3125rem]"
+              onClick={() => {
+                if (like) {
+                  unlikedPost();
+                } else {
+                  likedPost();
+                }
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

@@ -62,7 +62,7 @@ export default function UserHeader({
               {userFullname}
             </div>
             <div className=" text-neutral-500 font-Inter text-tx ">
-              {userName}
+              @{userName}
             </div>
           </div>
           <div className="font-Inter text-neutral-50 text-fx ">{bio}</div>
