@@ -65,7 +65,7 @@ export default function DateSelector({ type, errors, touched, ...rest }) {
               className="focus:outline-none text-neutral-50 bg-neutral-1000 font-Inter text-[1.25rem] font-normal"
             >
               <option value className="hidden" />
-              {Array.from({ length: 13 }, (_, index) => (
+              {Array.from({ length: 53 }, (_, index) => (
                 <option key={2023 - index}>{2023 - index}</option>
               ))}
             </select>
