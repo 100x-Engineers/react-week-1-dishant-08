@@ -39,9 +39,9 @@ export default function Tweet() {
           time={twt.posted_at}
         />
       ))}
-      {[...tweet].reverse().map((twt) => (
+      {/* {[...tweet].reverse().map((twt) => (
         <Card key={twt.id} text={twt.content} />
-      ))}
+      ))} */}
     </>
   );
 }

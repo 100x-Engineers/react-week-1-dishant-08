@@ -11,6 +11,7 @@ import StepHeader from "../stepHeader";
 
 export default function StepFourMain() {
   const navigate = useNavigate();
+  const [isLoading, SetLoading] = useState(false);
   const validation = object({
     email: string("Invalid Entry")
       .email("Invalid Entry")
@@ -38,28 +39,32 @@ export default function StepFourMain() {
     validationSchema: validation,
     onSubmit: async (values, { setSubmitting }) => {
       // console.log(values);
-      try {
-        const response = await axios.post(
-          "https://one00xapi.onrender.com/api/login",
-          {
-            email: values.email,
-            password: values.password,
-          },
-          {
-            withCredentials: true,
-          }
-        );
+      if (!isLoading) {
+        SetLoading(true);
+        try {
+          const response = await axios.post(
+            "https://one00xapi.onrender.com/api/login",
+            {
+              email: values.email,
+              password: values.password,
+            },
+            {
+              withCredentials: true,
+            }
+          );
 
-        console.log("API response:", response.data);
+          console.log("API response:", response.data);
 
-        // Do any additional actions or navigate as needed
-        navigate("/home");
-      } catch (error) {
-        console.error("API error:", error);
-        setError(error.response.data);
-        // Handle API error if needed
-      } finally {
-        setSubmitting(false);
+          // Do any additional actions or navigate as needed
+          navigate("/home");
+        } catch (error) {
+          console.error("API error:", error);
+          setError(error.response.data);
+          // Handle API error if needed
+        } finally {
+          SetLoading(false);
+          setSubmitting(false);
+        }
       }
     },
   });
@@ -178,8 +183,8 @@ export default function StepFourMain() {
           </div>
         </main>
         <footer className="flex pt-20 md:pt-[220px] flex-col justify-end w-full items-center gap-2.5  flex-shrink-0 self-stretch">
-          <Button variant="default" type="next">
-            Login
+          <Button variant="default" type="next" isDisabled={isLoading}>
+            {isLoading ? "Authenticating" : "Login"}
           </Button>
         </footer>
       </form>
