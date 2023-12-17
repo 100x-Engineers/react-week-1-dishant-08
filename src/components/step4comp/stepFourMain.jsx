@@ -10,6 +10,7 @@ import axios from "axios";
 
 export default function StepFourMain() {
   const navigate = useNavigate();
+  const [isLoading, setLoading] = useState(false);
   const validation = object({
     password: string("Enter Password").required("Please Enter the Password"),
   });
@@ -31,36 +32,41 @@ export default function StepFourMain() {
     },
     validationSchema: validation,
     onSubmit: async (values, { setSubmitting }) => {
-      try {
-        const apiValue = {
-          ...formData,
-          ...values,
-          username: formData.name + "08",
-        };
-        console.log(apiValue);
+      if (!isLoading) {
+        setLoading(true);
 
-        const response = await axios.post(
-          "https://one00xapi.onrender.com/api/signup",
-          {
-            username: apiValue.username,
-            email: apiValue.email,
-            display_name: apiValue.name, // You might want to verify if this is the correct property
-            date_of_birth: apiValue.date_of_birth,
-            password: apiValue.password, // Assuming hashehPassword is defined
-          },
-          {
-            withCredentials: true,
-          }
-        );
+        try {
+          const apiValue = {
+            ...formData,
+            ...values,
+            username: formData.name + "08",
+          };
+          console.log(apiValue);
 
-        console.log("API response:", response.data);
-        // Do any additional actions or navigate as needed
-        navigate("/signup");
-      } catch (error) {
-        console.error("API error:", error);
-        // Handle API error if needed
-      } finally {
-        setSubmitting(false);
+          const response = await axios.post(
+            "https://one00xapi.onrender.com/api/signup",
+            {
+              username: apiValue.username,
+              email: apiValue.email,
+              display_name: apiValue.name, // You might want to verify if this is the correct property
+              date_of_birth: apiValue.date_of_birth,
+              password: apiValue.password, // Assuming hashehPassword is defined
+            },
+            {
+              withCredentials: true,
+            }
+          );
+
+          console.log("API response:", response.data);
+          // Do any additional actions or navigate as needed
+          navigate("/signup");
+        } catch (error) {
+          console.error("API error:", error);
+          // Handle API error if needed
+        } finally {
+          setSubmitting(false);
+          setLoading(false);
+        }
       }
     },
   });
@@ -152,8 +158,8 @@ export default function StepFourMain() {
         </Input>
       </main>
       <footer className="flex pt-20 md:pt-[300px] flex-col justify-end w-full items-center gap-2.5 flex-grow flex-shrink-0 self-stretch">
-        <Button variant="default" type="next">
-          Next
+        <Button variant="default" type="next" isDisabled={isLoading}>
+          {isLoading ? "Creating Account" : "Next"}
         </Button>
       </footer>
     </form>
