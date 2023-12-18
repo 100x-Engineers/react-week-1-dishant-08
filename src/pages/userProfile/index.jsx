@@ -28,6 +28,7 @@ export default function User() {
   const [User, SetUser] = useState();
   const userName = useParams();
   // console.log();
+  const { render, Setrender } = useContext(AuthContext);
 
   const getUserDetails = async () => {
     try {
@@ -40,8 +41,8 @@ export default function User() {
       // console.log(response);
       const data = response.data;
       SetUser(data.user);
-      console.log(User);
-      console.log(User.display_name);
+      // console.log(User);
+      // console.log(User.display_name);
     } catch (error) {
       console.error("Error fetching user details:", error);
     }
@@ -51,6 +52,9 @@ export default function User() {
   useEffect(() => {
     getUserDetails();
   }, []);
+  useEffect(() => {
+    getUserDetails();
+  }, [render]);
 
   const { showEditModal, SetShowEditModal } = useContext(AuthContext);
   return (
@@ -62,6 +66,7 @@ export default function User() {
             userName={User?.username}
             userFullname={User?.display_name}
             bio={User?.bio}
+            userId={User?.id}
             // bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
             userImage={userAvatar ?? User?.profile_picture}
             UserBackground={bgImage}
@@ -78,6 +83,7 @@ export default function User() {
             userName={User?.username}
             userFullname={User?.display_name}
             bio={User?.bio}
+            userId={User?.id}
             // bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
             userImage={userAvatar ?? User?.profile_picture}
             UserBackground={bgImage}

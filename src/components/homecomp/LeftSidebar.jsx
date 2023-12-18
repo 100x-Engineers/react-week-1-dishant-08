@@ -16,8 +16,8 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 
-export function DesktopHome({ page, onPageIdChange }) {
-  const [pageId, setPageId] = useState();
+export function DesktopHome({ page, oncurrentLogUserChange }) {
+  const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
 
   const getCurrentUser = async () => {
     try {
@@ -28,8 +28,8 @@ export function DesktopHome({ page, onPageIdChange }) {
         }
       );
       const data = await response.data;
-      setPageId(data);
-      onPageIdChange(data);
+      setcurrentLogUser(data);
+      oncurrentLogUserChange(data);
       // console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
@@ -52,7 +52,7 @@ export function DesktopHome({ page, onPageIdChange }) {
       </div>
       <div>
         <Link
-          to={`/user/${pageId?.currUser}`}
+          to={`/user/${currentLogUser?.currUser}`}
           className="flex py-3 px-5 gap-5 "
         >
           <img
@@ -86,7 +86,7 @@ export default function LeftSidebar({ page }) {
             <img src={Logox} alt="X" />
           </div>
         </div>
-        <DesktopHome page={page} onPageIdChange={SettingUser} />
+        <DesktopHome page={page} oncurrentLogUserChange={SettingUser} />
         <div className="p-2.5">
           <div className="py-tx">
             <Button

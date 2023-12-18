@@ -6,6 +6,7 @@ import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import Edit from "../../pages/userProfile/editProfile";
 import { createPortal } from "react-dom";
+import FollowBtn from "./followbtn";
 
 UserHeader.propTypes = {
   userName: PropTypes.string,
@@ -22,6 +23,7 @@ export default function UserHeader({
   userName,
   userFullname,
   bio,
+  userId,
   userImage,
   UserBackground,
   following,
@@ -30,7 +32,10 @@ export default function UserHeader({
   joinedAt,
 }) {
   const navigate = useNavigate();
-  const { showEditModal, SetShowEditModal } = useContext(AuthContext);
+  // const {currentLogUser, setcurrentLogUser} = useContext(AuthContext)
+  const { showEditModal, SetShowEditModal, currentLogUser, setcurrentLogUser } =
+    useContext(AuthContext);
+  // console.log(currentLogUser);
   return (
     <>
       <header className=" flex flex-col ">
@@ -47,12 +52,23 @@ export default function UserHeader({
           />
         </div>
 
-        <button
+        {/* <button
           className=" text-neutral-50 text-[1rem] font-medium font-Inter py-2 px-5 rounded-[1.875rem] mt-2 mr-4 border border-edit-stroke self-end "
           onClick={() => SetShowEditModal(true)}
         >
           Edit profile
-        </button>
+        </button> */}
+        {currentLogUser?.id === userId ? (
+          <button
+            className=" text-neutral-50 text-[1rem] font-medium font-Inter py-2 px-5 rounded-[1.875rem] mt-2 mr-4 border border-edit-stroke self-end "
+            onClick={() => SetShowEditModal(true)}
+          >
+            Edit profile
+          </button>
+        ) : (
+          <FollowBtn follower={currentLogUser?.id} following={userId} />
+        )}
+
         {showEditModal &&
           createPortal(<Edit />, document.getElementById("portal"))}
 

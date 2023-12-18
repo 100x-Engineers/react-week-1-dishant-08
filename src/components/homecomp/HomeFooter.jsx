@@ -3,11 +3,12 @@ import HomeActive from "../../assets/homeActive.svg";
 import IconActive from "../../assets/IconActive.svg";
 import IconInactive from "../../assets/IconInactive.svg";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function HomeFooter({ page }) {
-  const [pageId, setPageId] = useState();
+  const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
   const getCurrentUser = async () => {
     try {
       const response = await axios.get(
@@ -17,8 +18,8 @@ export default function HomeFooter({ page }) {
         }
       );
       const data = await response.data;
-      setPageId(data);
-      // onPageIdChange(data);
+      setcurrentLogUser(data);
+      // oncurrentLogUserChange(data);
       // console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
@@ -35,7 +36,7 @@ export default function HomeFooter({ page }) {
           <Link to={"/home"}>
             <img src={page === "home" ? HomeActive : HomeInactive} />
           </Link>
-          <Link to={`/user/${pageId?.currUser}`}>
+          <Link to={`/user/${currentLogUser?.currUser}`}>
             <img src={page === "user" ? IconActive : IconInactive} />
           </Link>
         </div>

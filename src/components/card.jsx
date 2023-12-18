@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import comment from "../assets/comment.svg";
 import userAvatar from "../assets/user-avatar.png";
 import PropTypes from "prop-types"; // ES6
 import moment from "moment";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 Card.propTypes = {
   text: PropTypes.string.isRequired,
@@ -18,7 +20,7 @@ export default function Card({ text, time, postId, userId }) {
   const [AllLike, setAllLike] = useState(0);
   const [like, setLike] = useState(false);
   const [currUser, SetCurrUser] = useState();
-
+  const { render, Setrender } = useContext(AuthContext);
   const [RetweetFocus, setRetweetFocus] = useState(false);
   const [shareFocus, setShareFocus] = useState(false);
   const likedPost = async () => {
@@ -108,7 +110,12 @@ export default function Card({ text, time, postId, userId }) {
   return (
     <div>
       <article className="flex py-2 px-4  gap-4 border-b border-b-neutral-700">
-        <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
+        <Link
+          to={`/user/${currUser?.currUser}`}
+          onClick={() => Setrender(!render)}
+        >
+          <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
+        </Link>
         <div className="flex flex-col items-center gap-2 self-stretch flex-1 flex-shrink-0 flex-basis-0">
           <div className="flex flex-col items-start gap-1 self-stretch">
             <div className="flex items-center gap-[0.0625rem] self-stretch">

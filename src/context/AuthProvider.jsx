@@ -9,6 +9,8 @@ export default function AuthProvider({ children }) {
   const [showTweetModal, SetShowTweetModal] = useState(false);
   const [showEditModal, SetShowEditModal] = useState(false);
   const [isLoading, SetLoading] = useState(false);
+  const [render, Setrender] = useState(false);
+  const [currentLogUser, setcurrentLogUser] = useState();
 
   return (
     <>
@@ -26,6 +28,10 @@ export default function AuthProvider({ children }) {
           SetShowEditModal,
           isLoading,
           SetLoading,
+          render,
+          Setrender,
+          currentLogUser,
+          setcurrentLogUser,
         }}
       >
         {children}
