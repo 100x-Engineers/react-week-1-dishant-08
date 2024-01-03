@@ -7,15 +7,18 @@ import { AuthContext } from "../../context/AuthContext";
 import Edit from "../../pages/userProfile/editProfile";
 import { createPortal } from "react-dom";
 import FollowBtn from "./followbtn";
+import bgImage from "../../assets/bgimage.png";
+import userAvatar from "../../assets/user-avatar.png";
+import { convertBufferToDataURL, convertFileToBuffer } from "../../constants";
 
 UserHeader.propTypes = {
   userName: PropTypes.string,
   userFullname: PropTypes.string,
   bio: PropTypes.string,
-  userImage: PropTypes.string.isRequired,
-  UserBackground: PropTypes.string.isRequired,
-  following: PropTypes.string,
-  followers: PropTypes.string,
+  userImage: PropTypes.object.isRequired,
+  UserBackground: PropTypes.object.isRequired,
+  following: PropTypes.number,
+  followers: PropTypes.number,
   bioLink: PropTypes.string,
 };
 
@@ -35,21 +38,33 @@ export default function UserHeader({
   // const {currentLogUser, setcurrentLogUser} = useContext(AuthContext)
   const { showEditModal, SetShowEditModal, currentLogUser, setcurrentLogUser } =
     useContext(AuthContext);
-  // console.log(currentLogUser);
+  console.log(UserBackground);
   return (
     <>
       <header className=" flex flex-col ">
         <div className="relative">
-          <img
-            className=" bg-cover w-full "
-            src={UserBackground}
-            alt="bg-image"
-          />
-          <img
-            className=" absolute -bottom-8 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
-            src={userImage}
-            alt="user-avatar"
-          />
+          {!!UserBackground ? (
+            <img
+              className=" bg-cover w-full "
+              src={convertBufferToDataURL(UserBackground?.data)}
+              alt="bg-image"
+            />
+          ) : (
+            <img className=" bg-cover w-full " src={bgImage} alt="bg-image" />
+          )}
+          {!!userImage ? (
+            <img
+              className=" absolute -bottom-8 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
+              src={convertBufferToDataURL(userImage?.data)}
+              alt="user-avatar"
+            />
+          ) : (
+            <img
+              className=" absolute -bottom-8 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
+              src={userAvatar}
+              alt="user-avatar"
+            />
+          )}
         </div>
 
         {/* <button
@@ -125,6 +140,7 @@ export default function UserHeader({
                 {followers}
               </span>
               <span className="font-Inter text-fx font-medium text-neutral-500">
+                {" "}
                 Followers
               </span>
             </div>

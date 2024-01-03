@@ -6,9 +6,11 @@ import { Link } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import { convertBufferToDataURL } from "../../constants";
 
 export default function TweetModal() {
-  const { showTweetModal, SetShowTweetModal } = useContext(AuthContext);
+  const { showTweetModal, SetShowTweetModal, currentLogUser } =
+    useContext(AuthContext);
   const [tweetText, setTweetText] = useState("");
   const { isLoading, SetLoading } = useContext(AuthContext);
 
@@ -22,7 +24,15 @@ export default function TweetModal() {
         </header>
         <main>
           <div className="flex  py-2 px-4  items-start gap-3">
-            <img src={userAvatar} alt="user-avatar" />
+            {!!currentLogUser?.dp?.data ? (
+              <img
+                src={convertBufferToDataURL(currentLogUser?.dp?.data)}
+                alt="user-avatar"
+                className="w-14 rounded-full h-12"
+              />
+            ) : (
+              <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
+            )}
             <textarea
               rows="10"
               className="bg-inherit  w-full  mt-1.5 caret-twitter-blue focus:outline-none  resize-none

@@ -18,6 +18,7 @@ const FollowBtn = ({ follower, following }) => {
       );
       console.log(respone.data);
       SetState(true);
+      Setrender(!render);
     } catch (error) {
       console.error(error, "Failed to follow");
     }
@@ -35,6 +36,7 @@ const FollowBtn = ({ follower, following }) => {
       );
       console.log(respone.data);
       SetState(false);
+      Setrender(!render);
     } catch (error) {
       console.error(error, "Failed to follow");
     }

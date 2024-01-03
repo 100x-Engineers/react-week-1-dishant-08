@@ -8,7 +8,12 @@ export default function EditHeader() {
     <>
       <header className=" flex py-3 pr-4 justify-between items-center self-stretch ">
         <div className="flex items-center gap-5">
-          <button onClick={() => SetShowEditModal(false)}>
+          <button
+            onClick={() => {
+              // Setrender(!render);
+              SetShowEditModal(false);
+            }}
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width={24}

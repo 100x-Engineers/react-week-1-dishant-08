@@ -7,10 +7,11 @@ import Button from "../../components/button";
 import axios from "axios";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { convertBufferToDataURL } from "../../constants";
 export default function DesktopPage() {
   const [tweetText, setTweetText] = useState("");
   // const [isLoading, SetLoading] = useState(false);
-  const { isLoading, SetLoading } = useContext(AuthContext);
+  const { isLoading, SetLoading, currentLogUser } = useContext(AuthContext);
   return (
     <div className="flex justify-center ">
       <div className="flex ">
@@ -24,7 +25,15 @@ export default function DesktopPage() {
 
           <ForyouTab />
           <div className="flex p-4 gap-3 border-b border-b-neutral-700 ">
-            <img src={userAvatar} alt="user-avatar" />
+            {!!currentLogUser?.dp?.data ? (
+              <img
+                src={convertBufferToDataURL(currentLogUser?.dp?.data)}
+                alt="user-avatar"
+                className="w-14 rounded-full h-12"
+              />
+            ) : (
+              <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
+            )}
             <textarea
               className="bg-inherit  w-full  mt-1.5 caret-twitter-blue focus:outline-none  resize-none
       rounded-md placeholder-neutral-500 text-base text-neutral-50"

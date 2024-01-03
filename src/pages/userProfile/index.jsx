@@ -10,6 +10,7 @@ import DesktopUserPage from "./desktopUserPage";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
+import { useMediaQuery } from "react-responsive";
 
 export function MobileUserPage({ children }) {
   window.scrollTo(0, 0);
@@ -26,6 +27,7 @@ export function MobileUserPage({ children }) {
 
 export default function User() {
   const [User, SetUser] = useState();
+  const [data, SetData] = useState();
   const userName = useParams();
   // console.log();
   const { render, Setrender } = useContext(AuthContext);
@@ -41,7 +43,8 @@ export default function User() {
       // console.log(response);
       const data = response.data;
       SetUser(data.user);
-      // console.log(User);
+      SetData(data);
+      console.log(User);
       // console.log(User.display_name);
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -55,44 +58,48 @@ export default function User() {
   useEffect(() => {
     getUserDetails();
   }, [render]);
-
+  const isDesktop = useMediaQuery({ query: "(min-width: 768px)" });
   const { showEditModal, SetShowEditModal } = useContext(AuthContext);
   return (
     <>
-      <div className={` hidden md:block ${showEditModal && "bg-modal-bg"} `}>
-        <DesktopUserPage>
-          {" "}
-          <UserHeader
-            userName={User?.username}
-            userFullname={User?.display_name}
-            bio={User?.bio}
-            userId={User?.id}
-            // bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
-            userImage={userAvatar ?? User?.profile_picture}
-            UserBackground={bgImage}
-            following=" 0"
-            followers=" 1 "
-            bioLink={User?.website}
-            joinedAt={timeStamp}
-          />
-        </DesktopUserPage>
-      </div>
-      <div className=" md:hidden ">
-        <MobileUserPage>
-          <UserHeader
-            userName={User?.username}
-            userFullname={User?.display_name}
-            bio={User?.bio}
-            userId={User?.id}
-            // bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
-            userImage={userAvatar ?? User?.profile_picture}
-            UserBackground={bgImage}
-            following=" 0"
-            followers=" 1 "
-            bioLink={User?.website}
-            joinedAt={timeStamp}
-          />
-        </MobileUserPage>
+      <div
+        className={`${isDesktop && "hidden md:block"} ${
+          isDesktop && showEditModal && "bg-modal-bg"
+        }`}
+      >
+        {isDesktop ? (
+          <DesktopUserPage>
+            <UserHeader
+              userName={User?.username}
+              userFullname={User?.display_name}
+              bio={User?.bio}
+              userId={User?.id}
+              // bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
+              userImage={User?.profile_picture}
+              UserBackground={User?.cover_picture}
+              following={data?.following}
+              followers={data?.follower}
+              bioLink={User?.website}
+              joinedAt={timeStamp}
+            />
+          </DesktopUserPage>
+        ) : (
+          <MobileUserPage>
+            <UserHeader
+              userName={User?.username}
+              userFullname={User?.display_name}
+              bio={User?.bio}
+              userId={User?.id}
+              // bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
+              userImage={User?.profile_picture}
+              UserBackground={User?.cover_picture}
+              following={data?.following}
+              followers={data?.follower}
+              bioLink={User?.website}
+              joinedAt={timeStamp}
+            />
+          </MobileUserPage>
+        )}
       </div>
     </>
   );

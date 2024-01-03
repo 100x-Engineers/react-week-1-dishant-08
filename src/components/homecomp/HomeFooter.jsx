@@ -20,7 +20,7 @@ export default function HomeFooter({ page }) {
       const data = await response.data;
       setcurrentLogUser(data);
       // oncurrentLogUserChange(data);
-      // console.log(data);
+      console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
     }

@@ -15,6 +15,7 @@ import TweetModal from "../modal/tweetModal"; // Removed .jsx extension
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
+import { convertBufferToDataURL } from "../../constants";
 
 export function DesktopHome({ page, oncurrentLogUserChange }) {
   const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
@@ -30,7 +31,7 @@ export function DesktopHome({ page, oncurrentLogUserChange }) {
       const data = await response.data;
       setcurrentLogUser(data);
       oncurrentLogUserChange(data);
-      // console.log(data);
+      console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
     }
@@ -103,17 +104,35 @@ export default function LeftSidebar({ page }) {
       </div>
       <footer>
         <div className="flex justify-between items-center self-stretch">
-          <div className="flex items-start gap-3">
-            <img src={userAvatar} alt="User Avatar" />
-            <div className="flex flex-col items-start">
-              <p className="text-neutral-50 font-Inter text-fx font-bold">
-                {currUser?.disName}
-              </p>
-              <p className="text-neutral-500 font-Inter text-fx">
-                @{currUser?.currUser}
-              </p>
+          <Link
+            to={`/user/${currUser?.currUser}`}
+            onClick={() => Setrender(!render)}
+          >
+            <div className="flex items-start gap-3">
+              {!!currUser?.dp?.data ? (
+                <img
+                  src={convertBufferToDataURL(currUser?.dp?.data)}
+                  alt="user-avatar"
+                  className="w-12 rounded-full h-12"
+                />
+              ) : (
+                <img
+                  src={userAvatar}
+                  alt="user-avatar"
+                  className="w-12  rounded-full h-12"
+                />
+              )}
+              <div className="flex flex-col items-start">
+                <p className="text-neutral-50 font-Inter text-fx font-bold">
+                  {currUser?.disName}
+                </p>
+                <p className="text-neutral-500 font-Inter text-fx">
+                  @{currUser?.currUser}
+                </p>
+              </div>
             </div>
-          </div>
+          </Link>
+
           <div className="flex justify-center items-center w-[2.0625rem] h-[2.0625rem] px-[0.49413rem]">
             <img src={ThreeDot} alt="Three Dot" />
           </div>

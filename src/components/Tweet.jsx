@@ -5,8 +5,10 @@ import Card from "./card";
 import axios from "axios";
 export default function Tweet() {
   const { tweet } = useContext(AuthContext);
+  // const { render } = useContext(AuthContext);
+
   const [posts, setPosts] = useState([]);
-  const { isLoading } = useContext(AuthContext);
+  const { isLoading, render } = useContext(AuthContext);
 
   const getAllPosts = async () => {
     try {
@@ -23,22 +25,27 @@ export default function Tweet() {
       console.error("Error fetching posts:", error.message);
     }
   };
-
+  console.log(posts.content);
   useEffect(() => {
     getAllPosts();
-  }, [isLoading]);
+  }, [isLoading, render]);
 
   return (
     <>
-      {[...posts].reverse().map((twt) => (
-        <Card
-          key={twt.id}
-          postId={twt.id}
-          text={twt.content}
-          userId={twt.user_id}
-          time={twt.posted_at}
-        />
-      ))}
+      {[...posts]
+        .reverse()
+        .map((twt) =>
+          twt.content !== null ? (
+            <Card
+              key={twt.id}
+              postId={twt.id}
+              text={twt.content}
+              userId={twt.user_id}
+              time={twt.posted_at}
+            />
+          ) : null
+        )}
+
       {/* {[...tweet].reverse().map((twt) => (
         <Card key={twt.id} text={twt.content} />
       ))} */}

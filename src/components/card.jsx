@@ -6,6 +6,7 @@ import moment from "moment";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { convertBufferToDataURL } from "../constants";
 
 Card.propTypes = {
   text: PropTypes.string.isRequired,
@@ -18,6 +19,7 @@ export default function Card({ text, time, postId, userId }) {
   const [TrendingFocus, setTrendingFocus] = useState(false);
   const [likeFocus, setLikeFocus] = useState(null);
   const [AllLike, setAllLike] = useState(0);
+  const [AllRepost, setAllRepost] = useState(0);
   const [like, setLike] = useState(false);
   const [currUser, SetCurrUser] = useState();
   const { render, Setrender } = useContext(AuthContext);
@@ -40,7 +42,36 @@ export default function Card({ text, time, postId, userId }) {
       console.error("Error", error);
     }
   };
+  const rePost = async () => {
+    try {
+      await axios.post(
+        `https://one00xapi.onrender.com/api/retweet/${postId}`,
+        null,
+        {
+          withCredentials: true,
+        }
+      );
+      setRetweetFocus(true); // Set the retweet state to true
+      setAllRepost((prev) => prev + 1); // Increment the like count
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
 
+  const unrePost = async () => {
+    try {
+      await axios.delete(
+        `https://one00xapi.onrender.com/api/unretweet/${postId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      setRetweetFocus(false); // Set the like state to false
+      setAllRepost((prev) => prev - 1); // Decrement the like count
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
   const unlikedPost = async () => {
     try {
       await axios.delete(
@@ -72,6 +103,22 @@ export default function Card({ text, time, postId, userId }) {
       console.error("Error", error);
     }
   };
+  const getAllrePost = async () => {
+    try {
+      const likesData = await axios.get(
+        `https://one00xapi.onrender.com/api/getretweet/${postId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      // console.log(likesData);
+      setAllRepost(likesData?.data?.repostCount);
+      setRetweetFocus(likesData?.data?.isRePost);
+      // setLikeFocus(!likeFocus)
+    } catch (error) {
+      console.error("Error", error);
+    }
+  };
 
   const getCurrentUser = async () => {
     try {
@@ -85,7 +132,7 @@ export default function Card({ text, time, postId, userId }) {
       // setPageId(data);
       SetCurrUser(data);
       // onPageIdChange(data);
-      // console.log(data);
+      console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
     }
@@ -103,6 +150,12 @@ export default function Card({ text, time, postId, userId }) {
 
     postId && getAllLikedPost();
   }, [like]);
+  useEffect(() => {
+    // if (likeFocus === true) likedPost();
+    // if (likeFocus === false) unlikedPost();
+
+    postId && getAllrePost();
+  }, [RetweetFocus]);
 
   const timeStamp = moment(time).fromNow();
   // console.log(time, timeStamp);
@@ -114,7 +167,15 @@ export default function Card({ text, time, postId, userId }) {
           to={`/user/${currUser?.currUser}`}
           onClick={() => Setrender(!render)}
         >
-          <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
+          {!!currUser?.dp?.data ? (
+            <img
+              src={convertBufferToDataURL(currUser?.dp?.data)}
+              alt="user-avatar"
+              className="w-12 rounded-full h-12"
+            />
+          ) : (
+            <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
+          )}
         </Link>
         <div className="flex flex-col items-center gap-2 self-stretch flex-1 flex-shrink-0 flex-basis-0">
           <div className="flex flex-col items-start gap-1 self-stretch">
@@ -141,7 +202,14 @@ export default function Card({ text, time, postId, userId }) {
 
             <button
               className="flex justify-center items-center gap-[0.3125rem]"
-              onClick={() => setRetweetFocus(!RetweetFocus)}
+              // onClick={() => setRetweetFocus(!RetweetFocus)}
+              onClick={() => {
+                if (RetweetFocus) {
+                  unrePost();
+                } else {
+                  rePost();
+                }
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -188,7 +256,7 @@ export default function Card({ text, time, postId, userId }) {
                   RetweetFocus ? "text-Success" : " text-neutral-500"
                 } `}
               >
-                270
+                {AllRepost}
               </span>
             </button>
 
@@ -238,7 +306,7 @@ export default function Card({ text, time, postId, userId }) {
               </svg>
               <span
                 className={` font-Inter text-xs font-normal  ${
-                  likeFocus ? "text-red-like" : " text-neutral-500"
+                  like ? "text-red-like" : " text-neutral-500"
                 } `}
               >
                 {AllLike}

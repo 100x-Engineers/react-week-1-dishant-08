@@ -11,7 +11,7 @@ export default function Compose() {
   const [tweetText, setTweetText] = useState("");
   const { tweet, setTweet } = useContext(AuthContext);
   const date = new Date();
-  const { isLoading, SetLoading } = useContext(AuthContext);
+  const { isLoading, SetLoading, currentLogUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   return (

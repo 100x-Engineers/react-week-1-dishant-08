@@ -8,6 +8,7 @@ import EditHeader from "./EditHeader";
 
 import * as yup from "yup";
 import axios from "axios";
+import { convertBufferToDataURL, handleFileUpload } from "../../constants";
 
 EditMain.propTypes = {
   // display_name: PropTypes.string.isRequired,
@@ -33,6 +34,13 @@ const editUserSchema = yup.object().shape({
 export default function EditMain({ userImage, UserBackground }) {
   const { formData, setFormData } = useContext(AuthContext);
   const { showEditModal, SetShowEditModal } = useContext(AuthContext);
+  const [profileBuffer, setProfileBuffer] = useState();
+  const [coverBuffer, setCoverBuffer] = useState();
+  const [isbgImage, setIsbgImage] = useState(false);
+  const [isproImage, setIsproImage] = useState(false);
+  // useEffect( () => {
+
+  // } , [] )
 
   const [user, setUser] = useState();
   const [inputValues, setInputValues] = useState({
@@ -42,6 +50,7 @@ export default function EditMain({ userImage, UserBackground }) {
     website: "",
   });
   const [error, SetError] = useState("");
+  const { render, Setrender } = useContext(AuthContext);
 
   const getUserData = async () => {
     try {
@@ -52,6 +61,10 @@ export default function EditMain({ userImage, UserBackground }) {
         }
       );
       setUser(response.data?.user || {});
+      setCoverBuffer(response.data?.user?.cover_picture?.data);
+      console.log(response.data?.user?.cover_picture);
+      setProfileBuffer(response.data?.user?.profile_picture?.data);
+      console.log(response.data?.user?.profile_picture);
     } catch (error) {
       console.error("Error fetching User Details:", error.message);
     }
@@ -83,6 +96,57 @@ export default function EditMain({ userImage, UserBackground }) {
     });
   };
 
+  // const [userData, setUserData] = useState(null);
+
+  const handlebgImage = async (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      try {
+        const buffer = await handleFileUpload(file, "cover_picture");
+        setCoverBuffer(buffer);
+        console.log(coverBuffer);
+        setIsbgImage(true);
+        // Send the profile image data to the backend
+        // You can handle this part based on your requirements
+        // ...
+
+        // Rest of your code
+      } catch (error) {
+        console.error("Error handling profile image:", error);
+      }
+    }
+  };
+
+  const handleProImage = async (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      try {
+        const buffer = await handleFileUpload(file, "profile_picture");
+        setProfileBuffer(buffer);
+
+        setIsproImage(true);
+        // Send the cover image data to the backend
+        // You can handle this part based on your requirements
+        // ...
+
+        // Rest of your code
+      } catch (error) {
+        console.error("Error handling cover image:", error);
+      }
+    }
+  };
+
+  const [imgdata, setData] = useState();
+  useEffect(() => {
+    setData(convertBufferToDataURL(coverBuffer));
+  }, [coverBuffer]);
+  const [imgProData, setProData] = useState();
+  useEffect(() => {
+    setProData(convertBufferToDataURL(profileBuffer));
+  }, [profileBuffer]);
+
   return (
     <>
       <form
@@ -101,20 +165,54 @@ export default function EditMain({ userImage, UserBackground }) {
             });
 
           try {
+            const formData = new FormData();
+            formData.append("display_name", inputValues.display_name);
+            formData.append("bio", inputValues.bio);
+            formData.append("location", inputValues.location);
+            formData.append("website", inputValues.website);
+
+            // const profileBuffer = await handleFileUpload(
+            //   proimage,
+            //   "profile_picture"
+            // );
+
+            // const coverBuffer = await handleFileUpload(
+            //   coverPictureFile,
+            //   "cover_picture"
+            // );
+            console.log(profileBuffer);
+            console.log(coverBuffer);
+
+            if (isproImage) {
+              formData.append(
+                "profile_picture",
+                new Blob([profileBuffer]),
+                "profile.jpg"
+              );
+            }
+
+            if (isbgImage) {
+              formData.append(
+                "cover_picture",
+                new Blob([coverBuffer]),
+                "cover.jpg"
+              );
+            }
+
             const response = await axios.put(
               "https://one00xapi.onrender.com/api/editUser",
-              {
-                display_name: inputValues.display_name,
-                bio: inputValues.bio,
-                location: inputValues.location,
-                website: inputValues.website,
-              },
+              formData,
               {
                 withCredentials: true,
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
               }
             );
+
             SetShowEditModal(false);
-            window.location.reload(false);
+            // window.location.reload(false);
+            Setrender(!render);
             console.log("API response:", response.data);
           } catch (error) {
             console.error("API error:", error);
@@ -125,25 +223,75 @@ export default function EditMain({ userImage, UserBackground }) {
       >
         <EditHeader />
 
+        {/* <img
+                className="  w-full md:w-[350px] md:h-[200px] "
+                src={convertBufferToDataURL(userData?.image)}
+                alt="User Image"
+              /> */}
+
         <main>
           <div className="flex  justify-center items-center relative">
-            <img className="  w-full  " src={UserBackground} alt="bg-image" />
+            {coverBuffer ? (
+              <img
+                className=" w-[350px] h-[200px]"
+                src={imgdata}
+                alt="User Image"
+                onError={(e) => console.error("Image error:", e)}
+              />
+            ) : (
+              <img className=" w-full  " src={UserBackground} alt="bg-image" />
+            )}
             <div className="flex p-1 justify-center items-center absolute bg-edit-svg rounded-full  ">
-              <img className="w-6 h-6" src={camera} alt="camera icon" />
+              <label htmlFor="bgimage">
+                <img className="w-6 h-6" src={camera} alt="camera icon" />
+              </label>
+              <input
+                className="hidden"
+                type="file"
+                name="bgimage"
+                id="bgimage"
+                onChange={handlebgImage}
+              />
             </div>
-
-            <button onClick={() => SetShowEditModal(false)}>
+            {/* reload bug  */}
+            <button type="button" onClick={() => setCoverBuffer("")}>
               <img
                 className="absolute top-1/2  left-[60%] -translate-x-1/2 -translate-y-1/2     bg-edit-svg  p-1 rounded-full flex  items-center z-40"
                 src={cancel}
                 alt="cross-button "
               />{" "}
             </button>
-            <img
-              className=" absolute -bottom-4 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
-              src={userImage}
-              alt="user-avatar"
-            />
+            <div className="absolute -bottom-5 left-3 ">
+              <div className="relative">
+                {profileBuffer ? (
+                  <img
+                    className="  border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
+                    src={imgProData}
+                    alt="user-avatar"
+                  />
+                ) : (
+                  <img
+                    className="  border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
+                    src={userImage}
+                    alt="user-avatar"
+                  />
+                )}
+                <label htmlFor="proimage">
+                  <img
+                    className="w-6 h-6 absolute bottom-5 left-5 p-1 bg-edit-svg rounded-full  "
+                    src={camera}
+                    alt="camera icon"
+                  />
+                </label>
+                <input
+                  className="hidden"
+                  type="file"
+                  name="bgimage"
+                  id="proimage"
+                  onChange={handleProImage}
+                />
+              </div>
+            </div>
           </div>
 
           <div className=" mt-6 flex flex-col px-4 pb-2 items-start gap-5 self-stretch ">
