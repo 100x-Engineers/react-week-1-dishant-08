@@ -70,12 +70,14 @@ export function DesktopHome({ page, oncurrentLogUserChange }) {
 }
 
 export default function LeftSidebar({ page }) {
-  const { showTweetModal, SetShowTweetModal } = useContext(AuthContext);
+  const { showTweetModal, SetShowTweetModal, currentLogUser } =
+    useContext(AuthContext);
 
   const [currUser, SetCurrUser] = useState();
 
   function SettingUser(data) {
     SetCurrUser(data);
+    console.log(data);
   }
 
   return (
@@ -105,7 +107,7 @@ export default function LeftSidebar({ page }) {
       <footer>
         <div className="flex justify-between items-center self-stretch">
           <Link
-            to={`/user/${currUser?.currUser}`}
+            to={`/user/${currentLogUser?.currUser}`}
             onClick={() => Setrender(!render)}
           >
             <div className="flex items-start gap-3">
