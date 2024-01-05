@@ -239,7 +239,12 @@ export default function EditMain({ userImage, UserBackground }) {
                 onError={(e) => console.error("Image error:", e)}
               />
             ) : (
-              <img className=" w-full  " src={UserBackground} alt="bg-image" />
+              <img
+                className="  w-[350px] h-[200px]  "
+                // className=" w-[350px] h-[200px]"
+                src={UserBackground}
+                alt="bg-image"
+              />
             )}
             <div className="flex p-1 justify-center items-center absolute bg-edit-svg rounded-full  ">
               <label htmlFor="bgimage">
