@@ -19,6 +19,33 @@ export default function StepFourMain() {
     password: string("Enter Password").required("Please Enter the Password"),
   });
 
+  const handleGuestLogin = async () => {
+    if (!isLoading) {
+      SetLoading(true);
+
+      try {
+        const response = await axios.post(
+          "https://one00xapi.onrender.com/api/guest-login",
+
+          {
+            withCredentials: true,
+          }
+        );
+
+        console.log("API response:", response.data);
+
+        // Do any additional actions or navigate as needed
+        navigate("/home");
+      } catch (error) {
+        console.error("API error:", error);
+        setError(error.response.data);
+        // Handle guest login error if needed
+      } finally {
+        SetLoading(false);
+      }
+    }
+  };
+
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   // const { formData, setFormData } = useContext(AuthContext);
@@ -183,6 +210,14 @@ export default function StepFourMain() {
           </div>
         </main>
         <footer className="flex pt-20 md:pt-[220px] flex-col justify-end w-full items-center gap-2.5  flex-shrink-0 self-stretch">
+          <button
+            className="bg-neutral-50 text-neutral-1000 rounded-4xl shadow-3xl backdrop-blur-fx  w-full py-3 px-6  gap-2.5  font-Inter text-fx font-bold"
+            type="button"
+            onClick={handleGuestLogin}
+            isDisabled={isLoading}
+          >
+            {isLoading ? "Authenticating" : "Login as Guest"}
+          </button>
           <Button variant="default" type="next" isDisabled={isLoading}>
             {isLoading ? "Authenticating" : "Login"}
           </Button>

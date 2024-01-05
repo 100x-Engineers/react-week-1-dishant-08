@@ -19,6 +19,8 @@ export default function Button({
   const variantType = {
     default:
       " bg-neutral-50 text-neutral-1000 rounded-4xl shadow-3xl backdrop-blur-fx ",
+    guest:
+      " bg-neutral-50 text-neutral-1000 rounded-4xl shadow-3xl backdrop-blur-fx  w-full py-3 px-6 ",
     outline:
       "border border-solid border-bcolr text-twitter-blue rounded-4xl shadow-3xl backdrop-blur-fx",
     solidBlue: "bg-twitter-blue text-Twitter-white-100 rounded-pox",
