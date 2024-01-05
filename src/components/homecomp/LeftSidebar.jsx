@@ -107,8 +107,11 @@ export default function LeftSidebar({ page }) {
       <footer>
         <div className="flex justify-between items-center self-stretch">
           <Link
-            to={`/user/${currentLogUser?.currUser}`}
-            onClick={() => Setrender(!render)}
+            to={`/user/${currUser?.currUser}`}
+            onClick={() => {
+              console.log("Link clicked");
+              Setrender(!render);
+            }}
           >
             <div className="flex items-start gap-3">
               {!!currUser?.dp?.data ? (
