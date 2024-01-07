@@ -4,7 +4,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Home from "./pages/home/index.jsx";
 import Step1 from "./pages/Login/step1.jsx";
 import Step2 from "./pages/Login/step2.jsx";
@@ -76,6 +76,7 @@ function App() {
       <AuthProvider>
         <RouterProvider router={router} />
       </AuthProvider>
+      <SpeedInsights />
     </>
   );
 }
