@@ -25,8 +25,11 @@ export default function StepFourMain() {
 
       try {
         const response = await axios.post(
-          "https://one00xapi.onrender.com/api/guest-login",
-
+          "https://one00xapi.onrender.com/api/login",
+          {
+            email: "randomEmail@example.com",
+            password: "randomPassword",
+          },
           {
             withCredentials: true,
           }

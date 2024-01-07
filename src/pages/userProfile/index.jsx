@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import moment from "moment";
 import { useMediaQuery } from "react-responsive";
+import UserTweet from "../../components/UserTweet";
 
 export function MobileUserPage({ children }) {
   window.scrollTo(0, 0);
@@ -18,7 +19,7 @@ export function MobileUserPage({ children }) {
     <>
       {children}
       <TweetLink />
-      <Tweet />
+      {/* <Tweet /> */}
 
       <HomeFooter page="user" />
     </>
@@ -82,6 +83,7 @@ export default function User() {
               bioLink={User?.website}
               joinedAt={timeStamp}
             />
+            <UserTweet userId={User?.id} />
           </DesktopUserPage>
         ) : (
           <MobileUserPage>
@@ -98,6 +100,7 @@ export default function User() {
               bioLink={User?.website}
               joinedAt={timeStamp}
             />
+            <UserTweet userId={User?.id} />
           </MobileUserPage>
         )}
       </div>

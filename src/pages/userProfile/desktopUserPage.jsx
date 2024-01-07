@@ -1,4 +1,3 @@
-import Tweet from "../../components/Tweet";
 import HomeHeader, { ForyouTab } from "../../components/homecomp/HomeHeader";
 import LeftSidebar from "../../components/homecomp/LeftSidebar";
 import RightSidebar from "../../components/homecomp/RightSidebar";
@@ -19,7 +18,6 @@ export default function DesktopUserPage({ children }) {
           <LeftSidebar page="user" />
           <div className="w-[37.5rem] h-screen px-[0.0625rem] flex flex-col overflow-y-auto no-scrollbar ">
             {children}
-            <Tweet />
           </div>
           <RightSidebar />
         </div>

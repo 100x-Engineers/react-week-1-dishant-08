@@ -8,14 +8,11 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { convertBufferToDataURL } from "../constants";
 
-import ReplyComp from "./ReplyComp";
-import CardReplyComp from "./CardReplyComp";
-
-Card.propTypes = {
+CardReplyComp.propTypes = {
   text: PropTypes.string.isRequired,
 };
 
-export default function Card({ text, time, postId, userId }) {
+export default function CardReplyComp({ text, time, postId, userId }) {
   const date = new Date();
   // console.log(postId);
 
@@ -25,7 +22,7 @@ export default function Card({ text, time, postId, userId }) {
   const [AllRepost, setAllRepost] = useState(0);
   const [like, setLike] = useState(false);
   const [currUser, SetCurrUser] = useState();
-  const { render, Setrender, replyrender } = useContext(AuthContext);
+  const { render, Setrender } = useContext(AuthContext);
   const [RetweetFocus, setRetweetFocus] = useState(false);
   const [shareFocus, setShareFocus] = useState(false);
   const likedPost = async () => {
@@ -122,26 +119,6 @@ export default function Card({ text, time, postId, userId }) {
       console.error("Error", error);
     }
   };
-  const [replyData, SetReplyData] = useState();
-  const getReplyPost = async () => {
-    try {
-      const replyDataArr = await axios.get(
-        `https://one00xapi.onrender.com/api/replyfeed/${postId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log(likesData);
-      SetReplyData(replyDataArr?.data);
-      // SetReplyData(replyData?.data?.count);
-      // setAllRepost(likesData?.data?.repostCount);
-      // setRetweetFocus(likesData?.data?.isRePost);
-      //
-      // setLikeFocus(!likeFocus)
-    } catch (error) {
-      console.error("Error", error);
-    }
-  };
 
   const getCurrentUser = async () => {
     try {
@@ -166,10 +143,6 @@ export default function Card({ text, time, postId, userId }) {
   }, [userId]);
 
   useEffect(() => {
-    postId && getReplyPost();
-  }, [replyrender]);
-
-  useEffect(() => {
     // if (likeFocus === true) likedPost();
     // if (likeFocus === false) unlikedPost();
 
@@ -187,7 +160,7 @@ export default function Card({ text, time, postId, userId }) {
   // console.log(time, timeStamp);
 
   return (
-    <div>
+    <div className="bg-gray-900 ">
       <article className="flex py-2 px-4  gap-4 border-b border-b-neutral-700">
         <Link
           to={`/user/${currUser?.currUser}`}
@@ -200,7 +173,7 @@ export default function Card({ text, time, postId, userId }) {
               className="w-12 rounded-full h-12"
             />
           ) : (
-            <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
+            <img src={userAvatar} alt="user-avatar" className="w-12 h-12  " />
           )}
         </Link>
         <div className="flex flex-col items-center gap-2 self-stretch flex-1 flex-shrink-0 flex-basis-0">
@@ -260,7 +233,7 @@ export default function Card({ text, time, postId, userId }) {
                   commentOpen ? "text-twitter-blue " : "text-neutral-500"
                 } `}
               >
-                {replyData?.count}
+                0
               </span>
             </div>
 
@@ -492,21 +465,7 @@ export default function Card({ text, time, postId, userId }) {
           </div>
         </div>
       </article>
-      {commentOpen &&
-        [...replyData.posts]
-          .reverse()
-          .map((twt) =>
-            twt.content !== null ? (
-              <CardReplyComp
-                key={twt.id}
-                postId={twt.id}
-                text={twt.content}
-                userId={twt.user_id}
-                time={twt.posted_at}
-              />
-            ) : null
-          )}
-      {commentOpen && <ReplyComp postId={postId} />}
+      {/* {commentOpen && <ReplyComp />} */}
     </div>
   );
 }

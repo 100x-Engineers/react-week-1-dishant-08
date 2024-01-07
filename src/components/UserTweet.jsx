@@ -3,13 +3,13 @@ import { useContext, useEffect, useState } from "react";
 import Card from "./card";
 
 import axios from "axios";
-export default function Tweet() {
-  const { tweet } = useContext(AuthContext);
+export default function UserTweet({ userId }) {
+  //   const { tweet } = useContext(AuthContext);
   // const { render } = useContext(AuthContext);
 
   const [posts, setPosts] = useState([]);
-  const { isLoading, render } = useContext(AuthContext);
-  const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
+  const { isLoading, render, setcurrentLogUser } = useContext(AuthContext);
+  //   const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
 
   const getCurrentUser = async () => {
     try {
@@ -35,7 +35,7 @@ export default function Tweet() {
   const getAllPosts = async () => {
     try {
       const response = await axios.get(
-        "https://one00xapi.onrender.com/api/feed",
+        `https://one00xapi.onrender.com/api/userfeed/${userId}`,
         {
           withCredentials: true,
         }
@@ -50,23 +50,29 @@ export default function Tweet() {
   console.log(posts.content);
   useEffect(() => {
     getAllPosts();
-  }, [isLoading, render]);
+  }, [isLoading, render, userId]);
 
   return (
     <>
-      {[...posts]
-        .reverse()
-        .map((twt) =>
-          twt.content !== null ? (
-            <Card
-              key={twt.id}
-              postId={twt.id}
-              text={twt.content}
-              userId={twt.user_id}
-              time={twt.posted_at}
-            />
-          ) : null
-        )}
+      {posts.length !== 0 ? (
+        [...posts]
+          .reverse()
+          .map((twt) =>
+            twt.content !== null ? (
+              <Card
+                key={twt.id}
+                postId={twt.id}
+                text={twt.content}
+                userId={twt.user_id}
+                time={twt.posted_at}
+              />
+            ) : null
+          )
+      ) : (
+        <div className="text-neutral-50 text-center ">
+          Posts Are Loading...{" "}
+        </div>
+      )}
 
       {/* {[...tweet].reverse().map((twt) => (
         <Card key={twt.id} text={twt.content} />

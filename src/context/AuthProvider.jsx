@@ -10,6 +10,7 @@ export default function AuthProvider({ children }) {
   const [showEditModal, SetShowEditModal] = useState(false);
   const [isLoading, SetLoading] = useState(false);
   const [render, Setrender] = useState(false);
+  const [replyrender, Setreplyrender] = useState(false);
   const [currentLogUser, setcurrentLogUser] = useState();
 
   return (
@@ -32,6 +33,8 @@ export default function AuthProvider({ children }) {
           Setrender,
           currentLogUser,
           setcurrentLogUser,
+          replyrender,
+          Setreplyrender,
         }}
       >
         {children}
