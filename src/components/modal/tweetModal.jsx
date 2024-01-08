@@ -27,7 +27,7 @@ export default function TweetModal() {
 
       const apiUrl = "https://api.openai.com/v1/chat/completions";
       const apiKey = import.meta.env.VITE_API_KEY;
-      const prompt = `Generate Short and consice Twitter Post about ${promptText}`;
+      const prompt = `Generate Short and concise Twitter Post about ${promptText}`;
 
       const response = await fetch(apiUrl, {
         method: "POST",
@@ -48,6 +48,7 @@ export default function TweetModal() {
           temperature: 0.2,
           model: "gpt-3.5-turbo",
         }),
+        credentials: "include", // Include this line to use credentials
       });
 
       const output = await response.json();
