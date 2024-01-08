@@ -1,9 +1,10 @@
 import cancel from "../../assets/create-account-1-signup-x.svg";
 import userAvatar from "../../assets/user-avatar.png";
 import Button from "../button";
+import OpenAI from "openai";
 
 import { Link } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { convertBufferToDataURL } from "../../constants";
@@ -12,6 +13,60 @@ export default function TweetModal() {
   const { showTweetModal, SetShowTweetModal, currentLogUser } =
     useContext(AuthContext);
   const [tweetText, setTweetText] = useState("");
+  // console.log(tweetText);
+  // console.log(tweetText.length);
+  // console.log(tweetText.substring(0, 14));
+  // console.log(tweetText.substring(14));
+  const isCompleteText = tweetText.substring(0, 14) === "/complete-text";
+  const promptText = isCompleteText ? tweetText.substring(14) : "";
+  const [responseText, setResponseText] = useState("");
+
+  const handleCompleteText = async () => {
+    try {
+      SetLoading(true);
+
+      const apiUrl = "https://api.openai.com/v1/chat/completions";
+      const apiKey = import.meta.env.VITE_API_KEY;
+      const prompt = `Generate Short and consice Twitter Post about ${promptText}`;
+
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are a Social Media Manager and Expert at Viral Tweets.",
+            },
+            { role: "user", content: prompt },
+          ],
+          max_tokens: 45,
+          temperature: 0.2,
+          model: "gpt-3.5-turbo",
+        }),
+      });
+
+      const output = await response.json();
+      const explanation = output.choices[0].message.content;
+      setTweetText(explanation);
+
+      console.log(explanation);
+    } catch (error) {
+      console.error("Error:", error);
+    } finally {
+      SetLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // You can include additional logic here if needed
+    console.log(responseText);
+  }, [responseText]);
+
   const { isLoading, SetLoading } = useContext(AuthContext);
 
   return (
@@ -41,6 +96,16 @@ export default function TweetModal() {
               value={tweetText}
               onChange={(e) => setTweetText(e.target.value)}
             />
+            {isCompleteText && (
+              <Button
+                variant="solidBlue"
+                type="small"
+                onClick={handleCompleteText}
+                disabled={isLoading}
+              >
+                {isLoading ? "Completing Text..." : "Complete Text"}
+              </Button>
+            )}
           </div>
         </main>
         <footer className=" py-3 px-4  flex justify-between text-neutral-500 ">
@@ -61,7 +126,7 @@ export default function TweetModal() {
             variant="solidBlue"
             type="small"
             onClick={async () => {
-              if (tweetText != "" && !isLoading) {
+              if (tweetText != "" && tweetText.length < 280 && !isLoading) {
                 SetLoading(true);
                 try {
                   await axios.post(
