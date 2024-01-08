@@ -21,42 +21,60 @@ export default function TweetModal() {
   const promptText = isCompleteText ? tweetText.substring(14) : "";
   // const [responseText, setResponseText] = useState("");
 
+  // const handleCompleteText = async () => {
+  //   try {
+  //     SetLoading(true);
+
+  //     const proxyUrl = "https://one00xapi.onrender.com/openai-request";
+  //     const prompt = `Generate Short and concise Twitter Post about ${promptText}`;
+
+  //     const response = await axios.post(
+  //       proxyUrl,
+  //       {
+  //         messages: [
+  //           {
+  //             role: "system",
+  //             content:
+  //               "You are a Social Media Manager and Expert at Viral Tweets.",
+  //           },
+  //           { role: "user", content: prompt },
+  //         ],
+  //         max_tokens: 45,
+  //         temperature: 0.2,
+  //         model: "gpt-3.5-turbo",
+  //       },
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         withCredentials: true,
+  //       }
+  //     );
+
+  //     const explanation = response.data.choices[0].message.content;
+  //     setTweetText(explanation);
+
+  //     console.log(explanation);
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //   } finally {
+  //     SetLoading(false);
+  //   }
+  // };
   const handleCompleteText = async () => {
     try {
       SetLoading(true);
 
-      const apiUrl = "https://api.openai.com/v1/chat/completions";
-      const apiKey = import.meta.env.VITE_API_KEY;
-      const prompt = `Generate Short and concise Twitter Post about ${promptText}`;
-
-      const response = await axios.post(
-        apiUrl,
+      // Make a GET request to the backend route for text completion
+      const response = await axios.get(
+        `https://one00xapi.onrender.com/complete-text?input=${promptText}`,
         {
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are a Social Media Manager and Expert at Viral Tweets.",
-            },
-            { role: "user", content: prompt },
-          ],
-          max_tokens: 45,
-          temperature: 0.2,
-          model: "gpt-3.5-turbo",
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
           withCredentials: true,
         }
       );
 
-      const explanation = response.data.choices[0].message.content;
-      setTweetText(explanation);
-
-      console.log(explanation);
+      // Set the completed text in the state
+      setTweetText(response.data.completedText);
     } catch (error) {
       console.error("Error:", error);
     } finally {
