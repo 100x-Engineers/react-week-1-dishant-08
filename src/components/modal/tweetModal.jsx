@@ -19,7 +19,7 @@ export default function TweetModal() {
   // console.log(tweetText.substring(14));
   const isCompleteText = tweetText.substring(0, 14) === "/complete-text";
   const promptText = isCompleteText ? tweetText.substring(14) : "";
-  const [responseText, setResponseText] = useState("");
+  // const [responseText, setResponseText] = useState("");
 
   const handleCompleteText = async () => {
     try {
@@ -29,13 +29,9 @@ export default function TweetModal() {
       const apiKey = import.meta.env.VITE_API_KEY;
       const prompt = `Generate Short and concise Twitter Post about ${promptText}`;
 
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({
+      const response = await axios.post(
+        apiUrl,
+        {
           messages: [
             {
               role: "system",
@@ -47,12 +43,17 @@ export default function TweetModal() {
           max_tokens: 45,
           temperature: 0.2,
           model: "gpt-3.5-turbo",
-        }),
-        credentials: "include", // Include this line to use credentials
-      });
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          withCredentials: true,
+        }
+      );
 
-      const output = await response.json();
-      const explanation = output.choices[0].message.content;
+      const explanation = response.data.choices[0].message.content;
       setTweetText(explanation);
 
       console.log(explanation);
@@ -63,10 +64,10 @@ export default function TweetModal() {
     }
   };
 
-  useEffect(() => {
-    // You can include additional logic here if needed
-    console.log(responseText);
-  }, [responseText]);
+  // useEffect(() => {
+  //   // You can include additional logic here if needed
+  //   console.log(responseText);
+  // }, [responseText]);
 
   const { isLoading, SetLoading } = useContext(AuthContext);
 
