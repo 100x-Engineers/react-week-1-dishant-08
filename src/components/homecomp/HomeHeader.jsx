@@ -2,11 +2,11 @@ import { Link } from "react-router-dom";
 import Logo from "../../assets/100x-Logo.svg";
 import userAvatar from "../../assets/user-avatar.png";
 import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext, ForyouTabContext } from "../../context/AuthContext";
 import { convertBufferToDataURL } from "../../constants";
 
 export function ForyouTab() {
-  const [tab, setTab] = useState(true);
+  const { tab, setTab } = useContext(ForyouTabContext);
 
   return (
     <div className=" flex pt-5 px-20  pb-0 justify-center items-center gap-40  border-b  border-b-neutral-700 self-stretch ">

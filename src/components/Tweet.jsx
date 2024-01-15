@@ -1,4 +1,4 @@
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext, ForyouTabContext } from "../context/AuthContext";
 import { useContext, useEffect, useState } from "react";
 import Card from "./card";
 
@@ -8,6 +8,7 @@ export default function Tweet() {
   // const { render } = useContext(AuthContext);
 
   const [posts, setPosts] = useState([]);
+  const { tab } = useContext(ForyouTabContext);
   const { isLoading, render } = useContext(AuthContext);
   const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
 
@@ -41,7 +42,7 @@ export default function Tweet() {
         }
       );
 
-      console.log(response.data);
+      // console.log(response.data);
       setPosts(response.data.posts);
     } catch (error) {
       console.error("Error fetching posts:", error.message);
@@ -51,6 +52,8 @@ export default function Tweet() {
   useEffect(() => {
     getAllPosts();
   }, [isLoading, render]);
+
+  // tab, setTab;
 
   return (
     <>

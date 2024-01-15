@@ -19,6 +19,8 @@ import StepHeader from "./components/stepHeader.jsx";
 import DesktopPage from "./pages/home/desktopPage.jsx";
 import ErrorModal from "./components/modal/Errormodal.jsx";
 import SignUpmodal from "./components/modal/SignUpmodal.jsx";
+import { ForyouTabContext } from "./context/AuthContext.jsx";
+import { useState } from "react";
 
 const router = createBrowserRouter([
   {
@@ -71,11 +73,14 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const [tab, setTab] = useState(true);
   return (
     <>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
+      <ForyouTabContext.Provider value={{ tab, setTab }}>
+        <AuthProvider>
+          <RouterProvider router={router} />
+        </AuthProvider>
+      </ForyouTabContext.Provider>
     </>
   );
 }

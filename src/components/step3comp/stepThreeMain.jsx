@@ -1,79 +1,104 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import Input from "../../components/input";
 import Button from "../../components/button";
 import { useFormik } from "formik";
-
 import { useNavigate } from "react-router-dom";
-import { BoldText } from "../../components/textcomp";
-import { DescriptionText } from "../../components/textcomp";
+import { BoldText, DescriptionText } from "../../components/textcomp";
 import { object, number } from "yup";
+import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
+
 export default function StepThreeMain() {
   const navigate = useNavigate();
+  const { formData } = useContext(AuthContext);
+  const [isLoading, setLoading] = useState(false);
 
-  const validation = object({
-    verification: number("Enter number code").required("Please Enter the code"),
+  // Form validation schema using Yup
+  const validationSchema = object({
+    verification: number().required("Please enter the code"),
   });
 
-  const {
-    values,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    isSubmitting,
-  } = useFormik({
+  // Formik form handling
+  const formik = useFormik({
     initialValues: {
       verification: "",
     },
-    validationSchema: validation,
-    onSubmit: (values, { setSubmitting, resetForm }) => {
-      setTimeout(() => {
-        console.log("Submitted values", values);
+    validationSchema: validationSchema,
+    onSubmit: handleSubmit,
+  });
+
+  async function handleSubmit(values, { setSubmitting, resetForm }) {
+    try {
+      setLoading(true);
+
+      // Make the API call to verify the code
+      const response = await axios.post(
+        "https://one00xapi.onrender.com/verifymail",
+        {
+          otp: values.verification,
+        },
+        {
+          withCredentials: true,
+          // Add headers if required (e.g., Authorization header with API key/token)
+        }
+      );
+
+      // Check the response from the server
+      if (response.data.msg === "You are verified") {
+        console.log(response.data);
+        console.log("Verification successful");
         resetForm();
         setSubmitting(false);
         navigate("/step4");
-      }, 400);
-    },
-  });
+      } else {
+        console.log("Verification failed");
+        // Handle the case where the verification failed
+        // Display an error message to the user
+      }
+    } catch (error) {
+      console.error("Error verifying code:", error);
+      // Handle the error appropriately
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <form
-      onSubmit={handleSubmit}
-      className="flex   flex-col h-screen md:h-full "
+      onSubmit={formik.handleSubmit}
+      className="flex flex-col h-screen md:h-full"
     >
-      <main className="flex flex-col items-start gap-5 self-stretch  ">
-        <div className=" flex flex-col items-start gap-1 self-stretch">
+      <main className="flex flex-col items-start gap-5 self-stretch">
+        <div className="flex flex-col items-start gap-1 self-stretch">
           <BoldText>Create your account</BoldText>
           <DescriptionText>
-            Enter it below to verify dishant.sahu@gmail.com
+            Enter the verification code sent to {formData.email}
           </DescriptionText>
         </div>
-        <div className=" flex flex-col items-end gap-3 self-stretch group ">
+        <div className="flex flex-col items-end gap-3 self-stretch group">
           <Input
             name="verification"
             placeholder="Verification code"
-            onChange={handleChange}
-            onBlur={handleBlur}
-            value={values.verification}
-            disabled={isSubmitting}
-            errors={errors.verification}
-            touched={touched.verification}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            value={formik.values.verification}
+            disabled={formik.isSubmitting}
+            error={formik.errors.verification}
+            touched={formik.touched.verification}
           />
-          <p className="text-twitter-blue font-Inter text-[0.875rem] ">
+          <p
+            className="text-twitter-blue font-Inter text-[0.875rem]"
+            onClick={() => navigate(-1)}
+          >
             Didn’t receive a code?
           </p>
         </div>
       </main>
-      <footer className="flex pt-20   md:pt-[280px]  flex-col justify-end w-full  items-center gap-2.5 flex-grow  flex-shrink-0 self-stretch">
-        <Button variant="default" type="next" disabled={isSubmitting}>
-          Next
+      <footer className="flex pt-20 md:pt-[280px] flex-col justify-end w-full items-center gap-2.5 flex-grow flex-shrink-0 self-stretch">
+        <Button variant="default" type="next" isDisabled={isLoading}>
+          {isLoading ? "Loading..." : "Next"}
         </Button>
       </footer>
     </form>
   );
 }
-
-// onClick={() => {
-//   // navigate("/step4");
-// }}

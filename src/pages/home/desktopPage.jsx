@@ -6,11 +6,13 @@ import userAvatar from "../../assets/user-avatar.png";
 import Button from "../../components/button";
 import axios from "axios";
 import { useContext, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext, ForyouTabContext } from "../../context/AuthContext";
 import { convertBufferToDataURL } from "../../constants";
+import FollowingTweet from "../../components/FollowingTweet";
 export default function DesktopPage() {
   const [tweetText, setTweetText] = useState("");
   // const [isLoading, SetLoading] = useState(false);
+  const { tab } = useContext(ForyouTabContext);
   const { isLoading, SetLoading, currentLogUser } = useContext(AuthContext);
   return (
     <div className="flex justify-center ">
@@ -22,7 +24,6 @@ export default function DesktopPage() {
               Home
             </p>
           </div>
-
           <ForyouTab />
           <div className="flex p-4 gap-3 border-b border-b-neutral-700 ">
             {!!currentLogUser?.dp?.data ? (
@@ -74,8 +75,12 @@ export default function DesktopPage() {
               {isLoading ? "Posting..." : "Post"}
             </Button>
           </div>
-
-          <Tweet />
+          <div className={` ${!tab ? "hidden" : "block"} `}>
+            <Tweet />
+          </div>
+          <div className={` ${tab ? "hidden" : "block"} `}>
+            <FollowingTweet />
+          </div>
         </div>
         <RightSidebar />
       </div>

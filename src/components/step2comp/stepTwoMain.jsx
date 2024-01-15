@@ -2,14 +2,16 @@ import Input from "../../components/input";
 import Button from "../../components/button";
 import { useNavigate } from "react-router-dom";
 import { BoldText } from "../../components/textcomp";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import axios from "axios";
 
 export default function StepTwoMain() {
   const navigate = useNavigate();
   const { formData, setFormData } = useContext(AuthContext);
+  const [isLoading, setLoading] = useState(false);
   useEffect(() => {
-    console.log(formData);
+    console.log(formData.email);
   }, []);
   // console.log("Step 2", formData);
   // const validation =
@@ -45,11 +47,33 @@ export default function StepTwoMain() {
         <Button
           variant="solidBlue"
           type="large"
-          onClick={() => {
-            navigate("/step3");
+          isDisabled={isLoading}
+          onClick={async () => {
+            try {
+              setLoading(true);
+              const response = await axios.post(
+                "https://one00xapi.onrender.com/sendmail",
+                {
+                  email: formData.email,
+                },
+                {
+                  withCredentials: true,
+                  maxRedirects: 0, // or set it to a higher value if needed
+                }
+              );
+
+              console.log("API response:", response.data);
+              // Do any additional actions or navigate as needed
+              navigate("/step3");
+            } catch (error) {
+              console.error("API error:", error);
+              // Handle API error if needed
+            } finally {
+              setLoading(false);
+            }
           }}
         >
-          Sign Up
+          {isLoading ? "Verifying Email" : "Sign Up"}
         </Button>
       </footer>
     </>
