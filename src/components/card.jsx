@@ -155,7 +155,7 @@ export default function Card({ text, time, postId, userId }) {
       // setPageId(data);
       SetCurrUser(data);
       // onPageIdChange(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
     }

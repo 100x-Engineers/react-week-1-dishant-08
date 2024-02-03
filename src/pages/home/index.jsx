@@ -1,20 +1,21 @@
 import TweetLink from "../../components/TweetLink";
-import Tweet from "../../components/Tweet";
 import HomeHeader from "../../components/homecomp/HomeHeader";
 import HomeFooter from "../../components/homecomp/HomeFooter";
 import { useEffect, useState, useContext } from "react";
 import DesktopPage from "./desktopPage";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext, ForyouTabContext } from "../../context/AuthContext";
 
 export function MobilePage() {
   window.scrollTo(0, 0);
+  const { tab } = useContext(ForyouTabContext);
 
   return (
     <>
       <HomeHeader />
-      <Tweet />
       <TweetLink />
-      <HomeFooter page="home" />
+      <div className="sticky bottom-0 z-50">
+        <HomeFooter page="home" />
+      </div>
     </>
   );
 }
@@ -26,7 +27,7 @@ export default function Home() {
   // const checkScreenSize = () => {
   //   console.log(window.innerWidth);
   //   setDesktopMode(window.innerWidth > 768);
-  // };
+  // };kn
 
   // useEffect(() => {
   //   window.addEventListener("resize", checkScreenSize);

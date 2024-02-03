@@ -1,5 +1,4 @@
 import Tweet from "../../components/Tweet";
-import HomeHeader, { ForyouTab } from "../../components/homecomp/HomeHeader";
 import LeftSidebar from "../../components/homecomp/LeftSidebar";
 import RightSidebar from "../../components/homecomp/RightSidebar";
 import userAvatar from "../../assets/user-avatar.png";
@@ -9,6 +8,7 @@ import { useContext, useState } from "react";
 import { AuthContext, ForyouTabContext } from "../../context/AuthContext";
 import { convertBufferToDataURL } from "../../constants";
 import FollowingTweet from "../../components/FollowingTweet";
+import ForyouTab from "../../components/homecomp/ForyouTab";
 export default function DesktopPage() {
   const [tweetText, setTweetText] = useState("");
   // const [isLoading, SetLoading] = useState(false);

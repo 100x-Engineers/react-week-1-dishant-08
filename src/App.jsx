@@ -5,7 +5,7 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import Home from "./pages/home/index.jsx";
+import Home, { MobilePage } from "./pages/home/index.jsx";
 import Step1 from "./pages/Login/step1.jsx";
 import Step2 from "./pages/Login/step2.jsx";
 import Step3 from "./pages/Login/step3.jsx";
@@ -21,6 +21,7 @@ import ErrorModal from "./components/modal/Errormodal.jsx";
 import SignUpmodal from "./components/modal/SignUpmodal.jsx";
 import { ForyouTabContext } from "./context/AuthContext.jsx";
 import { useState } from "react";
+import HomeHeader from "./components/homecomp/HomeHeader.jsx";
 
 const router = createBrowserRouter([
   {
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
   {
     path: "/test",
     element: <DesktopPage />,
+  },
+  {
+    path: "/test2",
+    element: <HomeHeader />,
   },
   {
     path: "/home",

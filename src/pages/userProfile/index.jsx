@@ -20,8 +20,9 @@ export function MobileUserPage({ children }) {
       {children}
       <TweetLink />
       {/* <Tweet /> */}
-
-      <HomeFooter page="user" />
+      <div className="fixed bottom-0 z-50">
+        <HomeFooter page="user" />
+      </div>
     </>
   );
 }

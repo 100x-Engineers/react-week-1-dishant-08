@@ -70,7 +70,7 @@ export default function UserTweet({ userId }) {
           )
       ) : (
         <div className="text-neutral-50 text-center ">
-          Posts Are Loading...{" "}
+          Posts are Loading...{" "}
         </div>
       )}
 

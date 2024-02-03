@@ -1,6 +1,6 @@
 // Import statements
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Logo100 from "../../assets/copy-link-100.svg";
 import HomeInactive from "../../assets/state-not-selectedhome-icon.svg";
 import HomeActive from "../../assets/homeActive.svg";
@@ -16,6 +16,8 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import { convertBufferToDataURL } from "../../constants";
+import SignOut from "../../assets/logout.svg";
+// import { ReactComponent as SignOutIcon } from "../../assets/logout.svg";
 
 export function DesktopHome({ page, oncurrentLogUserChange }) {
   const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
@@ -73,11 +75,27 @@ export default function LeftSidebar({ page }) {
   const { showTweetModal, SetShowTweetModal, currentLogUser } =
     useContext(AuthContext);
 
+  const navigate = useNavigate();
+
   const [currUser, SetCurrUser] = useState();
+
+  const { showModal, SetModal } = useContext(AuthContext);
 
   function SettingUser(data) {
     SetCurrUser(data);
     console.log(data);
+  }
+
+  async function doSignOut() {
+    try {
+      await axios.post("https://one00xapi.onrender.com/api/logout", {
+        withCredentials: true,
+      });
+      SetModal(false);
+      navigate("/");
+    } catch (error) {
+      console.error("Error :", error);
+    }
   }
 
   return (
@@ -138,8 +156,10 @@ export default function LeftSidebar({ page }) {
             </div>
           </Link>
 
-          <div className="flex justify-center items-center w-[2.0625rem] h-[2.0625rem] px-[0.49413rem]">
-            <img src={ThreeDot} alt="Three Dot" />
+          <div className="flex justify-center items-center w-[3rem] h-[3rem] px-[0.49413rem]">
+            <button onClick={() => doSignOut()}>
+              <img src={SignOut} alt="Sign Out" />
+            </button>
           </div>
         </div>
       </footer>

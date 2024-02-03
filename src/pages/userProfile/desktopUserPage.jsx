@@ -1,4 +1,3 @@
-import HomeHeader, { ForyouTab } from "../../components/homecomp/HomeHeader";
 import LeftSidebar from "../../components/homecomp/LeftSidebar";
 import RightSidebar from "../../components/homecomp/RightSidebar";
 // import userAvatar from "../../assets/user-avatar.png";

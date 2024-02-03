@@ -41,7 +41,7 @@ export default function UserHeader({
   console.log(UserBackground);
   return (
     <>
-      <header className=" flex flex-col ">
+      <header className=" flex flex-col  border-b border-slate-700  ">
         <div className="relative">
           {!!UserBackground ? (
             <img
@@ -116,7 +116,15 @@ export default function UserHeader({
                   fill="#737373"
                 />
               </svg>
-              <span className=" text-twitter-blue font-Inter ">{bioLink}</span>
+
+              <a
+                href={bioLink}
+                target="blank"
+                rel="noopener noreferrer"
+                className=" text-twitter-blue  font-Inter "
+              >
+                {bioLink}
+              </a>
             </div>
             <div>
               <img className="inline" src={calender} alt="calendar" />
@@ -125,7 +133,7 @@ export default function UserHeader({
               </span>
             </div>
           </div>
-          <div className="flex items-end gap-5">
+          <div className="flex items-end gap-5 pb-2 ">
             <div>
               <span className="font-Inter text-fx font-medium text-neutral-50">
                 {following}

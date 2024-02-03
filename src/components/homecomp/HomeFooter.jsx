@@ -31,8 +31,8 @@ export default function HomeFooter({ page }) {
   }, []);
   return (
     <>
-      <footer className="flex flex-col justify-end flex-grow h-screen ">
-        <div className=" flex py-[1.125rem] px-6 justify-center items-center gap-10 border-t border-neutral-800 bg-neutral-1000  ">
+      <footer className="flex flex-col justify-end flex-grow fixed bottom-0 left-0 right-0">
+        <div className="flex py-[1.125rem] px-6 justify-center items-center gap-10 border-t border-neutral-800 bg-neutral-1000">
           <Link to={"/home"}>
             <img src={page === "home" ? HomeActive : HomeInactive} />
           </Link>
