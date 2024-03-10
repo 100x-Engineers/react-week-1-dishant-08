@@ -46,7 +46,7 @@ export default function User() {
       const data = response.data;
       SetUser(data.user);
       SetData(data);
-      console.log(User);
+      // console.log(User);
       // console.log(User.display_name);
     } catch (error) {
       console.error("Error fetching user details:", error);
@@ -108,42 +108,3 @@ export default function User() {
     </>
   );
 }
-
-/*
-  const [desktopMode, setDesktopMode] = useState(false);
-
-  const checkScreenSize = () => {
-    console.log(window.innerWidth);
-    setDesktopMode(window.innerWidth > 768);
-  };
-
-  useEffect(() => {
-    window.addEventListener("resize", checkScreenSize);
-    return () => {
-      window.removeEventListener("resize", checkScreenSize);
-    };
-  }, []);
-  return (
-    <>
-      {desktopMode ? (
-        <div className={` ${showEditModal && "bg-modal-bg"} `}>
-          <DesktopUserPage />
-        </div>
-      ) : (
-        <MobileUserPage />
-      )}
-    </>
-  );
-  <UserHeader
-        userName=" @dishant_sahu "
-        userFullname=" Dishant sahu"
-        bio="   Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations "
-        userImage={userAvatar}
-        UserBackground={bgImage}
-        following=" 217"
-        followers="118 "
-        bioLink="pixsellz.io "
-        joinedAt="  Joined September 2018"
-      />
-
-*/

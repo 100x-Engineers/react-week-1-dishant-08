@@ -38,7 +38,7 @@ export default function UserHeader({
   // const {currentLogUser, setcurrentLogUser} = useContext(AuthContext)
   const { showEditModal, SetShowEditModal, currentLogUser, setcurrentLogUser } =
     useContext(AuthContext);
-  console.log(UserBackground);
+  // console.log(UserBackground);
   return (
     <>
       <header className=" flex flex-col  border-b border-slate-700  ">

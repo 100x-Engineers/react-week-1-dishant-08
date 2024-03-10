@@ -17,7 +17,7 @@ export default function FollowingTweet() {
         }
       );
 
-      console.log("FollowingTweet response:", response.data);
+      // console.log("FollowingTweet response:", response.data);
       setPosts(response.data.posts);
     } catch (error) {
       console.error("Error fetching following posts:", error.message);

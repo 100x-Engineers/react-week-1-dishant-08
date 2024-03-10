@@ -23,7 +23,7 @@ export default function Tweet() {
       const data = await response.data;
       setcurrentLogUser(data);
       // oncurrentLogUserChange(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
     }
@@ -48,7 +48,7 @@ export default function Tweet() {
       console.error("Error fetching posts:", error.message);
     }
   };
-  console.log(posts.content);
+  // console.log(posts.content);
   useEffect(() => {
     getAllPosts();
   }, [isLoading, render]);

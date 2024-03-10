@@ -16,7 +16,7 @@ const FollowBtn = ({ follower, following }) => {
           withCredentials: true,
         }
       );
-      console.log(respone.data);
+      // console.log(respone.data);
       SetState(true);
       Setrender(!render);
     } catch (error) {
@@ -34,7 +34,7 @@ const FollowBtn = ({ follower, following }) => {
           withCredentials: true,
         }
       );
-      console.log(respone.data);
+      // console.log(respone.data);
       SetState(false);
       Setrender(!render);
     } catch (error) {
@@ -50,7 +50,7 @@ const FollowBtn = ({ follower, following }) => {
           withCredentials: true,
         }
       );
-      console.log(response.data);
+      // console.log(response.data);
       SetState(response.data.status);
     } catch (error) {
       console.error(error, "Failed to  Get Following Status");

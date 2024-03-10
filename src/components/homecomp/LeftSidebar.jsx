@@ -33,7 +33,7 @@ export function DesktopHome({ page, oncurrentLogUserChange }) {
       const data = await response.data;
       setcurrentLogUser(data);
       oncurrentLogUserChange(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
     }
@@ -79,11 +79,11 @@ export default function LeftSidebar({ page }) {
 
   const [currUser, SetCurrUser] = useState();
 
-  const { showModal, SetModal } = useContext(AuthContext);
+  const { showModal, Setrender, SetModal } = useContext(AuthContext);
 
   function SettingUser(data) {
     SetCurrUser(data);
-    console.log(data);
+    // console.log(data);
   }
 
   async function doSignOut() {
@@ -128,7 +128,7 @@ export default function LeftSidebar({ page }) {
             <div
               className="flex items-start gap-3"
               onClick={() => {
-                console.log("Link clicked");
+                // console.log("Link clicked");
                 Setrender(!render);
               }}
             >

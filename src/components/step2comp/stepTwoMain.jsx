@@ -10,9 +10,9 @@ export default function StepTwoMain() {
   const navigate = useNavigate();
   const { formData, setFormData } = useContext(AuthContext);
   const [isLoading, setLoading] = useState(false);
-  useEffect(() => {
-    console.log(formData.email);
-  }, []);
+  // useEffect(() => {
+  //   console.log(formData.email);
+  // }, []);
   // console.log("Step 2", formData);
   // const validation =
   return (
@@ -62,7 +62,7 @@ export default function StepTwoMain() {
                 }
               );
 
-              console.log("API response:", response.data);
+              // console.log("API response:", response.data);
               // Do any additional actions or navigate as needed
               navigate("/step3");
             } catch (error) {

@@ -64,7 +64,7 @@ export const handleFileUpload = async (file, fieldName) => {
   try {
     const buffer = await convertFileToBuffer(file);
     // Handle the buffer, e.g., send it to the server
-    console.log(`Converted ${fieldName} buffer:`, buffer);
+    // console.log(`Converted ${fieldName} buffer:`, buffer);
     // You can perform specific actions based on the field name (profile_picture or cover_picture)
     return buffer;
   } catch (error) {

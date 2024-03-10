@@ -45,13 +45,13 @@ export default function StepThreeMain() {
 
       // Check the response from the server
       if (response.data.msg === "You are verified") {
-        console.log(response.data);
-        console.log("Verification successful");
+        // console.log(response.data);
+        // console.log("Verification successful");
         resetForm();
         setSubmitting(false);
         navigate("/step4");
       } else {
-        console.log("Verification failed");
+        console.error("Verification failed");
         // Handle the case where the verification failed
         // Display an error message to the user
       }

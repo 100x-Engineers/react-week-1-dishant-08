@@ -22,7 +22,7 @@ export default function UserTweet({ userId }) {
       const data = await response.data;
       setcurrentLogUser(data);
       // oncurrentLogUserChange(data);
-      console.log(data);
+      // console.log(data);
     } catch (error) {
       console.error("Error fetching current user:", error);
     }
@@ -41,13 +41,13 @@ export default function UserTweet({ userId }) {
         }
       );
 
-      console.log(response.data);
+      // console.log(response.data);
       setPosts(response.data.posts);
     } catch (error) {
       console.error("Error fetching posts:", error.message);
     }
   };
-  console.log(posts.content);
+  // console.log(posts.content);
   useEffect(() => {
     getAllPosts();
   }, [isLoading, render, userId]);

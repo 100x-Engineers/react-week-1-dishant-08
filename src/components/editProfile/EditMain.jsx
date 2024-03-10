@@ -62,9 +62,9 @@ export default function EditMain({ userImage, UserBackground }) {
       );
       setUser(response.data?.user || {});
       setCoverBuffer(response.data?.user?.cover_picture?.data);
-      console.log(response.data?.user?.cover_picture);
+      // console.log(response.data?.user?.cover_picture);
       setProfileBuffer(response.data?.user?.profile_picture?.data);
-      console.log(response.data?.user?.profile_picture);
+      // console.log(response.data?.user?.profile_picture);
     } catch (error) {
       console.error("Error fetching User Details:", error.message);
     }
@@ -105,7 +105,7 @@ export default function EditMain({ userImage, UserBackground }) {
       try {
         const buffer = await handleFileUpload(file, "cover_picture");
         setCoverBuffer(buffer);
-        console.log(coverBuffer);
+        // console.log(coverBuffer);
         setIsbgImage(true);
         // Send the profile image data to the backend
         // You can handle this part based on your requirements
@@ -157,11 +157,11 @@ export default function EditMain({ userImage, UserBackground }) {
             .validate(inputValues)
             .then(() => {
               SetError("");
-              console.log("Validation Sucessful");
+              // console.log("Validation Sucessful");
             })
             .catch((error) => {
               SetError(error);
-              console.log(error.message);
+              // console.error(error.message);
             });
 
           try {
@@ -180,8 +180,8 @@ export default function EditMain({ userImage, UserBackground }) {
             //   coverPictureFile,
             //   "cover_picture"
             // );
-            console.log(profileBuffer);
-            console.log(coverBuffer);
+            // console.log(profileBuffer);
+            // console.log(coverBuffer);
 
             if (isproImage) {
               formData.append(
@@ -213,12 +213,12 @@ export default function EditMain({ userImage, UserBackground }) {
             SetShowEditModal(false);
             // window.location.reload(false);
             Setrender(!render);
-            console.log("API response:", response.data);
+            // console.log("API response:", response.data);
           } catch (error) {
             console.error("API error:", error);
           }
 
-          console.log("Submitted values", inputValues);
+          // console.log("Submitted values", inputValues);
         }}
       >
         <EditHeader />

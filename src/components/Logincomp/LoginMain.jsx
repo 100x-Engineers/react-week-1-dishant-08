@@ -25,11 +25,11 @@ const handleSignUp = async () => {
       const jsonres = response.json();
       return jsonres;
     } else {
-      console.log("HTTPS Status : ", response.status);
-      console.log("Error  ");
+      // console.log("HTTPS Status : ", response.status);
+      // console.log("Error  ");
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 

@@ -35,7 +35,7 @@ export default function StepFourMain() {
           }
         );
 
-        console.log("API response:", response.data);
+        // console.log("API response:", response.data);
 
         // Do any additional actions or navigate as needed
         navigate("/home");
@@ -83,7 +83,7 @@ export default function StepFourMain() {
             }
           );
 
-          console.log("API response:", response.data);
+          // console.log("API response:", response.data);
 
           // Do any additional actions or navigate as needed
           navigate("/home");
