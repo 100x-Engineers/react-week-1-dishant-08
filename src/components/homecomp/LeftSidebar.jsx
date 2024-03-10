@@ -79,7 +79,7 @@ export default function LeftSidebar({ page }) {
 
   const [currUser, SetCurrUser] = useState();
 
-  const { showModal, Setrender, SetModal } = useContext(AuthContext);
+  const { showModal, Setrender, render, SetModal } = useContext(AuthContext);
 
   function SettingUser(data) {
     SetCurrUser(data);
