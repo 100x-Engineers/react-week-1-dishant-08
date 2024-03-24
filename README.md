@@ -7,6 +7,11 @@
 
 link for LLD: https://excalidraw.com/#json=Aw53SM3t1Dn8krHZ3NYMJ,njk97nc3rypVr5SwzScdyQ
 
+## Screenshot
+
+![image](https://github.com/100x-Engineers/react-week-1-dishant-08/assets/60565337/d7772b6c-3c73-4663-84e8-df309b0313aa)
+
+
 ## Projects Summary:
 
 1. **Microblogging Platform Development**
