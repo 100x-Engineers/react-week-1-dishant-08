@@ -9,7 +9,7 @@ import { createPortal } from "react-dom";
 import FollowBtn from "./followbtn";
 import bgImage from "../../assets/bgimage.png";
 import userAvatar from "../../assets/user-avatar.png";
-import { convertBufferToDataURL, convertFileToBuffer } from "../../constants";
+import { convertBufferToDataURL } from "../../constants";
 
 UserHeader.propTypes = {
   userName: PropTypes.string,
@@ -35,10 +35,9 @@ export default function UserHeader({
   joinedAt,
 }) {
   const navigate = useNavigate();
-  // const {currentLogUser, setcurrentLogUser} = useContext(AuthContext)
-  const { showEditModal, SetShowEditModal, currentLogUser, setcurrentLogUser } =
+  const { showEditModal, SetShowEditModal, currentLogUser } =
     useContext(AuthContext);
-  // console.log(UserBackground);
+
   return (
     <>
       <header className=" flex flex-col  border-b border-slate-700  ">
@@ -67,12 +66,6 @@ export default function UserHeader({
           )}
         </div>
 
-        {/* <button
-          className=" text-neutral-50 text-[1rem] font-medium font-Inter py-2 px-5 rounded-[1.875rem] mt-2 mr-4 border border-edit-stroke self-end "
-          onClick={() => SetShowEditModal(true)}
-        >
-          Edit profile
-        </button> */}
         {currentLogUser?.id === userId ? (
           <button
             className=" text-neutral-50 text-[1rem] font-medium font-Inter py-2 px-5 rounded-[1.875rem] mt-2 mr-4 border border-edit-stroke self-end "

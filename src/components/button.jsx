@@ -37,7 +37,7 @@ export default function Button({
   const disabledStyle = isDisabled ? "cursor-not-allowed opacity-50" : " ";
 
   const classes = `${common} ${variantType[variant]} ${btnType[type]} ${disabledStyle} `;
-  // console.log(classes)
+
   return (
     <>
       <button type="submit" className={classes} {...rest}>

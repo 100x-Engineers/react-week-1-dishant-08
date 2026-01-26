@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { useFormik } from "formik";
 import Button from "../../components/button";
 import Input from "../../components/input";
@@ -57,38 +57,12 @@ export default function StepOneMain() {
           ...values,
         };
 
-        console.log(updatedValues);
-        // Make an API call here
-        // axios
-        //   .post("/api/signup", { status: updatedValues.name })
-        //   .then((response) => {
-        //     console.log("API response:", response.data);
-        //     // Do any additional actions or navigate as needed
-        // navigate("/step2");
-        //   })
-        //   .catch((error) => {
-        //     console.error("API error:", error);
-        //     // Handle API error if needed
-        //   });
         return updatedValues;
       });
 
       navigate("/step2");
       setSubmitting(false);
     },
-    // onSubmit: (values, { setSubmitting }) => {
-    //   setFormData((prevData) => {
-    //     const updatedValues = { ...prevData, ...values };
-    //     const response = axios.post('/api/signup', { "status" : updatedValues.name}).then(re)
-
-    //     console.log(updatedValues);
-    //     return updatedValues;
-    //   });
-
-    //   console.log("Updated formData", formData); // Log the updated formData immediately
-    //   setSubmitting(false);
-    //   navigate("/step2");
-    // },
   });
 
   return (
@@ -174,7 +148,6 @@ export default function StepOneMain() {
           variant="default"
           type="default"
           disabled={isSubmitting}
-          // onClick={() => }
         >
           Create Account
         </Button>

@@ -1,190 +1,109 @@
-import { useContext, useEffect, useState } from "react";
-import comment from "../assets/comment.svg";
+import { useContext, useState } from "react";
 import userAvatar from "../assets/user-avatar.png";
-import PropTypes from "prop-types"; // ES6
+import PropTypes from "prop-types";
 import moment from "moment";
-import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { convertBufferToDataURL } from "../constants";
+import { useLike, useRetweet } from "../hooks/useMutation";
+import { useReplies } from "../hooks/useFetch";
 
 import ReplyComp from "./ReplyComp";
 import CardReplyComp from "./CardReplyComp";
 
 Card.propTypes = {
   text: PropTypes.string.isRequired,
+  postId: PropTypes.number,
+  userId: PropTypes.number,
+  time: PropTypes.string,
+  user: PropTypes.shape({
+    username: PropTypes.string,
+    display_name: PropTypes.string,
+    profile_picture: PropTypes.object,
+  }),
+  likeCount: PropTypes.number,
+  isLiked: PropTypes.bool,
+  repostCount: PropTypes.number,
+  isReposted: PropTypes.bool,
+  replyCount: PropTypes.number,
 };
 
-export default function Card({ text, time, postId, userId }) {
+export default function Card({
+  text,
+  time,
+  postId,
+  userId,
+  user: initialUser,
+  likeCount: initialLikeCount = 0,
+  isLiked: initialIsLiked = false,
+  repostCount: initialRepostCount = 0,
+  isReposted: initialIsReposted = false,
+  replyCount: initialReplyCount = 0,
+}) {
   const date = new Date();
-  // console.log(postId);
 
   const [TrendingFocus, setTrendingFocus] = useState(false);
-  const [likeFocus, setLikeFocus] = useState(null);
-  const [AllLike, setAllLike] = useState(0);
-  const [AllRepost, setAllRepost] = useState(0);
-  const [like, setLike] = useState(false);
-  const [currUser, SetCurrUser] = useState();
-  const { render, Setrender, replyrender } = useContext(AuthContext);
-  const [RetweetFocus, setRetweetFocus] = useState(false);
+  const [AllLike, setAllLike] = useState(initialLikeCount);
+  const [AllRepost, setAllRepost] = useState(initialRepostCount);
+  const [likeState, setLikeState] = useState(initialIsLiked);
+  const [currUser] = useState(
+    initialUser
+      ? {
+          currUser: initialUser.username,
+          disName: initialUser.display_name,
+          dp: initialUser.profile_picture,
+        }
+      : null
+  );
+  const { render, Setrender } = useContext(AuthContext);
+  const [RetweetFocus, setRetweetFocus] = useState(initialIsReposted);
   const [shareFocus, setShareFocus] = useState(false);
-  const likedPost = async () => {
-    try {
-      await axios.post(
-        "https://one00xapi.onrender.com/api/like",
-        {
-          post_id: postId,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      setLike(true); // Set the like state to true
-      setAllLike((prev) => prev + 1); // Increment the like count
-    } catch (error) {
-      console.error("Error", error);
-    }
-  };
-  const rePost = async () => {
-    try {
-      await axios.post(
-        `https://one00xapi.onrender.com/api/retweet/${postId}`,
-        null,
-        {
-          withCredentials: true,
-        }
-      );
-      setRetweetFocus(true); // Set the retweet state to true
-      setAllRepost((prev) => prev + 1); // Increment the like count
-    } catch (error) {
-      console.error("Error", error);
-    }
+  const [replyCountState, setReplyCountState] = useState(initialReplyCount);
+  const [commentOpen, setCommentOpen] = useState(false);
+
+  // Use React Query hooks for mutations
+  const { like, unlike } = useLike();
+  const { retweet, unretweet } = useRetweet();
+
+  // Use React Query for replies (only fetched when comments are opened)
+  const { posts: replyPosts, count: replyCount, refetch: refetchReplies } = useReplies(
+    commentOpen ? postId : null
+  );
+
+  const likedPost = () => {
+    like(postId);
+    setLikeState(true);
+    setAllLike((prev) => prev + 1);
   };
 
-  const unrePost = async () => {
-    try {
-      await axios.delete(
-        `https://one00xapi.onrender.com/api/unretweet/${postId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      setRetweetFocus(false); // Set the like state to false
-      setAllRepost((prev) => prev - 1); // Decrement the like count
-    } catch (error) {
-      console.error("Error", error);
-    }
-  };
-  const unlikedPost = async () => {
-    try {
-      await axios.delete(
-        `https://one00xapi.onrender.com/api/unlike/${postId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      setLike(false); // Set the like state to false
-      setAllLike((prev) => prev - 1); // Decrement the like count
-    } catch (error) {
-      console.error("Error", error);
-    }
+  const unlikedPost = () => {
+    unlike(postId);
+    setLikeState(false);
+    setAllLike((prev) => prev - 1);
   };
 
-  const getAllLikedPost = async () => {
-    try {
-      const likesData = await axios.get(
-        `https://one00xapi.onrender.com/api/getlike/${postId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log(likesData);
-      setAllLike(likesData?.data?.count);
-      setLike(likesData?.data?.likedPost);
-      // setLikeFocus(!likeFocus)
-    } catch (error) {
-      console.error("Error", error);
-    }
-  };
-  const getAllrePost = async () => {
-    try {
-      const likesData = await axios.get(
-        `https://one00xapi.onrender.com/api/getretweet/${postId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log(likesData);
-      setAllRepost(likesData?.data?.repostCount);
-      setRetweetFocus(likesData?.data?.isRePost);
-      // setLikeFocus(!likeFocus)
-    } catch (error) {
-      console.error("Error", error);
-    }
-  };
-  const [replyData, SetReplyData] = useState();
-  const getReplyPost = async () => {
-    try {
-      const replyDataArr = await axios.get(
-        `https://one00xapi.onrender.com/api/replyfeed/${postId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log(likesData);
-      SetReplyData(replyDataArr?.data);
-      // SetReplyData(replyData?.data?.count);
-      // setAllRepost(likesData?.data?.repostCount);
-      // setRetweetFocus(likesData?.data?.isRePost);
-      //
-      // setLikeFocus(!likeFocus)
-    } catch (error) {
-      console.error("Error", error);
-    }
+  const rePost = () => {
+    retweet(postId);
+    setRetweetFocus(true);
+    setAllRepost((prev) => prev + 1);
   };
 
-  const getCurrentUser = async () => {
-    try {
-      const response = await axios.get(
-        `https://one00xapi.onrender.com/api/getUserbyId/${userId}`,
-        {
-          withCredentials: true,
-        }
-      );
-      const data = await response.data;
-      // setPageId(data);
-      SetCurrUser(data);
-      // onPageIdChange(data);
-      // console.log(data);
-    } catch (error) {
-      console.error("Error fetching current user:", error);
-    }
+  const unrePost = () => {
+    unretweet(postId);
+    setRetweetFocus(false);
+    setAllRepost((prev) => prev - 1);
   };
-
-  useEffect(() => {
-    userId && getCurrentUser();
-  }, [userId]);
-
-  useEffect(() => {
-    postId && getReplyPost();
-  }, [replyrender]);
-
-  useEffect(() => {
-    // if (likeFocus === true) likedPost();
-    // if (likeFocus === false) unlikedPost();
-
-    postId && getAllLikedPost();
-  }, [like]);
-  useEffect(() => {
-    // if (likeFocus === true) likedPost();
-    // if (likeFocus === false) unlikedPost();
-
-    postId && getAllrePost();
-  }, [RetweetFocus]);
 
   const timeStamp = moment(time).fromNow();
-  const [commentOpen, SetCommentOpen] = useState(false);
-  // console.log(time, timeStamp);
+
+  const handleCommentToggle = () => {
+    setCommentOpen(!commentOpen);
+  };
+
+  const handleReplySuccess = () => {
+    refetchReplies();
+    setReplyCountState((prev) => prev + 1);
+  };
 
   return (
     <div>
@@ -220,12 +139,9 @@ export default function Card({ text, time, postId, userId }) {
           </div>
           <div className="flex py-3 px-0 justify-between items-center self-stretch">
             <div
-              onClick={() => {
-                SetCommentOpen(!commentOpen);
-              }}
+              onClick={handleCommentToggle}
               className="flex justify-center items-center gap-[0.3125rem]"
             >
-              {/* <img src={comment} alt="comment" /> */}
               {!commentOpen ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -260,13 +176,12 @@ export default function Card({ text, time, postId, userId }) {
                   commentOpen ? "text-twitter-blue " : "text-neutral-500"
                 } `}
               >
-                {replyData?.count}
+                {replyCountState}
               </span>
             </div>
 
             <button
               className="flex justify-center items-center gap-[0.3125rem]"
-              // onClick={() => setRetweetFocus(!RetweetFocus)}
               onClick={() => {
                 if (RetweetFocus) {
                   unrePost();
@@ -324,20 +239,10 @@ export default function Card({ text, time, postId, userId }) {
               </span>
             </button>
 
-            {/* <button
-              className="flex justify-center items-center gap-[0.3125rem]"
-              // className={likeFocus ? "group" : ""}
-              onClick={() => {
-                
-                setLikeFocus(!likeFocus);
-                // likeFocus ? likedPost() : unlikedPost();
-              }}
-              // onClick={() => }
-            > */}
             <button
               className="flex justify-center items-center gap-[0.3125rem]"
               onClick={() => {
-                if (like) {
+                if (likeState) {
                   unlikedPost();
                 } else {
                   likedPost();
@@ -351,15 +256,14 @@ export default function Card({ text, time, postId, userId }) {
                 viewBox="0 0 17 17"
                 fill="none"
               >
-                <g className={` ${!like ? "block" : "hidden"}`}>
+                <g className={` ${!likeState ? "block" : "hidden"}`}>
                   <path
                     d="M8.68949 3.88656L8.06479 3.10989C6.34036 0.96597 3.18154 1.31923 1.8957 3.79981C1.27525 4.99675 1.24436 7.42586 1.81333 8.65259C3.72921 12.7834 7.31758 14.7369 8.0055 15.0815C8.08262 15.1201 8.1527 15.1687 8.22534 15.2152C8.54725 15.4213 8.95834 15.3954 9.25784 15.1376C9.31419 15.089 13.4404 13.2347 15.5657 8.65259C16.1346 7.42586 16.1037 4.99675 15.4833 3.79981C14.1974 1.31923 10.51 0.723394 8.68949 3.88656Z"
                     stroke="#525252"
                     strokeWidth="1.5"
                   />
                 </g>
-                {/* <g className={` ${likeFocus || like ? "block" : "hidden"}`}> */}
-                <g className={` ${like ? "block" : "hidden"}`}>
+                <g className={` ${likeState ? "block" : "hidden"}`}>
                   <path
                     d="M8.12553 3.88656L7.50083 3.10989C5.77639 0.96597 2.61758 1.31923 1.33173 3.79981C0.711282 4.99675 0.680397 7.42586 1.24936 8.65259C3.16525 12.7834 6.75362 14.7369 7.44153 15.0815C7.51865 15.1201 7.58873 15.1687 7.66137 15.2152C7.98329 15.4213 8.39438 15.3954 8.69387 15.1376C8.75023 15.089 12.8765 13.2347 15.0017 8.65259C15.5707 7.42586 15.5398 4.99675 14.9193 3.79981C13.6335 1.31923 9.94603 0.723394 8.12553 3.88656Z"
                     fill="#F4245E"
@@ -370,7 +274,7 @@ export default function Card({ text, time, postId, userId }) {
               </svg>
               <span
                 className={` font-Inter text-xs font-normal  ${
-                  like ? "text-red-like" : " text-neutral-500"
+                  likeState ? "text-red-like" : " text-neutral-500"
                 } `}
               >
                 {AllLike}
@@ -378,10 +282,7 @@ export default function Card({ text, time, postId, userId }) {
             </button>
 
             <div className="flex justify-center items-center gap-[0.3125rem]">
-              <button
-                // className={ ? "group" : ""}
-                onClick={() => setTrendingFocus(!TrendingFocus)}
-              >
+              <button onClick={() => setTrendingFocus(!TrendingFocus)}>
                 <svg
                   width={13}
                   height={15}
@@ -460,11 +361,7 @@ export default function Card({ text, time, postId, userId }) {
               </span>
             </div>
             <div>
-              {/* h-17 */}
-              <button
-                // className={`group ${shareFocus ? 'focus:opacity-0' : 'group-focus:opacity-100'}`}
-                onClick={() => setShareFocus(!shareFocus)}
-              >
+              <button onClick={() => setShareFocus(!shareFocus)}>
                 <svg
                   width={17}
                   height={17}
@@ -492,8 +389,8 @@ export default function Card({ text, time, postId, userId }) {
           </div>
         </div>
       </article>
-      {commentOpen &&
-        [...replyData.posts]
+      {commentOpen && replyPosts &&
+        [...replyPosts]
           .reverse()
           .map((twt) =>
             twt.content !== null ? (
@@ -503,10 +400,15 @@ export default function Card({ text, time, postId, userId }) {
                 text={twt.content}
                 userId={twt.user_id}
                 time={twt.posted_at}
+                user={twt.user}
+                likeCount={twt.likeCount}
+                isLiked={twt.isLiked}
+                repostCount={twt.repostCount}
+                isReposted={twt.isReposted}
               />
             ) : null
           )}
-      {commentOpen && <ReplyComp postId={postId} />}
+      {commentOpen && <ReplyComp postId={postId} onSuccess={handleReplySuccess} />}
     </div>
   );
 }

@@ -1,11 +1,6 @@
-import {
-  Routes,
-  Route,
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import { SpeedInsights } from "@vercel/speed-insights/react";
-import Home, { MobilePage } from "./pages/home/index.jsx";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Home from "./pages/home/index.jsx";
 import Step1 from "./pages/Login/step1.jsx";
 import Step2 from "./pages/Login/step2.jsx";
 import Step3 from "./pages/Login/step3.jsx";
@@ -15,13 +10,19 @@ import Compose from "./pages/compose/index.jsx";
 import User from "./pages/userProfile/index.jsx";
 import AuthProvider from "./context/AuthProvider";
 import Edit from "./pages/userProfile/editProfile.jsx";
-import StepHeader from "./components/stepHeader.jsx";
-import DesktopPage from "./pages/home/desktopPage.jsx";
-import ErrorModal from "./components/modal/Errormodal.jsx";
 import SignUpmodal from "./components/modal/SignUpmodal.jsx";
 import { ForyouTabContext } from "./context/AuthContext.jsx";
 import { useState } from "react";
-import HomeHeader from "./components/homecomp/HomeHeader.jsx";
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 30000, // 30 seconds
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
@@ -55,14 +56,6 @@ const router = createBrowserRouter([
     element: <Compose />,
   },
   {
-    path: "/test",
-    element: <DesktopPage />,
-  },
-  {
-    path: "/test2",
-    element: <HomeHeader />,
-  },
-  {
     path: "/home",
     element: <Home />,
   },
@@ -80,13 +73,13 @@ const router = createBrowserRouter([
 function App() {
   const [tab, setTab] = useState(true);
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       <ForyouTabContext.Provider value={{ tab, setTab }}>
         <AuthProvider>
           <RouterProvider router={router} />
         </AuthProvider>
       </ForyouTabContext.Provider>
-    </>
+    </QueryClientProvider>
   );
 }
 

@@ -11,12 +11,8 @@ import axios from "axios";
 import { convertBufferToDataURL, handleFileUpload } from "../../constants";
 
 EditMain.propTypes = {
-  // display_name: PropTypes.string.isRequired,
-  // userFullname: PropTypes.string,
-  // bio: PropTypes.string,
   userImage: PropTypes.string.isRequired,
   UserBackground: PropTypes.string.isRequired,
-  // bioLink: PropTypes.string,
 };
 
 const editUserSchema = yup.object().shape({
@@ -25,10 +21,8 @@ const editUserSchema = yup.object().shape({
     .required("display_name is Required")
     .min(2)
     .max(12),
-  // bio: userData.bio,
   location: yup.string(),
   website: yup.string(),
-  // website: userData.website,
 });
 
 export default function EditMain({ userImage, UserBackground }) {
@@ -38,9 +32,6 @@ export default function EditMain({ userImage, UserBackground }) {
   const [coverBuffer, setCoverBuffer] = useState();
   const [isbgImage, setIsbgImage] = useState(false);
   const [isproImage, setIsproImage] = useState(false);
-  // useEffect( () => {
-
-  // } , [] )
 
   const [user, setUser] = useState();
   const [inputValues, setInputValues] = useState({
@@ -55,16 +46,14 @@ export default function EditMain({ userImage, UserBackground }) {
   const getUserData = async () => {
     try {
       const response = await axios.get(
-        "https://one00xapi.onrender.com/api/geteditcuruser",
+        `${import.meta.env.VITE_API_BASE_URL}/api/geteditcuruser`,
         {
           withCredentials: true,
         }
       );
       setUser(response.data?.user || {});
       setCoverBuffer(response.data?.user?.cover_picture?.data);
-      // console.log(response.data?.user?.cover_picture);
       setProfileBuffer(response.data?.user?.profile_picture?.data);
-      // console.log(response.data?.user?.profile_picture);
     } catch (error) {
       console.error("Error fetching User Details:", error.message);
     }
@@ -96,8 +85,6 @@ export default function EditMain({ userImage, UserBackground }) {
     });
   };
 
-  // const [userData, setUserData] = useState(null);
-
   const handlebgImage = async (e) => {
     const file = e.target.files[0];
 
@@ -105,13 +92,7 @@ export default function EditMain({ userImage, UserBackground }) {
       try {
         const buffer = await handleFileUpload(file, "cover_picture");
         setCoverBuffer(buffer);
-        // console.log(coverBuffer);
         setIsbgImage(true);
-        // Send the profile image data to the backend
-        // You can handle this part based on your requirements
-        // ...
-
-        // Rest of your code
       } catch (error) {
         console.error("Error handling profile image:", error);
       }
@@ -125,13 +106,7 @@ export default function EditMain({ userImage, UserBackground }) {
       try {
         const buffer = await handleFileUpload(file, "profile_picture");
         setProfileBuffer(buffer);
-
         setIsproImage(true);
-        // Send the cover image data to the backend
-        // You can handle this part based on your requirements
-        // ...
-
-        // Rest of your code
       } catch (error) {
         console.error("Error handling cover image:", error);
       }
@@ -157,11 +132,9 @@ export default function EditMain({ userImage, UserBackground }) {
             .validate(inputValues)
             .then(() => {
               SetError("");
-              // console.log("Validation Sucessful");
             })
             .catch((error) => {
               SetError(error);
-              // console.error(error.message);
             });
 
           try {
@@ -170,18 +143,6 @@ export default function EditMain({ userImage, UserBackground }) {
             formData.append("bio", inputValues.bio);
             formData.append("location", inputValues.location);
             formData.append("website", inputValues.website);
-
-            // const profileBuffer = await handleFileUpload(
-            //   proimage,
-            //   "profile_picture"
-            // );
-
-            // const coverBuffer = await handleFileUpload(
-            //   coverPictureFile,
-            //   "cover_picture"
-            // );
-            // console.log(profileBuffer);
-            // console.log(coverBuffer);
 
             if (isproImage) {
               formData.append(
@@ -200,7 +161,7 @@ export default function EditMain({ userImage, UserBackground }) {
             }
 
             const response = await axios.put(
-              "https://one00xapi.onrender.com/api/editUser",
+              `${import.meta.env.VITE_API_BASE_URL}/api/editUser`,
               formData,
               {
                 withCredentials: true,
@@ -211,23 +172,13 @@ export default function EditMain({ userImage, UserBackground }) {
             );
 
             SetShowEditModal(false);
-            // window.location.reload(false);
             Setrender(!render);
-            // console.log("API response:", response.data);
           } catch (error) {
             console.error("API error:", error);
           }
-
-          // console.log("Submitted values", inputValues);
         }}
       >
         <EditHeader />
-
-        {/* <img
-                className="  w-full md:w-[350px] md:h-[200px] "
-                src={convertBufferToDataURL(userData?.image)}
-                alt="User Image"
-              /> */}
 
         <main>
           <div className="flex  justify-center items-center relative">
@@ -240,8 +191,7 @@ export default function EditMain({ userImage, UserBackground }) {
               />
             ) : (
               <img
-                className="  w-[350px] h-[200px]  "
-                // className=" w-[350px] h-[200px]"
+                className="w-[350px] h-[200px]"
                 src={UserBackground}
                 alt="bg-image"
               />
@@ -258,7 +208,6 @@ export default function EditMain({ userImage, UserBackground }) {
                 onChange={handlebgImage}
               />
             </div>
-            {/* reload bug  */}
             <button type="button" onClick={() => setCoverBuffer("")}>
               <img
                 className="absolute top-1/2  left-[60%] -translate-x-1/2 -translate-y-1/2     bg-edit-svg  p-1 rounded-full flex  items-center z-40"
@@ -304,7 +253,6 @@ export default function EditMain({ userImage, UserBackground }) {
               name="display_name"
               placeholder="Name"
               show="true"
-              // defaultValue={userFullname}
               value={inputValues.display_name}
               onChange={(e) =>
                 handleInputChange("display_name", e.target.value)
@@ -324,7 +272,6 @@ export default function EditMain({ userImage, UserBackground }) {
                 className="bg-inherit  w-full h-full  caret-twitter-blue focus:outline-none resize-none
       rounded-md placeholder-neutral-500 text-base text-neutral-50"
                 placeholder="Bio"
-                // defaultValue={bio}
                 value={inputValues.bio}
                 onChange={(e) => handleInputChange("bio", e.target.value)}
               />
@@ -340,7 +287,6 @@ export default function EditMain({ userImage, UserBackground }) {
               name="website"
               placeholder="Website"
               show="true"
-              // defaultValue={bioLink}
               value={inputValues.website}
               onChange={(e) => handleInputChange("website", e.target.value)}
             />

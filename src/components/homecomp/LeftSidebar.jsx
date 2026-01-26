@@ -1,6 +1,6 @@
-// Import statements
-import React, { useEffect } from "react";
+import { useEffect, useState, useContext, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import Logo100 from "../../assets/copy-link-100.svg";
 import HomeInactive from "../../assets/state-not-selectedhome-icon.svg";
 import HomeActive from "../../assets/homeActive.svg";
@@ -9,44 +9,30 @@ import IconInactive from "../../assets/menu-item-group.svg";
 import Logox from "../../assets/copy-link-group-27162.svg";
 import Button from "../button";
 import userAvatar from "../../assets/user-avatar.png";
-import ThreeDot from "../../assets/dark-theme-ellipses-group.svg";
-import { createPortal } from "react-dom";
-import TweetModal from "../modal/tweetModal"; // Removed .jsx extension
-import { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
-import { convertBufferToDataURL } from "../../constants";
 import SignOut from "../../assets/logout.svg";
-// import { ReactComponent as SignOutIcon } from "../../assets/logout.svg";
+import TweetModal from "../modal/tweetModal";
+import { AuthContext } from "../../context/AuthContext";
+import { convertBufferToDataURL } from "../../constants";
+import { useCurrentUser, useLogout } from "../../hooks";
 
-export function DesktopHome({ page, oncurrentLogUserChange }) {
-  const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
+function DesktopHome({ page, oncurrentLogUserChange }) {
+  const { setcurrentLogUser } = useContext(AuthContext);
 
-  const getCurrentUser = async () => {
-    try {
-      const response = await axios.get(
-        "https://one00xapi.onrender.com/api/curuser",
-        {
-          withCredentials: true,
-        }
-      );
-      const data = await response.data;
-      setcurrentLogUser(data);
-      oncurrentLogUserChange(data);
-      // console.log(data);
-    } catch (error) {
-      console.error("Error fetching current user:", error);
-    }
-  };
+  // Fetch current user using custom hook
+  const { data: currentUserData } = useCurrentUser();
 
+  // Update context and callback when user data changes
   useEffect(() => {
-    getCurrentUser();
-  }, []);
+    if (currentUserData) {
+      setcurrentLogUser(currentUserData);
+      oncurrentLogUserChange?.(currentUserData);
+    }
+  }, [currentUserData, setcurrentLogUser, oncurrentLogUserChange]);
 
   return (
     <>
       <div>
-        <Link to={"/home"} className="flex py-3 px-5 gap-5 ">
+        <Link to="/home" className="flex py-3 px-5 gap-5">
           <img src={page === "home" ? HomeActive : HomeInactive} alt="Home" />
           <p className="text-neutral-50 font-Inter text-[1.1875rem] font-medium">
             Home
@@ -55,8 +41,8 @@ export function DesktopHome({ page, oncurrentLogUserChange }) {
       </div>
       <div>
         <Link
-          to={`/user/${currentLogUser?.currUser}`}
-          className="flex py-3 px-5 gap-5 "
+          to={`/user/${currentUserData?.currUser}`}
+          className="flex py-3 px-5 gap-5"
         >
           <img
             src={page === "user" ? IconActive : IconInactive}
@@ -72,31 +58,28 @@ export function DesktopHome({ page, oncurrentLogUserChange }) {
 }
 
 export default function LeftSidebar({ page }) {
-  const { showTweetModal, SetShowTweetModal, currentLogUser } =
-    useContext(AuthContext);
-
+  const { showTweetModal, SetShowTweetModal, SetModal } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [currUser, setCurrUser] = useState(null);
 
-  const [currUser, SetCurrUser] = useState();
+  // Logout mutation hook
+  const { logout, isLoading: isLoggingOut } = useLogout();
 
-  const { showModal, Setrender, render, SetModal } = useContext(AuthContext);
+  const handleUserChange = useCallback((data) => {
+    setCurrUser(data);
+  }, []);
 
-  function SettingUser(data) {
-    SetCurrUser(data);
-    // console.log(data);
-  }
+  const handleSignOut = useCallback(async () => {
+    if (isLoggingOut) return;
 
-  async function doSignOut() {
     try {
-      await axios.post("https://one00xapi.onrender.com/api/logout", {
-        withCredentials: true,
-      });
+      await logout();
       SetModal(false);
       navigate("/");
-    } catch (error) {
-      console.error("Error :", error);
+    } catch {
+      // Error handled by hook
     }
-  }
+  }, [isLoggingOut, logout, SetModal, navigate]);
 
   return (
     <div className="flex p-5 flex-col h-screen justify-between border-r border-r-neutral-700">
@@ -107,7 +90,7 @@ export default function LeftSidebar({ page }) {
             <img src={Logox} alt="X" />
           </div>
         </div>
-        <DesktopHome page={page} oncurrentLogUserChange={SettingUser} />
+        <DesktopHome page={page} oncurrentLogUserChange={handleUserChange} />
         <div className="p-2.5">
           <div className="py-tx">
             <Button
@@ -125,16 +108,10 @@ export default function LeftSidebar({ page }) {
       <footer>
         <div className="flex justify-between items-center self-stretch">
           <Link to={`/user/${currUser?.currUser}`}>
-            <div
-              className="flex items-start gap-3"
-              onClick={() => {
-                // console.log("Link clicked");
-                Setrender(!render);
-              }}
-            >
-              {!!currUser?.dp?.data ? (
+            <div className="flex items-start gap-3">
+              {currUser?.dp?.data ? (
                 <img
-                  src={convertBufferToDataURL(currUser?.dp?.data)}
+                  src={convertBufferToDataURL(currUser.dp.data)}
                   alt="user-avatar"
                   className="w-12 rounded-full h-12"
                 />
@@ -142,7 +119,7 @@ export default function LeftSidebar({ page }) {
                 <img
                   src={userAvatar}
                   alt="user-avatar"
-                  className="w-12  rounded-full h-12"
+                  className="w-12 rounded-full h-12"
                 />
               )}
               <div className="flex flex-col items-start">
@@ -157,7 +134,11 @@ export default function LeftSidebar({ page }) {
           </Link>
 
           <div className="flex justify-center items-center w-[3rem] h-[3rem] px-[0.49413rem]">
-            <button onClick={() => doSignOut()}>
+            <button
+              onClick={handleSignOut}
+              disabled={isLoggingOut}
+              className="disabled:opacity-50"
+            >
               <img src={SignOut} alt="Sign Out" />
             </button>
           </div>

@@ -1,39 +1,21 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import Card from "./card";
-import axios from "axios";
-import { AuthContext, ForyouTabContext } from "../context/AuthContext";
+import { ForyouTabContext } from "../context/AuthContext";
+import { useFollowingFeed } from "../hooks/useFetch";
 
 export default function FollowingTweet() {
-  const { isLoading, render } = useContext(AuthContext);
   const { tab } = useContext(ForyouTabContext);
-  const [posts, setPosts] = useState([]);
 
-  const getAllPosts = async () => {
-    try {
-      const response = await axios.get(
-        "https://one00xapi.onrender.com/followingfeed",
-        {
-          withCredentials: true,
-        }
-      );
+  // Use React Query hook for fetching following feed
+  const { posts, isLoading } = useFollowingFeed(tab);
 
-      // console.log("FollowingTweet response:", response.data);
-      setPosts(response.data.posts);
-    } catch (error) {
-      console.error("Error fetching following posts:", error.message);
-    }
-  };
-
-  useEffect(() => {
-    // Fetch posts only when tab is true
-    if (tab) {
-      getAllPosts();
-    }
-  }, [tab, isLoading, render]);
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <>
-      {[...posts].map((twt) =>
+      {posts.map((twt) =>
         twt.content !== null ? (
           <Card
             key={twt.id}
@@ -41,6 +23,12 @@ export default function FollowingTweet() {
             text={twt.content}
             userId={twt.user_id}
             time={twt.posted_at}
+            user={twt.user}
+            likeCount={twt.likeCount}
+            isLiked={twt.isLiked}
+            repostCount={twt.repostCount}
+            isReposted={twt.isReposted}
+            replyCount={twt.replyCount}
           />
         ) : null
       )}

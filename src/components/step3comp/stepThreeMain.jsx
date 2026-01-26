@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import Input from "../../components/input";
 import Button from "../../components/button";
 import { useFormik } from "formik";
@@ -33,7 +33,7 @@ export default function StepThreeMain() {
 
       // Make the API call to verify the code
       const response = await axios.post(
-        "https://one00xapi.onrender.com/verifymail",
+        `${import.meta.env.VITE_API_BASE_URL}/verifymail`,
         {
           otp: values.verification,
         },
@@ -43,21 +43,15 @@ export default function StepThreeMain() {
         }
       );
 
-      // Check the response from the server
       if (response.data.msg === "You are verified") {
-        // console.log(response.data);
-        // console.log("Verification successful");
         resetForm();
         setSubmitting(false);
         navigate("/step4");
       } else {
         console.error("Verification failed");
-        // Handle the case where the verification failed
-        // Display an error message to the user
       }
     } catch (error) {
       console.error("Error verifying code:", error);
-      // Handle the error appropriately
     } finally {
       setLoading(false);
     }

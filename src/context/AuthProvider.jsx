@@ -1,44 +1,39 @@
-import { useContext, useState } from "react";
-import { TweetList } from "../constants";
+import { useState } from "react";
 import { AuthContext } from "./AuthContext";
 
 export default function AuthProvider({ children }) {
-  const [tweet, setTweet] = useState(TweetList);
+  // Modal states
   const [showModal, SetModal] = useState(false);
-  const [formData, setFormData] = useState({});
   const [showTweetModal, SetShowTweetModal] = useState(false);
   const [showEditModal, SetShowEditModal] = useState(false);
-  const [isLoading, SetLoading] = useState(false);
-  const [render, Setrender] = useState(false);
-  const [replyrender, Setreplyrender] = useState(false);
-  const [currentLogUser, setcurrentLogUser] = useState();
+
+  // Form data for multi-step registration
+  const [formData, setFormData] = useState({});
+
+  // Current logged in user
+  const [currentLogUser, setcurrentLogUser] = useState(null);
 
   return (
-    <>
-      <AuthContext.Provider
-        value={{
-          tweet,
-          setTweet,
-          showModal,
-          SetModal,
-          formData,
-          setFormData,
-          showTweetModal,
-          SetShowTweetModal,
-          showEditModal,
-          SetShowEditModal,
-          isLoading,
-          SetLoading,
-          render,
-          Setrender,
-          currentLogUser,
-          setcurrentLogUser,
-          replyrender,
-          Setreplyrender,
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
-    </>
+    <AuthContext.Provider
+      value={{
+        // Modal controls
+        showModal,
+        SetModal,
+        showTweetModal,
+        SetShowTweetModal,
+        showEditModal,
+        SetShowEditModal,
+
+        // Form data
+        formData,
+        setFormData,
+
+        // Current user
+        currentLogUser,
+        setcurrentLogUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   );
 }

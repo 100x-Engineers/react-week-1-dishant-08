@@ -1,82 +1,50 @@
-import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { useState, useCallback } from "react";
+import { useFollowStatus, useFollow } from "../../hooks";
 
-const FollowBtn = ({ follower, following }) => {
-  const [state, SetState] = useState(false);
-  const { render, Setrender } = useContext(AuthContext);
-  const Follow = async () => {
-    try {
-      const respone = await axios.post(
-        "https://one00xapi.onrender.com/api/follow",
-        {
-          following_id: following,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log(respone.data);
-      SetState(true);
-      Setrender(!render);
-    } catch (error) {
-      console.error(error, "Failed to follow");
-    }
-  };
-  const Unfollow = async () => {
-    try {
-      const respone = await axios.post(
-        "https://one00xapi.onrender.com/api/unfollow",
-        {
-          following_id: following,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log(respone.data);
-      SetState(false);
-      Setrender(!render);
-    } catch (error) {
-      console.error(error, "Failed to follow");
-    }
-  };
+const FollowBtn = ({ following }) => {
+  // Local state for optimistic updates
+  const [localFollowing, setLocalFollowing] = useState(null);
 
-  const getFollowingStatus = async () => {
+  // Fetch follow status
+  const { isFollowing: serverFollowing, refetch } = useFollowStatus(following);
+
+  // Follow/unfollow mutation
+  const { follow, unfollow, isLoading } = useFollow();
+
+  // Use local state for optimistic updates, fallback to server data
+  const isFollowing = localFollowing !== null ? localFollowing : serverFollowing;
+
+  const handleToggleFollow = useCallback(async () => {
+    if (isLoading) return;
+
+    // Optimistic update
+    const newState = !isFollowing;
+    setLocalFollowing(newState);
+
     try {
-      const response = await axios.get(
-        `https://one00xapi.onrender.com/api/checkFollowStatus?following_id=${following}`,
-        {
-          withCredentials: true,
-        }
-      );
-      // console.log(response.data);
-      SetState(response.data.status);
-    } catch (error) {
-      console.error(error, "Failed to  Get Following Status");
+      if (newState) {
+        await follow(following);
+      } else {
+        await unfollow(following);
+      }
+      // Refetch to sync with server
+      refetch();
+    } catch {
+      // Revert on error
+      setLocalFollowing(!newState);
     }
-  };
-  useEffect(() => {
-    getFollowingStatus();
-  }, []);
-  useEffect(() => {
-    following && getFollowingStatus();
-  }, [following, render]);
+  }, [isFollowing, isLoading, follow, unfollow, following, refetch]);
 
   return (
-    <>
-      <button
-        className={` ${
-          !state ? "text-black  bg-white " : "text-neutral-50"
-        }  text-[1rem] font-bold font-Inter py-2 px-5 rounded-[1.875rem] mt-2 mr-4 border border-edit-stroke self-end `}
-        onClick={() => {
-          if (state) Unfollow();
-          else Follow();
-        }}
-      >
-        {state ? "Following" : "Follow"}
-      </button>
-    </>
+    <button
+      className={`${
+        !isFollowing ? "text-black bg-white" : "text-neutral-50"
+      } text-[1rem] font-bold font-Inter py-2 px-5 rounded-[1.875rem] mt-2 mr-4 border border-edit-stroke self-end disabled:opacity-50`}
+      onClick={handleToggleFollow}
+      disabled={isLoading}
+    >
+      {isLoading ? "..." : isFollowing ? "Following" : "Follow"}
+    </button>
   );
 };
 

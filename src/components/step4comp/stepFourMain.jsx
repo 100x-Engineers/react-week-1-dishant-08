@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import Input from "../../components/input";
 import Button from "../../components/button";
 import { BoldText, DescriptionText } from "../../components/textcomp";
@@ -41,10 +41,9 @@ export default function StepFourMain() {
             ...values,
             username: formData.name + "08",
           };
-          console.log(apiValue);
 
           const response = await axios.post(
-            "https://one00xapi.onrender.com/api/signup",
+            `${import.meta.env.VITE_API_BASE_URL}/api/signup`,
             {
               username: apiValue.username,
               email: apiValue.email,
@@ -57,12 +56,9 @@ export default function StepFourMain() {
             }
           );
 
-          console.log("API response:", response.data);
-          // Do any additional actions or navigate as needed
           navigate("/signup");
         } catch (error) {
           console.error("API error:", error);
-          // Handle API error if needed
         } finally {
           setSubmitting(false);
           setLoading(false);

@@ -3,32 +3,23 @@ import HomeActive from "../../assets/homeActive.svg";
 import IconActive from "../../assets/IconActive.svg";
 import IconInactive from "../../assets/IconInactive.svg";
 import { Link } from "react-router-dom";
-import { useState, useEffect, useContext } from "react";
-import axios from "axios";
+import { useEffect, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
+import { useCurrentUser } from "../../hooks/useFetch";
 
 export default function HomeFooter({ page }) {
   const { currentLogUser, setcurrentLogUser } = useContext(AuthContext);
-  const getCurrentUser = async () => {
-    try {
-      const response = await axios.get(
-        "https://one00xapi.onrender.com/api/curuser",
-        {
-          withCredentials: true,
-        }
-      );
-      const data = await response.data;
-      setcurrentLogUser(data);
-      // oncurrentLogUserChange(data);
-      // console.log(data);
-    } catch (error) {
-      console.error("Error fetching current user:", error);
-    }
-  };
 
+  // Use React Query hook for current user
+  const { data: userData } = useCurrentUser();
+
+  // Update context when user data is available
   useEffect(() => {
-    getCurrentUser();
-  }, []);
+    if (userData) {
+      setcurrentLogUser(userData);
+    }
+  }, [userData, setcurrentLogUser]);
+
   return (
     <>
       <footer className="flex flex-col justify-end flex-grow fixed bottom-0 left-0 right-0">

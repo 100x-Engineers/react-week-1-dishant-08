@@ -1,11 +1,10 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import Input from "../../components/input";
 import Button from "../../components/button";
 import { BoldText, DescriptionText } from "../../components/textcomp";
 import { Link, useNavigate } from "react-router-dom";
 import { object, string } from "yup";
 import { useFormik } from "formik";
-import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
 import StepHeader from "../stepHeader";
 
@@ -25,24 +24,20 @@ export default function StepFourMain() {
 
       try {
         const response = await axios.post(
-          "https://one00xapi.onrender.com/api/login",
+          `${import.meta.env.VITE_API_BASE_URL}/api/login`,
           {
             email: "randomEmail@example.com",
             password: "randomPassword",
           },
           {
             withCredentials: true,
-          }
+          },
         );
 
-        // console.log("API response:", response.data);
-
-        // Do any additional actions or navigate as needed
         navigate("/home");
       } catch (error) {
         console.error("API error:", error);
         setError(error.response.data);
-        // Handle guest login error if needed
       } finally {
         SetLoading(false);
       }
@@ -51,7 +46,6 @@ export default function StepFourMain() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  // const { formData, setFormData } = useContext(AuthContext);
 
   const {
     values,
@@ -68,29 +62,24 @@ export default function StepFourMain() {
     },
     validationSchema: validation,
     onSubmit: async (values, { setSubmitting }) => {
-      // console.log(values);
       if (!isLoading) {
         SetLoading(true);
         try {
           const response = await axios.post(
-            "https://one00xapi.onrender.com/api/login",
+            `${import.meta.env.VITE_API_BASE_URL}/api/login`,
             {
               email: values.email,
               password: values.password,
             },
             {
               withCredentials: true,
-            }
+            },
           );
 
-          // console.log("API response:", response.data);
-
-          // Do any additional actions or navigate as needed
           navigate("/home");
         } catch (error) {
           console.error("API error:", error);
           setError(error.response.data);
-          // Handle API error if needed
         } finally {
           SetLoading(false);
           setSubmitting(false);

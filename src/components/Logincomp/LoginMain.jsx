@@ -5,34 +5,6 @@ import { useContext, useState } from "react";
 import Modal from "../modal/modal";
 import { AuthContext } from "../../context/AuthContext";
 
-const handleSignUp = async () => {
-  try {
-    let response = await fetch(
-      "https://one00x-react-backend.onrender.com/login",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: "batman@example.com",
-          password: "gothamrocks",
-        }),
-      }
-    );
-    // console.log(response.status);
-    if (response.ok) {
-      const jsonres = response.json();
-      return jsonres;
-    } else {
-      // console.log("HTTPS Status : ", response.status);
-      // console.log("Error  ");
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
 export default function LoginMain() {
   const { showModal, SetModal } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -63,20 +35,6 @@ export default function LoginMain() {
           </Button>
           {showModal &&
             createPortal(<Modal />, document.getElementById("portal"))}
-          {/* {showModal && <Modal />} */}
-
-          {/* </div> */}
-          {/* <div className=" md:hidden ">
-          <Button
-            variant="default"
-            type="default"
-            // onClick={() => SetModal(true)}
-            onClick={() => navigate("/step56")}
-          >
-            Create Account
-          </Button>
-          {showModal && <Modal />}
-        </div> */}
 
           <div className="flex justify-center items-center gap-1">
             <div className="bg-neutral-700 w-[155.5px] h-[1px]" />
@@ -94,15 +52,9 @@ export default function LoginMain() {
               variant="outline"
               type="default"
               onClick={() => {
-                navigate("/signup"); // Navigate to "/step1" when the button is clicked
+                navigate("/signup");
                 SetModal(true);
               }}
-              // onClick={async () => {
-              //   const res = await handleSignUp();
-              //   console.log(res.message);
-
-              //   navigate("/home");
-              // }}
             >
               Sign Up
             </Button>
