@@ -1,4 +1,4 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery, useInfiniteQuery } from "@tanstack/react-query";
 import api from "./useApi";
 
 /**
@@ -147,6 +147,78 @@ export function useFollowStatus(followingId) {
   return {
     data: result.data ?? null,
     isFollowing: result.data?.status || false,
+    isLoading: result.isLoading,
+    error: result.error?.message || null,
+    refetch: result.refetch,
+  };
+}
+
+// ============================================
+// INFINITE SCROLL HOOKS
+// ============================================
+
+const FEED_LIMIT = 8;
+
+/**
+ * Infinite scroll hook for fetching the main feed
+ * Returns paginated data with fetchNextPage capability
+ */
+export function useInfiniteFeed() {
+  const result = useInfiniteQuery({
+    queryKey: ["feed", "infinite"],
+    queryFn: async ({ pageParam = 0 }) => {
+      const response = await api.get(`/api/feed?limit=${FEED_LIMIT}&offset=${pageParam}`);
+      return response.data;
+    },
+    getNextPageParam: (lastPage) => {
+      if (lastPage.pagination?.hasMore) {
+        return lastPage.pagination.nextOffset;
+      }
+      return undefined;
+    },
+    initialPageParam: 0,
+  });
+
+  const allPosts = result.data?.pages.flatMap((page) => page.posts) || [];
+
+  return {
+    posts: allPosts,
+    fetchNextPage: result.fetchNextPage,
+    hasNextPage: result.hasNextPage,
+    isFetchingNextPage: result.isFetchingNextPage,
+    isLoading: result.isLoading,
+    error: result.error?.message || null,
+    refetch: result.refetch,
+  };
+}
+
+/**
+ * Infinite scroll hook for fetching following feed
+ * Returns paginated data with fetchNextPage capability
+ */
+export function useInfiniteFollowingFeed() {
+  const result = useInfiniteQuery({
+    queryKey: ["followingFeed", "infinite"],
+    queryFn: async ({ pageParam = 0 }) => {
+      const response = await api.get(`/followingfeed?limit=${FEED_LIMIT}&offset=${pageParam}`);
+      return response.data;
+    },
+    getNextPageParam: (lastPage) => {
+      if (lastPage.pagination?.hasMore) {
+        return lastPage.pagination.nextOffset;
+      }
+      return undefined;
+    },
+    initialPageParam: 0,
+  });
+
+  const allPosts = result.data?.pages.flatMap((page) => page.posts) || [];
+
+  return {
+    posts: allPosts,
+    fetchNextPage: result.fetchNextPage,
+    hasNextPage: result.hasNextPage,
+    isFetchingNextPage: result.isFetchingNextPage,
     isLoading: result.isLoading,
     error: result.error?.message || null,
     refetch: result.refetch,

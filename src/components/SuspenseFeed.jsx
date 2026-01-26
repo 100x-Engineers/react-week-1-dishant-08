@@ -1,13 +1,12 @@
-import { Suspense, memo, useContext, useEffect, useMemo } from "react";
+import { memo, useContext, useEffect, useRef, useCallback } from "react";
 import Card from "./card";
 import { FeedSkeleton } from "./TweetSkeleton";
 import ErrorBoundary from "./ErrorBoundary";
 import { AuthContext } from "../context/AuthContext";
-import { useSuspenseFeed, useSuspenseCurrentUser } from "../hooks/useFetch";
+import { useInfiniteFeed, useCurrentUser } from "../hooks/useFetch";
 
 /**
- * Batch of tweets for partial rendering
- * Renders a chunk of tweets within its own Suspense boundary
+ * Batch of tweets for rendering
  */
 const TweetBatch = memo(function TweetBatch({ tweets }) {
   return (
@@ -34,15 +33,35 @@ const TweetBatch = memo(function TweetBatch({ tweets }) {
 });
 
 /**
- * Inner feed content that uses Suspense hooks
- * Separated to allow Suspense boundary to catch the data fetching
+ * Loading spinner for infinite scroll
+ */
+function LoadingSpinner() {
+  return (
+    <div className="flex justify-center items-center py-4">
+      <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+}
+
+/**
+ * Inner feed content with infinite scroll
  */
 function FeedContent() {
   const { setcurrentLogUser } = useContext(AuthContext);
+  const observerRef = useRef(null);
+  const loadMoreRef = useRef(null);
 
-  // These hooks will suspend until data is available
-  const { posts } = useSuspenseFeed();
-  const { data: currentUser } = useSuspenseCurrentUser();
+  // Fetch current user
+  const { data: currentUser } = useCurrentUser();
+
+  // Infinite scroll feed
+  const {
+    posts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteFeed();
 
   // Update context when current user data is available
   useEffect(() => {
@@ -51,15 +70,39 @@ function FeedContent() {
     }
   }, [currentUser, setcurrentLogUser]);
 
-  // Split posts into batches for progressive rendering
-  const batches = useMemo(() => {
-    const BATCH_SIZE = 5;
-    const result = [];
-    for (let i = 0; i < posts.length; i += BATCH_SIZE) {
-      result.push(posts.slice(i, i + BATCH_SIZE));
-    }
-    return result;
-  }, [posts]);
+  // Intersection Observer for infinite scroll
+  const handleObserver = useCallback(
+    (entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    observerRef.current = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: "100px",
+      threshold: 0,
+    });
+
+    observerRef.current.observe(element);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [handleObserver]);
+
+  if (isLoading) {
+    return <FeedSkeleton count={6} />;
+  }
 
   if (posts.length === 0) {
     return (
@@ -71,29 +114,31 @@ function FeedContent() {
 
   return (
     <>
-      {/* Render first batch immediately */}
-      {batches[0] && <TweetBatch tweets={batches[0]} />}
+      <TweetBatch tweets={posts} />
 
-      {/* Render remaining batches with individual Suspense boundaries */}
-      {batches.slice(1).map((batch, index) => (
-        <Suspense key={`batch-${index + 1}`} fallback={<FeedSkeleton count={batch.length} />}>
-          <TweetBatch tweets={batch} />
-        </Suspense>
-      ))}
+      {/* Infinite scroll trigger */}
+      <div ref={loadMoreRef} className="h-1" />
+
+      {/* Loading indicator */}
+      {isFetchingNextPage && <LoadingSpinner />}
+
+      {/* End of feed message */}
+      {!hasNextPage && posts.length > 0 && (
+        <div className="flex justify-center py-4 text-neutral-500 text-sm">
+          You've reached the end
+        </div>
+      )}
     </>
   );
 }
 
 /**
- * Main Suspense-enabled feed component
- * Provides error boundaries and loading states with skeleton UI
+ * Main feed component with infinite scroll
  */
 export default function SuspenseFeed() {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<FeedSkeleton count={5} />}>
-        <FeedContent />
-      </Suspense>
+      <FeedContent />
     </ErrorBoundary>
   );
 }

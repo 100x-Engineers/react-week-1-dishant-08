@@ -1,11 +1,11 @@
-import { Suspense, memo, useMemo } from "react";
+import { memo, useEffect, useRef, useCallback } from "react";
 import Card from "./card";
 import { FeedSkeleton } from "./TweetSkeleton";
 import ErrorBoundary from "./ErrorBoundary";
-import { useSuspenseFollowingFeed } from "../hooks/useFetch";
+import { useInfiniteFollowingFeed } from "../hooks/useFetch";
 
 /**
- * Batch of tweets for partial rendering
+ * Batch of tweets for rendering
  */
 const TweetBatch = memo(function TweetBatch({ tweets }) {
   return (
@@ -32,20 +32,65 @@ const TweetBatch = memo(function TweetBatch({ tweets }) {
 });
 
 /**
- * Inner following feed content using Suspense hooks
+ * Loading spinner for infinite scroll
+ */
+function LoadingSpinner() {
+  return (
+    <div className="flex justify-center items-center py-4">
+      <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+}
+
+/**
+ * Inner following feed content with infinite scroll
  */
 function FollowingFeedContent() {
-  const { posts } = useSuspenseFollowingFeed();
+  const observerRef = useRef(null);
+  const loadMoreRef = useRef(null);
 
-  // Split posts into batches for progressive rendering
-  const batches = useMemo(() => {
-    const BATCH_SIZE = 5;
-    const result = [];
-    for (let i = 0; i < posts.length; i += BATCH_SIZE) {
-      result.push(posts.slice(i, i + BATCH_SIZE));
-    }
-    return result;
-  }, [posts]);
+  // Infinite scroll feed
+  const {
+    posts,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+  } = useInfiniteFollowingFeed();
+
+  // Intersection Observer for infinite scroll
+  const handleObserver = useCallback(
+    (entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    },
+    [fetchNextPage, hasNextPage, isFetchingNextPage]
+  );
+
+  useEffect(() => {
+    const element = loadMoreRef.current;
+    if (!element) return;
+
+    observerRef.current = new IntersectionObserver(handleObserver, {
+      root: null,
+      rootMargin: "100px",
+      threshold: 0,
+    });
+
+    observerRef.current.observe(element);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [handleObserver]);
+
+  if (isLoading) {
+    return <FeedSkeleton count={6} />;
+  }
 
   if (posts.length === 0) {
     return (
@@ -59,28 +104,31 @@ function FollowingFeedContent() {
 
   return (
     <>
-      {/* Render first batch immediately */}
-      {batches[0] && <TweetBatch tweets={batches[0]} />}
+      <TweetBatch tweets={posts} />
 
-      {/* Render remaining batches with individual Suspense boundaries */}
-      {batches.slice(1).map((batch, index) => (
-        <Suspense key={`batch-${index + 1}`} fallback={<FeedSkeleton count={batch.length} />}>
-          <TweetBatch tweets={batch} />
-        </Suspense>
-      ))}
+      {/* Infinite scroll trigger */}
+      <div ref={loadMoreRef} className="h-1" />
+
+      {/* Loading indicator */}
+      {isFetchingNextPage && <LoadingSpinner />}
+
+      {/* End of feed message */}
+      {!hasNextPage && posts.length > 0 && (
+        <div className="flex justify-center py-4 text-neutral-500 text-sm">
+          You've reached the end
+        </div>
+      )}
     </>
   );
 }
 
 /**
- * Main Suspense-enabled following feed component
+ * Main following feed component with infinite scroll
  */
 export default function SuspenseFollowingFeed() {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<FeedSkeleton count={5} />}>
-        <FollowingFeedContent />
-      </Suspense>
+      <FollowingFeedContent />
     </ErrorBoundary>
   );
 }
