@@ -8,19 +8,18 @@ import { useCreatePost } from "../../hooks";
 export default function Compose() {
   const [tweetText, setTweetText] = useState("");
   const navigate = useNavigate();
-  const { createPost, isLoading, error } = useCreatePost();
 
-  const handlePost = useCallback(async () => {
-    if (!tweetText.trim() || isLoading || tweetText.length > 280) return;
-
-    try {
-      await createPost(tweetText);
+  const { createPost, isLoading, error } = useCreatePost({
+    onSuccess: () => {
       setTweetText("");
       navigate("/home");
-    } catch {
-      // Error is handled by the hook
-    }
-  }, [tweetText, isLoading, createPost, navigate]);
+    },
+  });
+
+  const handlePost = useCallback(() => {
+    if (!tweetText.trim() || isLoading || tweetText.length > 280) return;
+    createPost(tweetText);
+  }, [tweetText, isLoading, createPost]);
 
   return (
     <div className="bg-neutral-1000 flex flex-col min-h-screen">

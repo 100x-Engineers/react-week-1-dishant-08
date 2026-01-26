@@ -1,4 +1,7 @@
-import { useMutation as useReactQueryMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation as useReactQueryMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import api from "./useApi";
 
 /**
@@ -12,9 +15,10 @@ export function useCreatePost(options = {}) {
       const response = await api.post("/api/post", { content });
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
-      queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
+    onSuccess: async () => {
+      // Wait for invalidation to complete before calling onSuccess callback
+      await queryClient.invalidateQueries({ queryKey: ["feed"] });
+      await queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
       options.onSuccess?.();
     },
     onError: options.onError,
@@ -22,6 +26,7 @@ export function useCreatePost(options = {}) {
 
   return {
     createPost: mutation.mutate,
+    createPostAsync: mutation.mutateAsync,
     isLoading: mutation.isPending,
     error: mutation.error?.message || null,
     data: mutation.data,
@@ -101,7 +106,10 @@ export function useRetweet() {
     retweet: retweetMutation.mutate,
     unretweet: unretweetMutation.mutate,
     isLoading: retweetMutation.isPending || unretweetMutation.isPending,
-    error: retweetMutation.error?.message || unretweetMutation.error?.message || null,
+    error:
+      retweetMutation.error?.message ||
+      unretweetMutation.error?.message ||
+      null,
   };
 }
 
@@ -113,22 +121,30 @@ export function useFollow() {
 
   const followMutation = useReactQueryMutation({
     mutationFn: async (followingId) => {
-      const response = await api.post("/api/follow", { following_id: followingId });
+      const response = await api.post("/api/follow", {
+        following_id: followingId,
+      });
       return response.data;
     },
     onSuccess: (_, followingId) => {
-      queryClient.invalidateQueries({ queryKey: ["followStatus", followingId] });
+      queryClient.invalidateQueries({
+        queryKey: ["followStatus", followingId],
+      });
       queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
     },
   });
 
   const unfollowMutation = useReactQueryMutation({
     mutationFn: async (followingId) => {
-      const response = await api.post("/api/unfollow", { following_id: followingId });
+      const response = await api.post("/api/unfollow", {
+        following_id: followingId,
+      });
       return response.data;
     },
     onSuccess: (_, followingId) => {
-      queryClient.invalidateQueries({ queryKey: ["followStatus", followingId] });
+      queryClient.invalidateQueries({
+        queryKey: ["followStatus", followingId],
+      });
       queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
     },
   });
@@ -137,7 +153,8 @@ export function useFollow() {
     follow: followMutation.mutate,
     unfollow: unfollowMutation.mutate,
     isLoading: followMutation.isPending || unfollowMutation.isPending,
-    error: followMutation.error?.message || unfollowMutation.error?.message || null,
+    error:
+      followMutation.error?.message || unfollowMutation.error?.message || null,
   };
 }
 
@@ -190,4 +207,3 @@ export function useLogout() {
     error: mutation.error?.message || null,
   };
 }
-
