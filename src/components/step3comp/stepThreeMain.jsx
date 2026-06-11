@@ -1,84 +1,38 @@
-import { useContext, useState } from "react";
 import Input from "../../components/input";
 import Button from "../../components/button";
-import { useFormik } from "formik";
 import { useNavigate } from "react-router-dom";
 import { BoldText, DescriptionText } from "../../components/textcomp";
-import { object, number } from "yup";
-import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
+import useSignupFlow from "../../hooks/useSignupFlow";
 
 export default function StepThreeMain() {
   const navigate = useNavigate();
-  const { formData } = useContext(AuthContext);
-  const [isLoading, setLoading] = useState(false);
-
-  // Form validation schema using Yup
-  const validationSchema = object({
-    verification: number().required("Please enter the code"),
-  });
-
-  // Formik form handling
-  const formik = useFormik({
-    initialValues: {
-      verification: "",
-    },
-    validationSchema: validationSchema,
-    onSubmit: handleSubmit,
-  });
-
-  async function handleSubmit(values, { setSubmitting, resetForm }) {
-    try {
-      setLoading(true);
-
-      // Make the API call to verify the code
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_BASE_URL}/verifymail`,
-        {
-          otp: values.verification,
-        },
-        {
-          withCredentials: true,
-          // Add headers if required (e.g., Authorization header with API key/token)
-        }
-      );
-
-      if (response.data.msg === "You are verified") {
-        resetForm();
-        setSubmitting(false);
-        navigate("/step4");
-      } else {
-        console.error("Verification failed");
-      }
-    } catch (error) {
-      console.error("Error verifying code:", error);
-    } finally {
-      setLoading(false);
-    }
-  }
+  const { data, errors, serverError, isSubmitting, setField, verifyOtp } =
+    useSignupFlow();
 
   return (
     <form
-      onSubmit={formik.handleSubmit}
+      onSubmit={(e) => {
+        e.preventDefault();
+        verifyOtp();
+      }}
       className="flex flex-col h-screen md:h-full"
     >
       <main className="flex flex-col items-start gap-5 self-stretch">
         <div className="flex flex-col items-start gap-1 self-stretch">
           <BoldText>Create your account</BoldText>
           <DescriptionText>
-            Enter the verification code sent to {formData.email}
+            Enter the verification code sent to {data.email}
           </DescriptionText>
         </div>
         <div className="flex flex-col items-end gap-3 self-stretch group">
           <Input
-            name="verification"
+            name="otp"
             placeholder="Verification code"
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            value={formik.values.verification}
-            disabled={formik.isSubmitting}
-            error={formik.errors.verification}
-            touched={formik.touched.verification}
+            value={data.otp}
+            onChange={(e) => setField("otp", e.target.value)}
+            disabled={isSubmitting}
+            errors={errors.otp}
+            touched={!!errors.otp}
           />
           <p
             className="text-twitter-blue font-Inter text-[0.875rem]"
@@ -87,10 +41,11 @@ export default function StepThreeMain() {
             Didn’t receive a code?
           </p>
         </div>
+        {serverError && <p className="text-red-600">{serverError}</p>}
       </main>
       <footer className="flex pt-20 md:pt-[280px] flex-col justify-end w-full items-center gap-2.5 flex-grow flex-shrink-0 self-stretch">
-        <Button variant="default" type="next" isDisabled={isLoading}>
-          {isLoading ? "Loading..." : "Next"}
+        <Button variant="default" type="next" isDisabled={isSubmitting}>
+          {isSubmitting ? "Loading..." : "Next"}
         </Button>
       </footer>
     </form>

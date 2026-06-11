@@ -1,93 +1,53 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Input from "../../components/input";
 import Button from "../../components/button";
 import { BoldText, DescriptionText } from "../../components/textcomp";
-import { useNavigate } from "react-router-dom";
-import { object, string } from "yup";
-import { useFormik } from "formik";
-import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
+import useSignupFlow from "../../hooks/useSignupFlow";
 
 export default function StepFourMain() {
-  const navigate = useNavigate();
-  const [isLoading, setLoading] = useState(false);
-  const validation = object({
-    password: string("Enter Password").required("Please Enter the Password"),
-  });
-
   const [showPassword, setShowPassword] = useState(false);
-  const { formData, setFormData } = useContext(AuthContext);
-
-  const {
-    values,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    isSubmitting,
-  } = useFormik({
-    initialValues: {
-      password: "",
-    },
-    validationSchema: validation,
-    onSubmit: async (values, { setSubmitting }) => {
-      if (!isLoading) {
-        setLoading(true);
-
-        try {
-          const apiValue = {
-            ...formData,
-            ...values,
-            username: formData.name + "08",
-          };
-
-          const response = await axios.post(
-            `${import.meta.env.VITE_API_BASE_URL}/api/signup`,
-            {
-              username: apiValue.username,
-              email: apiValue.email,
-              display_name: apiValue.name, // You might want to verify if this is the correct property
-              date_of_birth: apiValue.date_of_birth,
-              password: apiValue.password, // Assuming hashehPassword is defined
-            },
-            {
-              withCredentials: true,
-            }
-          );
-
-          navigate("/signup");
-        } catch (error) {
-          console.error("API error:", error);
-        } finally {
-          setSubmitting(false);
-          setLoading(false);
-        }
-      }
-    },
-  });
+  const { data, errors, serverError, isSubmitting, setField, submitSignup } =
+    useSignupFlow();
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col h-screen md:h-full">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        submitSignup();
+      }}
+      className="flex flex-col h-screen md:h-full"
+    >
       <main className="flex flex-col items-start gap-5 self-stretch">
         <div className="flex flex-col items-start gap-1 self-stretch">
-          <BoldText>You’ll need a password</BoldText>
-          <DescriptionText>Make sure it’s 8 characters or more</DescriptionText>
+          <BoldText>Pick a username & password</BoldText>
+          <DescriptionText>
+            Your username is unique. The password must be 8 characters or more.
+          </DescriptionText>
+        </div>
+        <div className="w-full">
+          <Input
+            name="username"
+            placeholder="Username"
+            value={data.username}
+            onChange={(e) => setField("username", e.target.value)}
+            disabled={isSubmitting}
+            errors={errors.username}
+            touched={!!errors.username}
+          />
         </div>
         <Input
           name="password"
           type={showPassword ? "text" : "password"}
           placeholder="Password"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.password}
+          value={data.password}
+          onChange={(e) => setField("password", e.target.value)}
           disabled={isSubmitting}
           errors={errors.password}
-          touched={touched.password}
+          touched={!!errors.password}
         >
           <button
             className="icon-button"
@@ -152,10 +112,11 @@ export default function StepFourMain() {
             )}
           </button>
         </Input>
+        {serverError && <p className="text-red-600">{serverError}</p>}
       </main>
       <footer className="flex pt-20 md:pt-[300px] flex-col justify-end w-full items-center gap-2.5 flex-grow flex-shrink-0 self-stretch">
-        <Button variant="default" type="next" isDisabled={isLoading}>
-          {isLoading ? "Creating Account" : "Next"}
+        <Button variant="default" type="next" isDisabled={isSubmitting}>
+          {isSubmitting ? "Creating Account" : "Next"}
         </Button>
       </footer>
     </form>

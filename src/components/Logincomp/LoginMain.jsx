@@ -1,13 +1,13 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import Button from "../../components/button";
-import { useContext, useState } from "react";
 import Modal from "../modal/modal";
-import { AuthContext } from "../../context/AuthContext";
 
 export default function LoginMain() {
-  const { showModal, SetModal } = useContext(AuthContext);
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isModalOpen = pathname !== "/";
+
   return (
     <>
       <main className="md:flex md:flex-row  md:items-center ">
@@ -21,19 +21,14 @@ export default function LoginMain() {
             </div>
           </section>
 
-          {/* <div className="hidden md:block  md:w-full "> */}
           <Button
             variant="default"
             type="default"
-            onClick={() => {
-              navigate("/step1"); // Navigate to "/step1" when the button is clicked
-              SetModal(true);
-            }}
-            // onClick={() => navigate("/step1")}
+            onClick={() => navigate("/step1")}
           >
             Create Account
           </Button>
-          {showModal &&
+          {isModalOpen &&
             createPortal(<Modal />, document.getElementById("portal"))}
 
           <div className="flex justify-center items-center gap-1">
@@ -51,10 +46,7 @@ export default function LoginMain() {
             <Button
               variant="outline"
               type="default"
-              onClick={() => {
-                navigate("/signup");
-                SetModal(true);
-              }}
+              onClick={() => navigate("/signup")}
             >
               Sign Up
             </Button>

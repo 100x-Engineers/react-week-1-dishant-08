@@ -7,9 +7,6 @@ export default function AuthProvider({ children }) {
   const [showTweetModal, SetShowTweetModal] = useState(false);
   const [showEditModal, SetShowEditModal] = useState(false);
 
-  // Form data for multi-step registration
-  const [formData, setFormData] = useState({});
-
   // Current logged in user
   const [currentLogUser, setcurrentLogUser] = useState(null);
 
@@ -23,10 +20,6 @@ export default function AuthProvider({ children }) {
         SetShowTweetModal,
         showEditModal,
         SetShowEditModal,
-
-        // Form data
-        formData,
-        setFormData,
 
         // Current user
         currentLogUser,
