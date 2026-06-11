@@ -4,6 +4,67 @@ import {
 } from "@tanstack/react-query";
 import api from "./useApi";
 
+// Every cache that holds enriched post objects (plain { posts } envelopes and
+// infinite-query { pages: [{ posts }] } shapes).
+const POST_CACHE_PREFIXES = [
+  ["feed"],
+  ["followingFeed"],
+  ["userFeed"],
+  ["replies"],
+];
+
+const updatePage = (page, postId, updater) => {
+  if (!page?.posts?.some((post) => post.id === postId)) return page;
+  return {
+    ...page,
+    posts: page.posts.map((post) =>
+      post.id === postId ? updater(post) : post
+    ),
+  };
+};
+
+const updatePostEverywhere = (queryClient, postId, updater) => {
+  POST_CACHE_PREFIXES.forEach((prefix) => {
+    queryClient.setQueriesData({ queryKey: prefix }, (old) => {
+      if (!old) return old;
+      if (old.pages) {
+        return {
+          ...old,
+          pages: old.pages.map((page) => updatePage(page, postId, updater)),
+        };
+      }
+      return updatePage(old, postId, updater);
+    });
+  });
+};
+
+// Shared optimistic-update wiring: apply the updater to the post in every
+// cache immediately, roll all caches back if the request fails. No
+// invalidation on success — the cache already matches the server.
+const usePostMutation = (mutationFn, updater) => {
+  const queryClient = useQueryClient();
+  return useReactQueryMutation({
+    mutationFn,
+    onMutate: async (postId) => {
+      await Promise.all(
+        POST_CACHE_PREFIXES.map((prefix) =>
+          queryClient.cancelQueries({ queryKey: prefix })
+        )
+      );
+      const snapshots = POST_CACHE_PREFIXES.flatMap((prefix) =>
+        queryClient.getQueriesData({ queryKey: prefix })
+      );
+      updatePostEverywhere(queryClient, postId, updater);
+      return { snapshots };
+    },
+    onError: (_err, _postId, context) => {
+      context?.snapshots?.forEach(([key, data]) =>
+        queryClient.setQueryData(key, data)
+      );
+    },
+  });
+};
+
 /**
  * Hook for creating a new post/tweet
  */
@@ -19,6 +80,7 @@ export function useCreatePost(options = {}) {
       // Wait for invalidation to complete before calling onSuccess callback
       await queryClient.invalidateQueries({ queryKey: ["feed"] });
       await queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
+      await queryClient.invalidateQueries({ queryKey: ["userFeed"] });
       options.onSuccess?.();
     },
     onError: options.onError,
@@ -35,34 +97,22 @@ export function useCreatePost(options = {}) {
 }
 
 /**
- * Hook for like/unlike operations
+ * Hook for like/unlike operations with optimistic cache updates
  */
 export function useLike() {
-  const queryClient = useQueryClient();
+  const likeMutation = usePostMutation(
+    (postId) => api.post("/api/like", { post_id: postId }),
+    (post) => ({ ...post, isLiked: true, likeCount: post.likeCount + 1 })
+  );
 
-  const likeMutation = useReactQueryMutation({
-    mutationFn: async (postId) => {
-      const response = await api.post("/api/like", { post_id: postId });
-      return response.data;
-    },
-    onSuccess: (_, postId) => {
-      queryClient.invalidateQueries({ queryKey: ["like", postId] });
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
-      queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
-    },
-  });
-
-  const unlikeMutation = useReactQueryMutation({
-    mutationFn: async (postId) => {
-      const response = await api.delete(`/api/unlike/${postId}`);
-      return response.data;
-    },
-    onSuccess: (_, postId) => {
-      queryClient.invalidateQueries({ queryKey: ["like", postId] });
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
-      queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
-    },
-  });
+  const unlikeMutation = usePostMutation(
+    (postId) => api.delete(`/api/unlike/${postId}`),
+    (post) => ({
+      ...post,
+      isLiked: false,
+      likeCount: Math.max(0, post.likeCount - 1),
+    })
+  );
 
   return {
     like: likeMutation.mutate,
@@ -73,34 +123,26 @@ export function useLike() {
 }
 
 /**
- * Hook for retweet/unretweet operations
+ * Hook for retweet/unretweet operations with optimistic cache updates
  */
 export function useRetweet() {
-  const queryClient = useQueryClient();
+  const retweetMutation = usePostMutation(
+    (postId) => api.post(`/api/retweet/${postId}`),
+    (post) => ({
+      ...post,
+      isReposted: true,
+      repostCount: post.repostCount + 1,
+    })
+  );
 
-  const retweetMutation = useReactQueryMutation({
-    mutationFn: async (postId) => {
-      const response = await api.post(`/api/retweet/${postId}`);
-      return response.data;
-    },
-    onSuccess: (_, postId) => {
-      queryClient.invalidateQueries({ queryKey: ["retweet", postId] });
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
-      queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
-    },
-  });
-
-  const unretweetMutation = useReactQueryMutation({
-    mutationFn: async (postId) => {
-      const response = await api.delete(`/api/unretweet/${postId}`);
-      return response.data;
-    },
-    onSuccess: (_, postId) => {
-      queryClient.invalidateQueries({ queryKey: ["retweet", postId] });
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
-      queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
-    },
-  });
+  const unretweetMutation = usePostMutation(
+    (postId) => api.delete(`/api/unretweet/${postId}`),
+    (post) => ({
+      ...post,
+      isReposted: false,
+      repostCount: Math.max(0, post.repostCount - 1),
+    })
+  );
 
   return {
     retweet: retweetMutation.mutate,
@@ -159,7 +201,8 @@ export function useFollow() {
 }
 
 /**
- * Hook for posting a reply
+ * Hook for posting a reply: bumps the parent's replyCount in every cache and
+ * refreshes the reply list itself.
  */
 export function useReply() {
   const queryClient = useQueryClient();
@@ -170,8 +213,11 @@ export function useReply() {
       return response.data;
     },
     onSuccess: (_, { postId }) => {
+      updatePostEverywhere(queryClient, postId, (post) => ({
+        ...post,
+        replyCount: (post.replyCount || 0) + 1,
+      }));
       queryClient.invalidateQueries({ queryKey: ["replies", postId] });
-      queryClient.invalidateQueries({ queryKey: ["feed"] });
     },
   });
 

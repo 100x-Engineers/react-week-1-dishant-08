@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import cancel from "../../assets/create-account-1-signup-x.svg";
 import userAvatar from "../../assets/user-avatar.png";
-import Button from "../../components/button";
+import Button from "../../components/Button";
 import { Link, useNavigate } from "react-router-dom";
 import { useCreatePost } from "../../hooks";
 

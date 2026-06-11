@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import Step1 from "../../pages/Login/step1";
+import Step1 from "../../pages/Login/Step1";
 
 {
 }

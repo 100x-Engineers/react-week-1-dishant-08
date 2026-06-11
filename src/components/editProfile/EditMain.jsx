@@ -1,6 +1,6 @@
 import camera from "../../assets/material-symbols-add-a-photo-outline.svg";
 import cancel from "../../assets/create-account-1-signup-x.svg";
-import Input from "../input";
+import Input from "../Input";
 import PropTypes from "prop-types"; // ES6
 import { useContext, useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";

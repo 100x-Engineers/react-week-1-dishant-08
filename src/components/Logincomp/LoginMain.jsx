@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
-import Button from "../../components/button";
-import Modal from "../modal/modal";
+import Button from "../../components/Button";
+import Modal from "../modal/Modal";
 
 export default function LoginMain() {
   const navigate = useNavigate();

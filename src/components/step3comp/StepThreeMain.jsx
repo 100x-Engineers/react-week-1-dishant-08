@@ -1,7 +1,7 @@
-import Input from "../../components/input";
-import Button from "../../components/button";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
 import { useNavigate } from "react-router-dom";
-import { BoldText, DescriptionText } from "../../components/textcomp";
+import { BoldText, DescriptionText } from "../../components/TextComp";
 import useSignupFlow from "../../hooks/useSignupFlow";
 
 export default function StepThreeMain() {

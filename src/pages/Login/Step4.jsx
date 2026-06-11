@@ -1,5 +1,5 @@
-import StepFourMain from "../../components/step4comp/stepFourMain";
-import StepHeder from "../../components/stepHeader";
+import StepFourMain from "../../components/step4comp/StepFourMain";
+import StepHeder from "../../components/StepHeader";
 
 export default function Step4() {
   return (

@@ -1,32 +1,31 @@
 import { memo, useEffect, useRef, useCallback } from "react";
-import Card from "./card";
+import Card from "./Card";
 import { FeedSkeleton } from "./TweetSkeleton";
 import ErrorBoundary from "./ErrorBoundary";
+import { FeedError } from "./SuspenseFeed";
 import { useInfiniteFollowingFeed } from "../hooks/useFetch";
 
 /**
- * Batch of tweets for rendering
+ * Batch of tweets for rendering (null-content rows are filtered server-side)
  */
 const TweetBatch = memo(function TweetBatch({ tweets }) {
   return (
     <>
-      {tweets.map((twt) =>
-        twt.content !== null ? (
-          <Card
-            key={twt.id}
-            postId={twt.id}
-            text={twt.content}
-            userId={twt.user_id}
-            time={twt.posted_at}
-            user={twt.user}
-            likeCount={twt.likeCount}
-            isLiked={twt.isLiked}
-            repostCount={twt.repostCount}
-            isReposted={twt.isReposted}
-            replyCount={twt.replyCount}
-          />
-        ) : null
-      )}
+      {tweets.map((twt) => (
+        <Card
+          key={twt.id}
+          postId={twt.id}
+          text={twt.content}
+          userId={twt.user_id}
+          time={twt.posted_at}
+          user={twt.user}
+          likeCount={twt.likeCount}
+          isLiked={twt.isLiked}
+          repostCount={twt.repostCount}
+          isReposted={twt.isReposted}
+          replyCount={twt.replyCount}
+        />
+      ))}
     </>
   );
 });
@@ -56,6 +55,9 @@ function FollowingFeedContent() {
     hasNextPage,
     isFetchingNextPage,
     isLoading,
+    isError,
+    error,
+    refetch,
   } = useInfiniteFollowingFeed();
 
   // Intersection Observer for infinite scroll
@@ -90,6 +92,10 @@ function FollowingFeedContent() {
 
   if (isLoading) {
     return <FeedSkeleton count={6} />;
+  }
+
+  if (isError) {
+    return <FeedError message={error} onRetry={refetch} />;
   }
 
   if (posts.length === 0) {

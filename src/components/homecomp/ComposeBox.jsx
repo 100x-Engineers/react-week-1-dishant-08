@@ -1,25 +1,24 @@
 import { useContext, useState, useCallback } from "react";
-import userAvatar from "../assets/user-avatar.png";
-import Button from "./Button";
-import { AuthContext } from "../context/AuthContext";
-import { useReply } from "../hooks";
+import userAvatar from "../../assets/user-avatar.png";
+import Button from "../Button";
+import { AuthContext } from "../../context/AuthContext";
+import { useCreatePost } from "../../hooks";
 
-const ReplyComp = ({ postId, onSuccess }) => {
+export default function ComposeBox() {
   const [tweetText, setTweetText] = useState("");
   const { currentLogUser } = useContext(AuthContext);
-  const { reply, isLoading, error } = useReply();
+  const { createPost, isLoading, error } = useCreatePost();
 
-  const handleReply = useCallback(async () => {
+  const handlePost = useCallback(async () => {
     if (!tweetText.trim() || isLoading) return;
 
     try {
-      await reply(postId, tweetText);
+      await createPost(tweetText);
       setTweetText("");
-      onSuccess?.();
     } catch {
       // Error is handled by the hook
     }
-  }, [tweetText, isLoading, reply, postId, onSuccess]);
+  }, [tweetText, isLoading, createPost]);
 
   return (
     <div className="flex p-4 gap-3 border-b border-b-neutral-700">
@@ -28,28 +27,26 @@ const ReplyComp = ({ postId, onSuccess }) => {
         alt="user-avatar"
         className="w-12 rounded-full h-12 object-cover"
       />
-      <div className="flex-1 flex flex-col gap-2">
+      <div className="flex-1 flex flex-col gap-1">
         <textarea
           className="bg-inherit w-full mt-1.5 caret-twitter-blue focus:outline-none resize-none
           rounded-md placeholder-neutral-500 text-base text-neutral-50"
-          placeholder="Post your reply"
+          placeholder="What's happening?"
           value={tweetText}
           onChange={(e) => setTweetText(e.target.value)}
         />
         {error && (
-          <p className="text-red-400 text-xs">Failed to post reply</p>
+          <p className="text-red-400 text-xs">Failed to post. Please try again.</p>
         )}
       </div>
       <Button
         variant="solidBlue"
         type="small"
-        onClick={handleReply}
+        onClick={handlePost}
         isDisabled={isLoading || !tweetText.trim()}
       >
-        {isLoading ? "Replying..." : "Reply"}
+        {isLoading ? "Posting..." : "Post"}
       </Button>
     </div>
   );
-};
-
-export default ReplyComp;
+}

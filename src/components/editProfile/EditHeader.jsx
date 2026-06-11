@@ -1,8 +1,13 @@
 import { useContext } from "react";
+import PropTypes from "prop-types";
 import { AuthContext } from "../../context/AuthContext";
 
+EditHeader.propTypes = {
+  isSaving: PropTypes.bool,
+};
+
 export default function EditHeader({ isSaving = false }) {
-  const { showEditModal, SetShowEditModal } = useContext(AuthContext);
+  const { SetShowEditModal } = useContext(AuthContext);
   return (
     <>
       <header className=" flex py-3 pr-4 justify-between items-center self-stretch ">

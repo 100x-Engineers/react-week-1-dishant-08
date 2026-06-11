@@ -1,7 +1,8 @@
 import { AuthContext } from "../context/AuthContext";
 import { useContext, useEffect, useRef, useCallback } from "react";
-import Card from "./card";
+import Card from "./Card";
 import { FeedSkeleton } from "./TweetSkeleton";
+import { FeedError } from "./SuspenseFeed";
 import { useInfiniteUserFeed, useCurrentUser } from "../hooks/useFetch";
 
 export default function UserTweet({ userId }) {
@@ -15,6 +16,9 @@ export default function UserTweet({ userId }) {
     hasNextPage,
     isFetchingNextPage,
     isLoading: feedLoading,
+    isError,
+    error,
+    refetch,
   } = useInfiniteUserFeed(userId);
   const { data: currentUser } = useCurrentUser();
 
@@ -55,6 +59,18 @@ export default function UserTweet({ userId }) {
 
   if (feedLoading) {
     return <FeedSkeleton count={3} />;
+  }
+
+  if (isError) {
+    return <FeedError message={error} onRetry={refetch} />;
+  }
+
+  if (posts.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[200px] p-4 text-center">
+        <p className="text-neutral-400">No posts yet.</p>
+      </div>
+    );
   }
 
   return (

@@ -1,5 +1,5 @@
-import StepTwoMain from "../../components/step2comp/stepTwoMain";
-import StepHeder from "../../components/stepHeader";
+import StepTwoMain from "../../components/step2comp/StepTwoMain";
+import StepHeder from "../../components/StepHeader";
 
 export default function Step2() {
   return (

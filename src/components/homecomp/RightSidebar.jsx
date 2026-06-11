@@ -1,4 +1,4 @@
-import TrendingBlock from "./Trendingblock";
+import TrendingBlock from "./TrendingBlock";
 
 export default function RightSidebar() {
   return (

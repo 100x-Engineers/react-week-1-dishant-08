@@ -1,5 +1,5 @@
-import StepThreeMain from "../../components/step3comp/stepThreeMain";
-import StepHeder from "../../components/stepHeader";
+import StepThreeMain from "../../components/step3comp/StepThreeMain";
+import StepHeder from "../../components/StepHeader";
 
 export default function Step3() {
   return (

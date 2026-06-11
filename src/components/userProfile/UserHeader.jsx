@@ -4,9 +4,9 @@ import calender from "../../assets/calendar-sv.svg";
 import PropTypes from "prop-types"; // ES6
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import Edit from "../../pages/userProfile/editProfile";
+import Edit from "../../pages/userProfile/EditProfile";
 import { createPortal } from "react-dom";
-import FollowBtn from "./followbtn";
+import FollowBtn from "./FollowBtn";
 import bgImage from "../../assets/bgimage.png";
 import userAvatar from "../../assets/user-avatar.png";
 

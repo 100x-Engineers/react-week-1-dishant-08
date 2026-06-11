@@ -1,6 +1,6 @@
-import Button from "../../components/button";
-import Input from "../../components/input";
-import { BoldText, DescriptionText } from "../../components/textcomp";
+import Button from "../../components/Button";
+import Input from "../../components/Input";
+import { BoldText, DescriptionText } from "../../components/TextComp";
 import DateSelector from "../../components/DateSelect";
 import useSignupFlow from "../../hooks/useSignupFlow";
 

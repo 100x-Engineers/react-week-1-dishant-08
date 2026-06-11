@@ -1,16 +1,16 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Home from "./pages/home/index.jsx";
-import Step1 from "./pages/Login/step1.jsx";
-import Step2 from "./pages/Login/step2.jsx";
-import Step3 from "./pages/Login/step3.jsx";
-import Step4 from "./pages/Login/step4.jsx";
+import Step1 from "./pages/Login/Step1.jsx";
+import Step2 from "./pages/Login/Step2.jsx";
+import Step3 from "./pages/Login/Step3.jsx";
+import Step4 from "./pages/Login/Step4.jsx";
 import Login from "./pages/Login/Login.jsx";
 import Compose from "./pages/compose/index.jsx";
 import User from "./pages/userProfile/index.jsx";
 import AuthProvider from "./context/AuthProvider";
-import Edit from "./pages/userProfile/editProfile.jsx";
-import SignUpmodal from "./components/modal/SignUpmodal.jsx";
+import Edit from "./pages/userProfile/EditProfile.jsx";
+import SignUpmodal from "./components/modal/SignUpModal.jsx";
 import { ForyouTabContext } from "./context/AuthContext.jsx";
 import { useState } from "react";
 

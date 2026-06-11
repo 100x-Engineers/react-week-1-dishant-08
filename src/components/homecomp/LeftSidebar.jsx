@@ -7,10 +7,10 @@ import HomeActive from "../../assets/homeActive.svg";
 import IconActive from "../../assets/IconActive.svg";
 import IconInactive from "../../assets/menu-item-group.svg";
 import Logox from "../../assets/copy-link-group-27162.svg";
-import Button from "../button";
+import Button from "../Button";
 import userAvatar from "../../assets/user-avatar.png";
 import SignOut from "../../assets/logout.svg";
-import TweetModal from "../modal/tweetModal";
+import TweetModal from "../modal/TweetModal";
 import { AuthContext } from "../../context/AuthContext";
 import { useCurrentUser, useLogout } from "../../hooks";
 

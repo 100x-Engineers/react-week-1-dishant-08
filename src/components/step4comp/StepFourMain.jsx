@@ -1,7 +1,7 @@
 import { useState } from "react";
-import Input from "../../components/input";
-import Button from "../../components/button";
-import { BoldText, DescriptionText } from "../../components/textcomp";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+import { BoldText, DescriptionText } from "../../components/TextComp";
 import useSignupFlow from "../../hooks/useSignupFlow";
 
 export default function StepFourMain() {

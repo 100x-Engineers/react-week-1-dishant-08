@@ -1,96 +1,39 @@
-import { useContext, useState } from "react";
+import { memo, useState } from "react";
 import userAvatar from "../assets/user-avatar.png";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { Link } from "react-router-dom";
-import { AuthContext } from "../context/AuthContext";
 import { useLike, useRetweet } from "../hooks/useMutation";
 
-CardReplyComp.propTypes = {
-  text: PropTypes.string.isRequired,
-  postId: PropTypes.string,
-  userId: PropTypes.string,
-  time: PropTypes.string,
-  user: PropTypes.shape({
-    username: PropTypes.string,
-    display_name: PropTypes.string,
-    profile_picture: PropTypes.string,
-  }),
-  likeCount: PropTypes.number,
-  isLiked: PropTypes.bool,
-  repostCount: PropTypes.number,
-  isReposted: PropTypes.bool,
-};
-
-export default function CardReplyComp({
+// Like/repost state comes from the React Query cache via props (updated
+// optimistically); memo() keeps sibling replies from re-rendering.
+const CardReplyComp = memo(function CardReplyComp({
   text,
   time,
   postId,
-  user: initialUser,
-  likeCount: initialLikeCount = 0,
-  isLiked: initialIsLiked = false,
-  repostCount: initialRepostCount = 0,
-  isReposted: initialIsReposted = false,
+  user,
+  likeCount = 0,
+  isLiked = false,
+  repostCount = 0,
+  isReposted = false,
 }) {
-  const date = new Date();
-
   const [TrendingFocus, setTrendingFocus] = useState(false);
-  const [AllLike, setAllLike] = useState(initialLikeCount);
-  const [AllRepost, setAllRepost] = useState(initialRepostCount);
-  const [likeState, setLikeState] = useState(initialIsLiked);
-  const [currUser] = useState(
-    initialUser
-      ? {
-          currUser: initialUser.username,
-          disName: initialUser.display_name,
-          dp: initialUser.profile_picture,
-        }
-      : null
-  );
-  const { render, Setrender } = useContext(AuthContext);
-  const [RetweetFocus, setRetweetFocus] = useState(initialIsReposted);
   const [shareFocus, setShareFocus] = useState(false);
-  const [commentOpen, SetCommentOpen] = useState(false);
 
-  // Use React Query hooks for mutations
   const { like, unlike } = useLike();
   const { retweet, unretweet } = useRetweet();
 
-  const likedPost = () => {
-    like(postId);
-    setLikeState(true);
-    setAllLike((prev) => prev + 1);
-  };
-
-  const unlikedPost = () => {
-    unlike(postId);
-    setLikeState(false);
-    setAllLike((prev) => prev - 1);
-  };
-
-  const rePost = () => {
-    retweet(postId);
-    setRetweetFocus(true);
-    setAllRepost((prev) => prev + 1);
-  };
-
-  const unrePost = () => {
-    unretweet(postId);
-    setRetweetFocus(false);
-    setAllRepost((prev) => prev - 1);
-  };
+  const toggleLike = () => (isLiked ? unlike(postId) : like(postId));
+  const toggleRepost = () => (isReposted ? unretweet(postId) : retweet(postId));
 
   const timeStamp = moment(time).fromNow();
 
   return (
     <div className="bg-gray-900 ">
       <article className="flex py-2 px-4  gap-4 border-b border-b-neutral-700">
-        <Link
-          to={`/user/${currUser?.currUser}`}
-          onClick={() => Setrender(!render)}
-        >
+        <Link to={`/user/${user?.username}`}>
           <img
-            src={currUser?.dp || userAvatar}
+            src={user?.profile_picture || userAvatar}
             alt="user-avatar"
             className="w-12 rounded-full h-12 object-cover"
           />
@@ -99,11 +42,10 @@ export default function CardReplyComp({
           <div className="flex flex-col items-start gap-1 self-stretch">
             <div className="flex items-center gap-[0.0625rem] self-stretch">
               <span className="text-neutral-50 font-Inter text-[1rem] font-semibold">
-                {currUser?.disName}
+                {user?.display_name}
               </span>
               <span className="font-Inter text-[1rem] font-normal text-neutral-500">
-                @{currUser?.currUser} •{" "}
-                {timeStamp ? timeStamp : date.getSeconds() + "s"}{" "}
+                @{user?.username} • {timeStamp}{" "}
               </span>
             </div>
             <div className="self-stretch text-neutral-50 font-Inter text-[1rem]">
@@ -111,59 +53,9 @@ export default function CardReplyComp({
             </div>
           </div>
           <div className="flex py-3 px-0 justify-between items-center self-stretch">
-            <div
-              onClick={() => {
-                SetCommentOpen(!commentOpen);
-              }}
-              className="flex justify-center items-center gap-[0.3125rem]"
-            >
-              {!commentOpen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  viewBox="0 0 15 15"
-                  fill="none"
-                >
-                  <path
-                    d="M12.1092 9.64524L8.03202 13.1684V11.3646V10.6146H7.28202H5.56048C2.90372 10.6146 0.75 8.46089 0.75 5.80413C0.75 3.14738 2.90373 0.993652 5.56048 0.993652H8.88896C11.609 0.993652 13.814 3.19869 13.814 5.91874C13.814 7.34959 13.1918 8.7097 12.1092 9.64524Z"
-                    stroke="#525252"
-                    strokeWidth="1.5"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="15"
-                  height="15"
-                  viewBox="0 0 15 15"
-                  fill="none"
-                >
-                  <path
-                    d="M12.1092 9.64524L8.03202 13.1684V11.3646V10.6146H7.28202H5.56048C2.90372 10.6146 0.75 8.46089 0.75 5.80413C0.75 3.14738 2.90373 0.993652 5.56048 0.993652H8.88896C11.609 0.993652 13.814 3.19869 13.814 5.91874C13.814 7.34959 13.1918 8.7097 12.1092 9.64524Z"
-                    stroke="#1D9BF0"
-                    strokeWidth="2.0"
-                  />
-                </svg>
-              )}
-              <span
-                className={`font-Inter text-xs font-normal ${
-                  commentOpen ? "text-twitter-blue " : "text-neutral-500"
-                } `}
-              >
-                0
-              </span>
-            </div>
-
             <button
               className="flex justify-center items-center gap-[0.3125rem]"
-              onClick={() => {
-                if (RetweetFocus) {
-                  unrePost();
-                } else {
-                  rePost();
-                }
-              }}
+              onClick={toggleRepost}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -172,7 +64,7 @@ export default function CardReplyComp({
                 viewBox="0 0 21 15"
                 fill="none"
               >
-                <g className={` ${!RetweetFocus ? "block" : "hidden"}`}>
+                <g className={` ${!isReposted ? "block" : "hidden"}`}>
                   <path
                     d="M3.72097 1.48621L1.56409 3.64312M3.72097 1.48621L5.87787 3.64312M3.72097 1.48621L3.72097 10.7214C3.72097 12.2918 4.99404 13.5649 6.56445 13.5649L11.4858 13.5649"
                     stroke="#525252"
@@ -188,7 +80,7 @@ export default function CardReplyComp({
                     strokeLinejoin="round"
                   />
                 </g>
-                <g className={` ${RetweetFocus ? "block" : "hidden"}`}>
+                <g className={` ${isReposted ? "block" : "hidden"}`}>
                   <path
                     d="M3.15688 1.48621L1 3.64312M3.15688 1.48621L5.31379 3.64312M3.15688 1.48621L3.15688 10.7214C3.15688 12.2918 4.42995 13.5649 6.00037 13.5649L10.9217 13.5649"
                     stroke="#00BE74"
@@ -207,22 +99,16 @@ export default function CardReplyComp({
               </svg>
               <span
                 className={` font-Inter text-xs font-normal  ${
-                  RetweetFocus ? "text-Success" : " text-neutral-500"
+                  isReposted ? "text-Success" : " text-neutral-500"
                 } `}
               >
-                {AllRepost}
+                {repostCount}
               </span>
             </button>
 
             <button
               className="flex justify-center items-center gap-[0.3125rem]"
-              onClick={() => {
-                if (likeState) {
-                  unlikedPost();
-                } else {
-                  likedPost();
-                }
-              }}
+              onClick={toggleLike}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -231,14 +117,14 @@ export default function CardReplyComp({
                 viewBox="0 0 17 17"
                 fill="none"
               >
-                <g className={` ${!likeState ? "block" : "hidden"}`}>
+                <g className={` ${!isLiked ? "block" : "hidden"}`}>
                   <path
                     d="M8.68949 3.88656L8.06479 3.10989C6.34036 0.96597 3.18154 1.31923 1.8957 3.79981C1.27525 4.99675 1.24436 7.42586 1.81333 8.65259C3.72921 12.7834 7.31758 14.7369 8.0055 15.0815C8.08262 15.1201 8.1527 15.1687 8.22534 15.2152C8.54725 15.4213 8.95834 15.3954 9.25784 15.1376C9.31419 15.089 13.4404 13.2347 15.5657 8.65259C16.1346 7.42586 16.1037 4.99675 15.4833 3.79981C14.1974 1.31923 10.51 0.723394 8.68949 3.88656Z"
                     stroke="#525252"
                     strokeWidth="1.5"
                   />
                 </g>
-                <g className={` ${likeState ? "block" : "hidden"}`}>
+                <g className={` ${isLiked ? "block" : "hidden"}`}>
                   <path
                     d="M8.12553 3.88656L7.50083 3.10989C5.77639 0.96597 2.61758 1.31923 1.33173 3.79981C0.711282 4.99675 0.680397 7.42586 1.24936 8.65259C3.16525 12.7834 6.75362 14.7369 7.44153 15.0815C7.51865 15.1201 7.58873 15.1687 7.66137 15.2152C7.98329 15.4213 8.39438 15.3954 8.69387 15.1376C8.75023 15.089 12.8765 13.2347 15.0017 8.65259C15.5707 7.42586 15.5398 4.99675 14.9193 3.79981C13.6335 1.31923 9.94603 0.723394 8.12553 3.88656Z"
                     fill="#F4245E"
@@ -249,10 +135,10 @@ export default function CardReplyComp({
               </svg>
               <span
                 className={` font-Inter text-xs font-normal  ${
-                  likeState ? "text-red-like" : " text-neutral-500"
+                  isLiked ? "text-red-like" : " text-neutral-500"
                 } `}
               >
-                {AllLike}
+                {likeCount}
               </span>
             </button>
 
@@ -366,4 +252,22 @@ export default function CardReplyComp({
       </article>
     </div>
   );
-}
+});
+
+CardReplyComp.propTypes = {
+  text: PropTypes.string.isRequired,
+  postId: PropTypes.string,
+  userId: PropTypes.string,
+  time: PropTypes.string,
+  user: PropTypes.shape({
+    username: PropTypes.string,
+    display_name: PropTypes.string,
+    profile_picture: PropTypes.string,
+  }),
+  likeCount: PropTypes.number,
+  isLiked: PropTypes.bool,
+  repostCount: PropTypes.number,
+  isReposted: PropTypes.bool,
+};
+
+export default CardReplyComp;

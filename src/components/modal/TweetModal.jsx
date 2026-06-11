@@ -1,6 +1,6 @@
 import cancel from "../../assets/create-account-1-signup-x.svg";
 import userAvatar from "../../assets/user-avatar.png";
-import Button from "../button";
+import Button from "../Button";
 
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
