@@ -11,7 +11,7 @@ export default function HomeHeader() {
 
   return (
     <header className="md:hidden flex flex-col items-start shrink-0 rounded-2xl">
-      <div className=" flex py-5 px-4 justify-center  w-full   border-b border-b-neutral-700">
+      <div className="relative flex py-5 px-4 justify-center  w-full   border-b border-b-neutral-700">
         <Link to={`/user/${currentLogUser?.currUser}`}>
           <img
             src={currentLogUser?.dp || userAvatar}

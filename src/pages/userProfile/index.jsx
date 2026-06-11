@@ -70,7 +70,7 @@ export default function User() {
         <LeftSidebar page="user" />
       </div>
 
-      <div className="w-full md:w-[37.5rem] h-screen px-[0.0625rem] flex flex-col overflow-y-auto no-scrollbar pb-16 md:pb-0">
+      <div className="w-full md:w-[37.5rem] h-screen px-[0.0625rem] flex flex-col overflow-y-auto no-scrollbar pb-16 md:pb-0 md:border-r md:border-r-neutral-700">
         {center}
       </div>
 

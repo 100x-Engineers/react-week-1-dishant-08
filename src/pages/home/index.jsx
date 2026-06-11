@@ -24,7 +24,7 @@ export default function Home() {
         <LeftSidebar page="home" />
       </div>
 
-      <div className="w-full md:w-[37.5rem] h-screen px-[0.0625rem] flex flex-col overflow-y-auto no-scrollbar pb-16 md:pb-0">
+      <div className="w-full md:w-[37.5rem] h-screen px-[0.0625rem] flex flex-col overflow-y-auto no-scrollbar pb-16 md:pb-0 md:border-r md:border-r-neutral-700">
         <HomeHeader />
         <div className="hidden md:flex p-4 border-b border-b-neutral-700">
           <p className="text-neutral-50 font-Inter text-[1.1875rem] font-bold">

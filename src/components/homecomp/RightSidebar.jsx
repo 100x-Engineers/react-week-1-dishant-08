@@ -3,7 +3,7 @@ import TrendingBlock from "./TrendingBlock";
 export default function RightSidebar() {
   return (
     <>
-      <div className="flex  flex-col items-start pt-2.5 pr-5 pb-0 pl-5 gap-tx  border-neutral-700 border-l ">
+      <div className="flex  flex-col items-start pt-2.5 pr-5 pb-0 pl-5 gap-tx ">
         <div className="group relative">
           <input
             type="search"
