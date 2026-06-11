@@ -4,7 +4,6 @@ import RightSidebar from "../../components/homecomp/RightSidebar";
 import userAvatar from "../../assets/user-avatar.png";
 import Button from "../../components/button";
 import { AuthContext, ForyouTabContext } from "../../context/AuthContext";
-import { convertBufferToDataURL } from "../../constants";
 import ForyouTab from "../../components/homecomp/ForyouTab";
 import { useCreatePost } from "../../hooks";
 import SuspenseFeed from "../../components/SuspenseFeed";
@@ -39,15 +38,11 @@ export default function DesktopPage() {
           </div>
           <ForyouTab />
           <div className="flex p-4 gap-3 border-b border-b-neutral-700">
-            {currentLogUser?.dp?.data ? (
-              <img
-                src={convertBufferToDataURL(currentLogUser.dp.data)}
-                alt="user-avatar"
-                className="w-14 rounded-full h-12"
-              />
-            ) : (
-              <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
-            )}
+            <img
+              src={currentLogUser?.dp || userAvatar}
+              alt="user-avatar"
+              className="w-12 rounded-full h-12 object-cover"
+            />
             <div className="flex-1 flex flex-col gap-1">
               <textarea
                 className="bg-inherit w-full mt-1.5 caret-twitter-blue focus:outline-none resize-none

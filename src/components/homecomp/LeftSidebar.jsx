@@ -12,7 +12,6 @@ import userAvatar from "../../assets/user-avatar.png";
 import SignOut from "../../assets/logout.svg";
 import TweetModal from "../modal/tweetModal";
 import { AuthContext } from "../../context/AuthContext";
-import { convertBufferToDataURL } from "../../constants";
 import { useCurrentUser, useLogout } from "../../hooks";
 
 function DesktopHome({ page, oncurrentLogUserChange }) {
@@ -109,19 +108,11 @@ export default function LeftSidebar({ page }) {
         <div className="flex justify-between items-center self-stretch">
           <Link to={`/user/${currUser?.currUser}`}>
             <div className="flex items-start gap-3">
-              {currUser?.dp?.data ? (
-                <img
-                  src={convertBufferToDataURL(currUser.dp.data)}
-                  alt="user-avatar"
-                  className="w-12 rounded-full h-12"
-                />
-              ) : (
-                <img
-                  src={userAvatar}
-                  alt="user-avatar"
-                  className="w-12 rounded-full h-12"
-                />
-              )}
+              <img
+                src={currUser?.dp || userAvatar}
+                alt="user-avatar"
+                className="w-12 rounded-full h-12 object-cover"
+              />
               <div className="flex flex-col items-start">
                 <p className="text-neutral-50 font-Inter text-fx font-bold">
                   {currUser?.disName}

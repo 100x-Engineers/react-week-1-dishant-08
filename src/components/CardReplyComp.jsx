@@ -4,18 +4,17 @@ import PropTypes from "prop-types";
 import moment from "moment";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { convertBufferToDataURL } from "../constants";
 import { useLike, useRetweet } from "../hooks/useMutation";
 
 CardReplyComp.propTypes = {
   text: PropTypes.string.isRequired,
-  postId: PropTypes.number,
-  userId: PropTypes.number,
+  postId: PropTypes.string,
+  userId: PropTypes.string,
   time: PropTypes.string,
   user: PropTypes.shape({
     username: PropTypes.string,
     display_name: PropTypes.string,
-    profile_picture: PropTypes.object,
+    profile_picture: PropTypes.string,
   }),
   likeCount: PropTypes.number,
   isLiked: PropTypes.bool,
@@ -90,15 +89,11 @@ export default function CardReplyComp({
           to={`/user/${currUser?.currUser}`}
           onClick={() => Setrender(!render)}
         >
-          {!!currUser?.dp?.data ? (
-            <img
-              src={convertBufferToDataURL(currUser?.dp?.data)}
-              alt="user-avatar"
-              className="w-12 rounded-full h-12"
-            />
-          ) : (
-            <img src={userAvatar} alt="user-avatar" className="w-12 h-12  " />
-          )}
+          <img
+            src={currUser?.dp || userAvatar}
+            alt="user-avatar"
+            className="w-12 rounded-full h-12 object-cover"
+          />
         </Link>
         <div className="flex flex-col items-center gap-2 self-stretch flex-1 flex-shrink-0 flex-basis-0">
           <div className="flex flex-col items-start gap-1 self-stretch">

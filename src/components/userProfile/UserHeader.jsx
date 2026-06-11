@@ -9,14 +9,13 @@ import { createPortal } from "react-dom";
 import FollowBtn from "./followbtn";
 import bgImage from "../../assets/bgimage.png";
 import userAvatar from "../../assets/user-avatar.png";
-import { convertBufferToDataURL } from "../../constants";
 
 UserHeader.propTypes = {
   userName: PropTypes.string,
   userFullname: PropTypes.string,
   bio: PropTypes.string,
-  userImage: PropTypes.object.isRequired,
-  UserBackground: PropTypes.object.isRequired,
+  userImage: PropTypes.string,
+  UserBackground: PropTypes.string,
   following: PropTypes.number,
   followers: PropTypes.number,
   bioLink: PropTypes.string,
@@ -42,28 +41,16 @@ export default function UserHeader({
     <>
       <header className=" flex flex-col  border-b border-slate-700  ">
         <div className="relative">
-          {!!UserBackground ? (
-            <img
-              className=" bg-cover w-full "
-              src={convertBufferToDataURL(UserBackground?.data)}
-              alt="bg-image"
-            />
-          ) : (
-            <img className=" bg-cover w-full " src={bgImage} alt="bg-image" />
-          )}
-          {!!userImage ? (
-            <img
-              className=" absolute -bottom-8 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
-              src={convertBufferToDataURL(userImage?.data)}
-              alt="user-avatar"
-            />
-          ) : (
-            <img
-              className=" absolute -bottom-8 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
-              src={userAvatar}
-              alt="user-avatar"
-            />
-          )}
+          <img
+            className=" object-cover w-full max-h-[200px]"
+            src={UserBackground || bgImage}
+            alt="bg-image"
+          />
+          <img
+            className=" absolute -bottom-8 left-3 border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] object-cover"
+            src={userImage || userAvatar}
+            alt="user-avatar"
+          />
         </div>
 
         {currentLogUser?.id === userId ? (

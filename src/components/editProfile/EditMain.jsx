@@ -2,13 +2,13 @@ import camera from "../../assets/material-symbols-add-a-photo-outline.svg";
 import cancel from "../../assets/create-account-1-signup-x.svg";
 import Input from "../input";
 import PropTypes from "prop-types"; // ES6
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { AuthContext } from "../../context/AuthContext";
 import EditHeader from "./EditHeader";
 
 import * as yup from "yup";
 import axios from "axios";
-import { convertBufferToDataURL, handleFileUpload } from "../../constants";
 
 EditMain.propTypes = {
   userImage: PropTypes.string.isRequired,
@@ -26,45 +26,56 @@ const editUserSchema = yup.object().shape({
 });
 
 export default function EditMain({ userImage, UserBackground }) {
-  const { formData, setFormData } = useContext(AuthContext);
-  const { showEditModal, SetShowEditModal } = useContext(AuthContext);
-  const [profileBuffer, setProfileBuffer] = useState();
-  const [coverBuffer, setCoverBuffer] = useState();
-  const [isbgImage, setIsbgImage] = useState(false);
-  const [isproImage, setIsproImage] = useState(false);
+  const { SetShowEditModal } = useContext(AuthContext);
+  const queryClient = useQueryClient();
 
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
+  const [profileFile, setProfileFile] = useState(null);
+  const [coverFile, setCoverFile] = useState(null);
   const [inputValues, setInputValues] = useState({
     display_name: "",
     bio: "",
     location: "",
     website: "",
   });
-  const [error, SetError] = useState("");
-  const { render, Setrender } = useContext(AuthContext);
+  const [error, setError] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(null);
 
-  const getUserData = async () => {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_BASE_URL}/api/geteditcuruser`,
-        {
-          withCredentials: true,
-        }
-      );
-      setUser(response.data?.user || {});
-      setCoverBuffer(response.data?.user?.cover_picture?.data);
-      setProfileBuffer(response.data?.user?.profile_picture?.data);
-    } catch (error) {
-      console.error("Error fetching User Details:", error.message);
-    }
-  };
+  // Local object URLs give an instant preview before anything is uploaded.
+  const profilePreview = useMemo(
+    () => (profileFile ? URL.createObjectURL(profileFile) : null),
+    [profileFile]
+  );
+  const coverPreview = useMemo(
+    () => (coverFile ? URL.createObjectURL(coverFile) : null),
+    [coverFile]
+  );
+  useEffect(
+    () => () => profilePreview && URL.revokeObjectURL(profilePreview),
+    [profilePreview]
+  );
+  useEffect(
+    () => () => coverPreview && URL.revokeObjectURL(coverPreview),
+    [coverPreview]
+  );
 
   useEffect(() => {
+    const getUserData = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/geteditcuruser`,
+          { withCredentials: true }
+        );
+        setUser(response.data?.user || {});
+      } catch (err) {
+        console.error("Error fetching User Details:", err.message);
+      }
+    };
     getUserData();
   }, []);
 
   useEffect(() => {
-    // Update inputValues when user changes
     setInputValues((prevValues) => ({
       ...prevValues,
       display_name: user?.display_name || "",
@@ -75,127 +86,75 @@ export default function EditMain({ userImage, UserBackground }) {
   }, [user]);
 
   const handleInputChange = (field, value) => {
-    setInputValues((prevValues) => {
-      const updatedValues = {
-        ...prevValues,
-        [field]: value,
-      };
-
-      return updatedValues;
-    });
+    setInputValues((prevValues) => ({ ...prevValues, [field]: value }));
   };
 
-  const handlebgImage = async (e) => {
-    const file = e.target.files[0];
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isSaving) return;
 
-    if (file) {
-      try {
-        const buffer = await handleFileUpload(file, "cover_picture");
-        setCoverBuffer(buffer);
-        setIsbgImage(true);
-      } catch (error) {
-        console.error("Error handling profile image:", error);
-      }
+    try {
+      await editUserSchema.validate(inputValues);
+      setError("");
+    } catch (validationError) {
+      setError(validationError.message);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("display_name", inputValues.display_name);
+    formData.append("bio", inputValues.bio);
+    formData.append("location", inputValues.location);
+    formData.append("website", inputValues.website);
+    if (profileFile) formData.append("profile_picture", profileFile);
+    if (coverFile) formData.append("cover_picture", coverFile);
+
+    setIsSaving(true);
+    setUploadProgress(0);
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_BASE_URL}/api/editUser`,
+        formData,
+        {
+          withCredentials: true,
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              setUploadProgress(
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              );
+            }
+          },
+        }
+      );
+
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["feed"] });
+      queryClient.invalidateQueries({ queryKey: ["followingFeed"] });
+      SetShowEditModal(false);
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to update profile");
+    } finally {
+      setIsSaving(false);
+      setUploadProgress(null);
     }
   };
 
-  const handleProImage = async (e) => {
-    const file = e.target.files[0];
-
-    if (file) {
-      try {
-        const buffer = await handleFileUpload(file, "profile_picture");
-        setProfileBuffer(buffer);
-        setIsproImage(true);
-      } catch (error) {
-        console.error("Error handling cover image:", error);
-      }
-    }
-  };
-
-  const [imgdata, setData] = useState();
-  useEffect(() => {
-    setData(convertBufferToDataURL(coverBuffer));
-  }, [coverBuffer]);
-  const [imgProData, setProData] = useState();
-  useEffect(() => {
-    setProData(convertBufferToDataURL(profileBuffer));
-  }, [profileBuffer]);
+  const coverSrc = coverPreview || user?.cover_picture || UserBackground;
+  const profileSrc = profilePreview || user?.profile_picture || userImage;
 
   return (
     <>
-      <form
-        onSubmit={async (e) => {
-          e.preventDefault();
-          setFormData(inputValues);
-          editUserSchema
-            .validate(inputValues)
-            .then(() => {
-              SetError("");
-            })
-            .catch((error) => {
-              SetError(error);
-            });
-
-          try {
-            const formData = new FormData();
-            formData.append("display_name", inputValues.display_name);
-            formData.append("bio", inputValues.bio);
-            formData.append("location", inputValues.location);
-            formData.append("website", inputValues.website);
-
-            if (isproImage) {
-              formData.append(
-                "profile_picture",
-                new Blob([profileBuffer]),
-                "profile.jpg"
-              );
-            }
-
-            if (isbgImage) {
-              formData.append(
-                "cover_picture",
-                new Blob([coverBuffer]),
-                "cover.jpg"
-              );
-            }
-
-            const response = await axios.put(
-              `${import.meta.env.VITE_API_BASE_URL}/api/editUser`,
-              formData,
-              {
-                withCredentials: true,
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              }
-            );
-
-            SetShowEditModal(false);
-            Setrender(!render);
-          } catch (error) {
-            console.error("API error:", error);
-          }
-        }}
-      >
-        <EditHeader />
+      <form onSubmit={handleSubmit}>
+        <EditHeader isSaving={isSaving} />
 
         <main>
           <div className="flex  justify-center items-center relative">
-            {coverBuffer ? (
-              <img
-                className=" w-[350px] h-[200px]"
-                src={imgdata}
-                alt="User Image"
-                onError={(e) => console.error("Image error:", e)}
-              />
-            ) : (
-              <img
-                className="w-[350px] h-[200px]"
-                src={UserBackground}
-                alt="bg-image"
-              />
-            )}
+            <img
+              className=" w-[350px] h-[200px] object-cover"
+              src={coverSrc}
+              alt="cover"
+            />
             <div className="flex p-1 justify-center items-center absolute bg-edit-svg rounded-full  ">
               <label htmlFor="bgimage">
                 <img className="w-6 h-6" src={camera} alt="camera icon" />
@@ -203,12 +162,13 @@ export default function EditMain({ userImage, UserBackground }) {
               <input
                 className="hidden"
                 type="file"
-                name="bgimage"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                name="cover_picture"
                 id="bgimage"
-                onChange={handlebgImage}
+                onChange={(e) => setCoverFile(e.target.files[0] || null)}
               />
             </div>
-            <button type="button" onClick={() => setCoverBuffer("")}>
+            <button type="button" onClick={() => setCoverFile(null)}>
               <img
                 className="absolute top-1/2  left-[60%] -translate-x-1/2 -translate-y-1/2     bg-edit-svg  p-1 rounded-full flex  items-center z-40"
                 src={cancel}
@@ -217,19 +177,11 @@ export default function EditMain({ userImage, UserBackground }) {
             </button>
             <div className="absolute -bottom-5 left-3 ">
               <div className="relative">
-                {profileBuffer ? (
-                  <img
-                    className="  border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
-                    src={imgProData}
-                    alt="user-avatar"
-                  />
-                ) : (
-                  <img
-                    className="  border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] "
-                    src={userImage}
-                    alt="user-avatar"
-                  />
-                )}
+                <img
+                  className="  border-4 rounded-[12.5rem]  border-neutral-1000 w-[4.25rem] h-[4.25rem] object-cover"
+                  src={profileSrc}
+                  alt="user-avatar"
+                />
                 <label htmlFor="proimage">
                   <img
                     className="w-6 h-6 absolute bottom-5 left-5 p-1 bg-edit-svg rounded-full  "
@@ -240,13 +192,28 @@ export default function EditMain({ userImage, UserBackground }) {
                 <input
                   className="hidden"
                   type="file"
-                  name="bgimage"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  name="profile_picture"
                   id="proimage"
-                  onChange={handleProImage}
+                  onChange={(e) => setProfileFile(e.target.files[0] || null)}
                 />
               </div>
             </div>
           </div>
+
+          {isSaving && uploadProgress !== null && (
+            <div className="mt-8 px-4">
+              <div className="h-1 w-full rounded bg-neutral-700">
+                <div
+                  className="h-1 rounded bg-twitter-blue transition-all"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+              <p className="text-neutral-500 font-Inter text-xs mt-1">
+                Uploading… {uploadProgress}%
+              </p>
+            </div>
+          )}
 
           <div className=" mt-6 flex flex-col px-4 pb-2 items-start gap-5 self-stretch ">
             <Input
@@ -258,9 +225,7 @@ export default function EditMain({ userImage, UserBackground }) {
                 handleInputChange("display_name", e.target.value)
               }
             />
-            <div className="text-red-600  ">
-              {error && <span>{error.message}</span>}
-            </div>
+            <div className="text-red-600  ">{error && <span>{error}</span>}</div>
             <fieldset className="flex  group w-full self-stretch py-4 px-3 items-center  rounded border  focus-within:border-twitter-blue justify-between grow">
               <legend className="group-focus-within:text-twitter-blue text-neutral-500 font-Inter text-[0.75rem]  font-medium px-1 ">
                 Bio

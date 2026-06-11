@@ -2,7 +2,6 @@ import { useContext, useState, useCallback } from "react";
 import userAvatar from "../assets/user-avatar.png";
 import Button from "./button";
 import { AuthContext } from "../context/AuthContext";
-import { convertBufferToDataURL } from "../constants";
 import { useReply } from "../hooks";
 
 const ReplyComp = ({ postId, onSuccess }) => {
@@ -24,15 +23,11 @@ const ReplyComp = ({ postId, onSuccess }) => {
 
   return (
     <div className="flex p-4 gap-3 border-b border-b-neutral-700">
-      {currentLogUser?.dp?.data ? (
-        <img
-          src={convertBufferToDataURL(currentLogUser.dp.data)}
-          alt="user-avatar"
-          className="w-16 rounded-full h-12"
-        />
-      ) : (
-        <img src={userAvatar} alt="user-avatar" className="w-12 h-12" />
-      )}
+      <img
+        src={currentLogUser?.dp || userAvatar}
+        alt="user-avatar"
+        className="w-12 rounded-full h-12 object-cover"
+      />
       <div className="flex-1 flex flex-col gap-2">
         <textarea
           className="bg-inherit w-full mt-1.5 caret-twitter-blue focus:outline-none resize-none
