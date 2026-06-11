@@ -163,20 +163,20 @@ const FEED_LIMIT = 8;
  * Infinite scroll hook for fetching the main feed
  * Returns paginated data with fetchNextPage capability
  */
-export function useInfiniteFeed() {
+// Shared shape for the cursor-paginated feed endpoints: pageParam is the
+// opaque nextCursor from the previous page (null for the first page).
+function useInfiniteCursorFeed(queryKey, path, enabled = true) {
   const result = useInfiniteQuery({
-    queryKey: ["feed", "infinite"],
-    queryFn: async ({ pageParam = 0 }) => {
-      const response = await api.get(`/api/feed?limit=${FEED_LIMIT}&offset=${pageParam}`);
+    queryKey,
+    queryFn: async ({ pageParam }) => {
+      const cursorParam = pageParam ? `&cursor=${encodeURIComponent(pageParam)}` : "";
+      const response = await api.get(`${path}?limit=${FEED_LIMIT}${cursorParam}`);
       return response.data;
     },
-    getNextPageParam: (lastPage) => {
-      if (lastPage.pagination?.hasMore) {
-        return lastPage.pagination.nextOffset;
-      }
-      return undefined;
-    },
-    initialPageParam: 0,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination?.nextCursor ?? undefined,
+    initialPageParam: null,
+    enabled,
   });
 
   const allPosts = result.data?.pages.flatMap((page) => page.posts) || [];
@@ -187,9 +187,14 @@ export function useInfiniteFeed() {
     hasNextPage: result.hasNextPage,
     isFetchingNextPage: result.isFetchingNextPage,
     isLoading: result.isLoading,
+    isError: result.isError,
     error: result.error?.message || null,
     refetch: result.refetch,
   };
+}
+
+export function useInfiniteFeed() {
+  return useInfiniteCursorFeed(["feed", "infinite"], "/api/feed");
 }
 
 /**
@@ -197,32 +202,18 @@ export function useInfiniteFeed() {
  * Returns paginated data with fetchNextPage capability
  */
 export function useInfiniteFollowingFeed() {
-  const result = useInfiniteQuery({
-    queryKey: ["followingFeed", "infinite"],
-    queryFn: async ({ pageParam = 0 }) => {
-      const response = await api.get(`/followingfeed?limit=${FEED_LIMIT}&offset=${pageParam}`);
-      return response.data;
-    },
-    getNextPageParam: (lastPage) => {
-      if (lastPage.pagination?.hasMore) {
-        return lastPage.pagination.nextOffset;
-      }
-      return undefined;
-    },
-    initialPageParam: 0,
-  });
+  return useInfiniteCursorFeed(["followingFeed", "infinite"], "/followingfeed");
+}
 
-  const allPosts = result.data?.pages.flatMap((page) => page.posts) || [];
-
-  return {
-    posts: allPosts,
-    fetchNextPage: result.fetchNextPage,
-    hasNextPage: result.hasNextPage,
-    isFetchingNextPage: result.isFetchingNextPage,
-    isLoading: result.isLoading,
-    error: result.error?.message || null,
-    refetch: result.refetch,
-  };
+/**
+ * Infinite scroll hook for a user's own posts (profile page)
+ */
+export function useInfiniteUserFeed(userId) {
+  return useInfiniteCursorFeed(
+    ["userFeed", "infinite", userId],
+    `/api/userfeed/${userId}`,
+    !!userId
+  );
 }
 
 // ============================================
